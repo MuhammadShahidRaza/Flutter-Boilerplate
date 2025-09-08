@@ -18,16 +18,35 @@ class AppLocalizations {
 
   Future<void> load() async {
     String jsonString = await rootBundle.loadString(
-      'l10n/${locale.languageCode}.json',
+      'lib/l10n/${locale.languageCode}.json',
     );
     Map<String, dynamic> jsonMap = json.decode(jsonString);
-    _localizedStrings = jsonMap.map(
-      (key, value) => MapEntry(key, value.toString()),
-    );
+
+    _localizedStrings = {};
+    jsonMap.forEach((key, value) {
+      if (value is Map) {
+        value.forEach((childKey, childValue) {
+          _localizedStrings["$key.$childKey"] = childValue.toString();
+        });
+      } else {
+        _localizedStrings[key] = value.toString();
+      }
+    });
   }
 
-  String translate(String key) {
-    return _localizedStrings[key] ?? key;
+  String translate(String? key, {Map<String, String>? params}) {
+    if (key == null || key.isEmpty) return "";
+
+    String value = _localizedStrings[key] ?? key;
+
+    // Replace placeholders with actual values
+    if (params != null) {
+      params.forEach((placeholder, replacement) {
+        value = value.replaceAll('{$placeholder}', replacement);
+      });
+    }
+
+    return value;
   }
 }
 
