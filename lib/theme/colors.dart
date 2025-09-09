@@ -6,7 +6,9 @@ class AppColors {
   static const Color secondary = Color(0xFF0AC8FF);
   static const Color error = Color(0xFFFB344F);
   static const Color backgroundColor = Colors.white;
-  static const Color scaffoldBackgroundColor = Color(0xFFF5F5F5);
+  static const Color scaffoldBackground = Color(0xFFF5F5F5);
+  static const darkBackground = Colors.black;
+  static const darkScaffoldBackground = Color(0xFF1E1E1E);
   static const Color icons = Color(0xFF676767);
   static const Color header = Color(0xFFECECEC);
   static const Color inputBackground = Color(0xFFF9F9F9);
