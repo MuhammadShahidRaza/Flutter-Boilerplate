@@ -1,5 +1,6 @@
 class Common {
   static const email = "COMMON.EMAIL";
+  static const feild = "COMMON.FEILD";
   static const password = "COMMON.PASSWORD";
   static const forgotPassword = "COMMON.FORGOT_PASSWORD";
   static const resetPassword = "COMMON.RESET_PASSWORD";
