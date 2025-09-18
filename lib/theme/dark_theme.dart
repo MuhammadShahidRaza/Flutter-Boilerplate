@@ -22,7 +22,7 @@ class DarkTheme {
       backgroundColor: AppColors.primary,
       foregroundColor: Colors.white,
     ),
-    iconTheme: const IconThemeData(color: AppColors.icons),
+    iconTheme: const IconThemeData(color: AppColors.icons, size: 16),
     elevatedButtonTheme: ElevatedButtonThemeData(
       style: ButtonStyle(
         minimumSize: WidgetStatePropertyAll(const Size.fromHeight(48)),
@@ -49,6 +49,15 @@ class DarkTheme {
     // Text Button
     textButtonTheme: TextButtonThemeData(
       style: ButtonStyle(foregroundColor: WidgetStatePropertyAll(Colors.white)),
+    ),
+
+    //input
+    inputDecorationTheme: InputDecorationTheme(
+      border: OutlineInputBorder(borderRadius: BorderRadius.circular(8)),
+      filled: true,
+      fillColor: Colors.grey.shade100,
+      labelStyle: TextStyle(color: Colors.grey.shade700),
+      hintStyle: TextStyle(color: Colors.grey.shade500),
     ),
   );
 }
