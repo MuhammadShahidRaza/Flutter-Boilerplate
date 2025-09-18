@@ -1,56 +1,61 @@
 import 'package:flutter/material.dart';
 import 'package:sanam_laundry/constants/strings.dart';
-import 'package:sanam_laundry/l10n/context_extension.dart';
 import 'package:sanam_laundry/routes/app_routes.dart';
 import 'package:sanam_laundry/routes/navigator.dart';
 import 'package:sanam_laundry/services/auth.dart';
 import 'package:sanam_laundry/widgets/button.dart';
+import 'package:sanam_laundry/widgets/input.dart';
 
-class Login extends StatelessWidget {
+class Login extends StatefulWidget {
   const Login({super.key});
+
+  @override
+  State<Login> createState() => _LoginState();
+}
+
+class _LoginState extends State<Login> {
+  final _formKey = GlobalKey<FormState>();
+
+  final emailController = TextEditingController();
+  final passwordController = TextEditingController();
+
+  void _submit() {
+    if (_formKey.currentState?.validate() ?? false) {
+      // ✅ Form is valid → proceed with login
+      print("Email: ${emailController.text}");
+      print("Password: ${passwordController.text}");
+
+      AuthService.saveToken("token");
+      context.replacePage(AppRoutes.home);
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Center(
-        child: Padding(
-          padding: const EdgeInsets.all(16),
+      body: Padding(
+        padding: const EdgeInsets.all(20),
+        child: Form(
+          key: _formKey,
           child: Column(
-            mainAxisSize: MainAxisSize.min,
             children: [
-              // Default Flutter ElevatedButton
-              ElevatedButton(
-                child: Text(context.tr(Common.login)),
-                onPressed: () {
-                  AuthService.saveToken("token");
-                  context.replacePage(AppRoutes.home);
-                },
+              AppInput(
+                label: Common.email,
+                hint: Common.enterYourEmail,
+                fieldKey: FieldType.email,
+                controller: emailController,
+                keyboardType: TextInputType.emailAddress,
               ),
 
-              const SizedBox(height: 12),
-
-              // Custom Buttons
-              AppButton(title: "Login", onPressed: () {}),
-
-              const SizedBox(height: 12),
-
-              AppButton(
-                title: "Cancel",
-                onPressed: () {},
-                type: AppButtonType.outlined,
+              AppInput(
+                label: Common.password,
+                hint: Common.enterYourPassword,
+                fieldKey: FieldType.password,
+                controller: passwordController,
+                obscureText: true,
               ),
 
-              const SizedBox(height: 12),
-
-              AppButton(
-                title: "Forgot Password?",
-                onPressed: () {},
-                type: AppButtonType.text,
-              ),
-
-              const SizedBox(height: 12),
-
-              AppButton(title: "Loading...", onPressed: () {}, isLoading: true),
+              AppButton(title: Common.login, onPressed: _submit),
             ],
           ),
         ),
