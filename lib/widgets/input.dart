@@ -148,6 +148,7 @@ class _AppInputState extends State<AppInput> {
         textCapitalization: widget.textCapitalization,
         style: theme.textTheme.bodyMedium,
         decoration: InputDecoration(
+          errorMaxLines: 3,
           labelText: widget.label != null ? context.tr(widget.label!) : null,
           hintText: widget.hint != null ? context.tr(widget.hint!) : null,
           prefixIcon: widget.prefixIcon,
