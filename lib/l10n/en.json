@@ -1,5 +1,6 @@
 {
   "COMMON": {
+    "FEILD": "Feild",
     "EMAIL": "Email",
     "PASSWORD": "Password",
     "FORGOT_PASSWORD": "Forgot Password",
