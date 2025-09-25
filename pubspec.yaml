@@ -40,7 +40,9 @@ dependencies:
   dio: ^5.9.0
   flutter_secure_storage: ^9.2.4
   go_router: ^16.2.1
-
+  video_player: ^2.10.0
+  flutter_dotenv: ^6.0.0
+  flutter_svg: ^2.2.1
 
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.
@@ -70,8 +72,12 @@ flutter:
   # generate: true
   # To add assets to your application, add an assets section, like this:
   assets:
-    - lib/l10n/en.json
-    - lib/l10n/ar.json
+    - lib/localization/
+    - assets/images/common/
+    - assets/images/auth/
+    - assets/videos/
+    - .env.development
+    - .env.production
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/to/resolution-aware-images
