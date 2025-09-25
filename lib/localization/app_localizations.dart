@@ -18,7 +18,7 @@ class AppLocalizations {
 
   Future<void> load() async {
     String jsonString = await rootBundle.loadString(
-      'lib/l10n/${locale.languageCode}.json',
+      'lib/localization/${locale.languageCode}.json',
     );
     Map<String, dynamic> jsonMap = json.decode(jsonString);
 
@@ -42,7 +42,10 @@ class AppLocalizations {
     // Replace placeholders with actual values
     if (params != null) {
       params.forEach((placeholder, replacement) {
-        value = value.replaceAll('{$placeholder}', replacement);
+        value = value.replaceAll(
+          '{$placeholder}',
+          _localizedStrings[replacement] ?? replacement,
+        );
       });
     }
 
