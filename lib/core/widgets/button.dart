@@ -33,7 +33,9 @@ class AppButton extends StatelessWidget {
     final buttonStyle = ButtonStyle(
       minimumSize: WidgetStatePropertyAll(Size.fromHeight(Dimens.buttonHeight)),
       shape: WidgetStatePropertyAll(
-        RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+        RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(Dimens.radiusS),
+        ),
       ),
     ).merge(style);
 
@@ -77,7 +79,7 @@ class AppButton extends StatelessWidget {
               if (icon != null) const SizedBox(width: 8),
               AppText(
                 title,
-                style: (textStyle ?? theme.textTheme.bodyMedium)?.copyWith(
+                style: (textStyle ?? theme.textTheme.bodyLarge)?.copyWith(
                   color: textColor,
                 ),
               ),
