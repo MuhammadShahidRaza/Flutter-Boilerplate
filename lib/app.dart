@@ -12,14 +12,14 @@ class MyApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       theme: AppTheme.lightTheme,
       darkTheme: AppTheme.darkTheme,
-      themeMode: ThemeMode.light,
+      themeMode: ThemeMode.system,
       locale: const Locale('en'),
       supportedLocales: AppLocalizationSetup.supportedLocales,
       localizationsDelegates: AppLocalizationSetup.localizationsDelegates,
       localeResolutionCallback: AppLocalizationSetup.resolveLocale,
-      builder: (context, child) {
-        return SafeArea(bottom: false, child: child!); // 👈 Global SafeArea
-      },
+      // builder: (context, child) {
+      //   return SafeArea(bottom: false, child: child!); // 👈 Global SafeArea
+      // },
     );
   }
 }
