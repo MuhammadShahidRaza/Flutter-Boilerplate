@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:sanam_laundry/core/utils/index.dart';
 import 'package:sanam_laundry/presentation/theme/colors.dart';
 import 'package:sanam_laundry/presentation/theme/text.dart';
 
@@ -27,7 +28,9 @@ class DarkTheme {
       style: ButtonStyle(
         minimumSize: WidgetStatePropertyAll(const Size.fromHeight(48)),
         shape: WidgetStatePropertyAll(
-          RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+          RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(Dimens.buttonRadius),
+          ),
         ),
         backgroundColor: WidgetStatePropertyAll(AppColors.primary),
         foregroundColor: WidgetStatePropertyAll(Colors.white),
@@ -37,9 +40,13 @@ class DarkTheme {
     // Outlined Button
     outlinedButtonTheme: OutlinedButtonThemeData(
       style: ButtonStyle(
-        minimumSize: WidgetStatePropertyAll(const Size.fromHeight(48)),
+        minimumSize: WidgetStatePropertyAll(
+          const Size.fromHeight(Dimens.buttonHeight),
+        ),
         shape: WidgetStatePropertyAll(
-          RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+          RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(Dimens.buttonRadius),
+          ),
         ),
         foregroundColor: WidgetStatePropertyAll(Colors.white), // text + icon
         side: WidgetStatePropertyAll(BorderSide(color: Colors.white)),
@@ -53,7 +60,9 @@ class DarkTheme {
 
     //input
     inputDecorationTheme: InputDecorationTheme(
-      border: OutlineInputBorder(borderRadius: BorderRadius.circular(8)),
+      border: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(Dimens.inputRadius),
+      ),
       filled: true,
       fillColor: Colors.grey.shade100,
       labelStyle: TextStyle(color: Colors.grey.shade700),
