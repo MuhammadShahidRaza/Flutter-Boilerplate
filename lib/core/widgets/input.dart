@@ -1,13 +1,15 @@
 import 'package:flutter/material.dart';
-import 'package:sanam_laundry/core/constants/strings.dart';
-import 'package:sanam_laundry/core/extensions/localization.dart';
-import 'package:sanam_laundry/core/utils/validators.dart';
+import 'package:sanam_laundry/core/constants/index.dart';
+import 'package:sanam_laundry/core/extensions/index.dart';
+import 'package:sanam_laundry/core/utils/index.dart';
+import 'package:sanam_laundry/core/widgets/text.dart';
 
 enum FieldType { email, password, confirmPassword, name, phone, required }
 
 class AppInput extends StatefulWidget {
   final String? label;
   final String? hint;
+  final String? title;
   final FieldType? fieldKey;
   final TextEditingController controller;
   final TextEditingController?
@@ -28,6 +30,7 @@ class AppInput extends StatefulWidget {
   const AppInput({
     super.key,
     this.label,
+    this.title,
     this.hint,
     this.fieldKey,
     required this.controller,
@@ -41,7 +44,7 @@ class AppInput extends StatefulWidget {
     this.minLines,
     this.enabled = true,
     this.textCapitalization = TextCapitalization.none,
-    this.marginBottom = 20.0,
+    this.marginBottom = Dimens.spacingS,
     this.minLength,
     this.maxLength,
   });
@@ -57,6 +60,13 @@ class _AppInputState extends State<AppInput> {
   void initState() {
     super.initState();
     _obscure = widget.obscureText;
+
+    if (widget.fieldKey == FieldType.confirmPassword &&
+        widget.originalPasswordController != null) {
+      widget.originalPasswordController!.addListener(() {
+        if (mounted) setState(() {});
+      });
+    }
   }
 
   String? _validator(BuildContext context, String? value) {
@@ -132,35 +142,48 @@ class _AppInputState extends State<AppInput> {
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-
     return Padding(
       padding: EdgeInsets.only(bottom: widget.marginBottom),
-      child: TextFormField(
-        controller: widget.controller,
-        keyboardType: widget.keyboardType ?? _keyboardType(),
-        obscureText: _obscure,
-        textInputAction: widget.textInputAction,
-        maxLines: widget.maxLines,
-        minLines: widget.minLines,
-        enabled: widget.enabled,
-        validator: (value) => _validator(context, value),
-        textCapitalization: widget.textCapitalization,
-        style: theme.textTheme.bodyMedium,
-        decoration: InputDecoration(
-          errorMaxLines: 3,
-          labelText: widget.label != null ? context.tr(widget.label!) : null,
-          hintText: widget.hint != null ? context.tr(widget.hint!) : null,
-          prefixIcon: widget.prefixIcon,
-          suffixIcon: widget.obscureText
-              ? IconButton(
-                  icon: Icon(
-                    _obscure ? Icons.visibility_off : Icons.visibility,
-                  ),
-                  onPressed: () => setState(() => _obscure = !_obscure),
-                )
-              : widget.suffixIcon,
-        ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          if (widget.title != null) ...[
+            AppText(
+              context.tr(widget.title!),
+              style: context.textTheme.titleSmall,
+            ),
+            const SizedBox(height: Dimens.spacingS),
+          ],
+          TextFormField(
+            controller: widget.controller,
+            keyboardType: widget.keyboardType ?? _keyboardType(),
+            obscureText: _obscure,
+            textInputAction: widget.textInputAction,
+            maxLines: widget.maxLines,
+            minLines: widget.minLines,
+            enabled: widget.enabled,
+            validator: (value) => _validator(context, value),
+            textCapitalization: widget.textCapitalization,
+            style: context.textTheme.bodyMedium,
+            autovalidateMode: AutovalidateMode.onUserInteraction,
+            decoration: InputDecoration(
+              errorMaxLines: 3,
+              labelText: widget.label != null
+                  ? context.tr(widget.label!)
+                  : null,
+              hintText: widget.hint != null ? context.tr(widget.hint!) : null,
+              prefixIcon: widget.prefixIcon,
+              suffixIcon: widget.obscureText
+                  ? IconButton(
+                      icon: Icon(
+                        _obscure ? Icons.visibility_off : Icons.visibility,
+                      ),
+                      onPressed: () => setState(() => _obscure = !_obscure),
+                    )
+                  : widget.suffixIcon,
+            ),
+          ),
+        ],
       ),
     );
   }
