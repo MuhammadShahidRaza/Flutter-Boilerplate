@@ -7,13 +7,13 @@ class LightTheme {
     brightness: Brightness.light,
     colorScheme: ColorScheme.light(
       primary: AppColors.primary,
-      onPrimary: Colors.white,
+      onPrimary: AppColors.white,
       secondary: AppColors.secondary,
-      onSecondary: Colors.white,
+      onSecondary: AppColors.white,
       surface: AppColors.scaffoldBackground,
       onSurface: AppColors.text,
       error: AppColors.error,
-      onError: Colors.white,
+      onError: AppColors.white,
     ),
     scaffoldBackgroundColor: AppColors.scaffoldBackground,
     textTheme: CustomTextTheme.getTextTheme(
@@ -23,16 +23,18 @@ class LightTheme {
     appBarTheme: const AppBarTheme(
       elevation: 0,
       backgroundColor: AppColors.primary,
-      foregroundColor: Colors.white,
+      foregroundColor: AppColors.white,
     ),
-    iconTheme: const IconThemeData(color: AppColors.icons, size: 16),
+    iconTheme: const IconThemeData(color: AppColors.icons, size: Dimens.iconS),
     elevatedButtonTheme: ElevatedButtonThemeData(
       style: ButtonStyle(
         minimumSize: WidgetStatePropertyAll(
           const Size.fromHeight(Dimens.buttonHeight),
         ),
         shape: WidgetStatePropertyAll(
-          RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+          RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(Dimens.buttonRadius),
+          ),
         ),
         backgroundColor: WidgetStatePropertyAll(AppColors.primary),
         foregroundColor: WidgetStatePropertyAll(Colors.white),
@@ -46,7 +48,9 @@ class LightTheme {
           const Size.fromHeight(Dimens.buttonHeight),
         ),
         shape: WidgetStatePropertyAll(
-          RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+          RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(Dimens.buttonRadius),
+          ),
         ),
         foregroundColor: WidgetStatePropertyAll(
           AppColors.primary,
@@ -64,9 +68,15 @@ class LightTheme {
 
     //input
     inputDecorationTheme: InputDecorationTheme(
-      border: OutlineInputBorder(borderRadius: BorderRadius.circular(8)),
-      filled: true,
-      fillColor: Colors.grey.shade100,
+      enabledBorder: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(Dimens.inputRadius),
+        borderSide: BorderSide(color: AppColors.border),
+      ),
+      border: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(Dimens.inputRadius),
+      ),
+      // filled: true,
+      // fillColor: Colors.grey.shade100,
       labelStyle: TextStyle(color: Colors.grey.shade700),
       hintStyle: TextStyle(color: Colors.grey.shade500),
     ),
