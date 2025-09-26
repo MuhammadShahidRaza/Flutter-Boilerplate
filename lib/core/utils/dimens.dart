@@ -10,9 +10,12 @@ class Dimens {
   static const double spacingXL = 32.0;
 
   // Border radius
-  static const double radiusS = 6.0;
-  static const double radiusM = 12.0;
+  static const double radiusXs = 8.0;
+  static const double radiusS = 10.0;
+  static const double radiusM = 15.0;
   static const double radiusL = 20.0;
+  static const double buttonRadius = 10.0;
+  static const double inputRadius = 10.0;
 
   // Icon sizes
   static const double iconS = 16.0;
@@ -30,5 +33,5 @@ class Dimens {
   static const double buttonHeight = 55.0;
   static const double inputHeight = 52.0;
 
-  static const double screenMargin = 22.0;
+  static const double screenMargin = 25.0;
 }
