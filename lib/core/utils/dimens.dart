@@ -18,6 +18,7 @@ class Dimens {
   static const double inputRadius = 10.0;
 
   // Icon sizes
+  static const double iconXs = 10.0;
   static const double iconS = 16.0;
   static const double iconM = 24.0;
   static const double iconL = 32.0;
