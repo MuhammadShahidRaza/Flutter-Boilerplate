@@ -1,11 +1,13 @@
+import 'dart:async';
 import 'package:flutter/material.dart';
-import 'package:sanam_laundry/core/routes/app_routes.dart';
-import 'package:sanam_laundry/core/utils/dimens.dart';
-import 'package:sanam_laundry/core/widgets/index.dart'; // AppText, AppButton, etc.
+import 'package:sanam_laundry/core/routes/index.dart';
+import 'package:sanam_laundry/core/utils/index.dart';
+import 'package:sanam_laundry/core/widgets/index.dart';
 import 'package:sanam_laundry/core/constants/index.dart';
 import 'package:sanam_laundry/core/extensions/index.dart';
+import 'package:sanam_laundry/data/models/onboarding.dart';
 import 'package:sanam_laundry/presentation/screens/common/wrapper.dart';
-import 'package:sanam_laundry/presentation/theme/colors.dart';
+import 'package:sanam_laundry/presentation/theme/index.dart';
 
 class Onboarding extends StatefulWidget {
   const Onboarding({super.key});
@@ -17,25 +19,51 @@ class Onboarding extends StatefulWidget {
 class _OnboardingState extends State<Onboarding> {
   final PageController _pageController = PageController();
   int _currentIndex = 0;
+  Timer? _autoSlideTimer;
 
-  final List<_OnboardingPage> pages = [
-    _OnboardingPage(
-      image: AppAssets.logo, // replace with your image
-      title: "Welcome to Sanam Laundry",
-      description:
-          "Fast, reliable, and affordable laundry services at your fingertips.",
+  final List<OnboardingModel> pages = [
+    OnboardingModel(
+      image: AppAssets.onboardingOne,
+      title: OnboardingText.heading1,
+      description: OnboardingText.description1,
     ),
-    _OnboardingPage(
-      image: AppAssets.logo, // replace with another
-      title: "Easy Pickup & Delivery",
-      description: "Schedule pickups and deliveries right from the app.",
+    OnboardingModel(
+      image: AppAssets.onboardingTwo,
+      title: OnboardingText.heading2,
+      description: OnboardingText.description2,
     ),
-    _OnboardingPage(
-      image: AppAssets.logo,
-      title: "Track Your Orders",
-      description: "Stay updated with real-time order tracking.",
+    OnboardingModel(
+      image: AppAssets.onboardingThree,
+      title: OnboardingText.heading3,
+      description: OnboardingText.description3,
     ),
   ];
+
+  @override
+  void initState() {
+    super.initState();
+    _startAutoSlide();
+  }
+
+  void _startAutoSlide() {
+    _autoSlideTimer = Timer.periodic(const Duration(seconds: 3), (timer) {
+      if (_currentIndex < pages.length - 1) {
+        _pageController.nextPage(
+          duration: const Duration(milliseconds: 400),
+          curve: Curves.easeInOut,
+        );
+      } else {
+        _autoSlideTimer?.cancel();
+      }
+    });
+  }
+
+  @override
+  void dispose() {
+    _autoSlideTimer?.cancel();
+    _pageController.dispose();
+    super.dispose();
+  }
 
   void _nextPage() {
     if (_currentIndex < pages.length - 1) {
@@ -51,8 +79,15 @@ class _OnboardingState extends State<Onboarding> {
   void _skip() => _finish();
 
   void _finish() {
-    // TODO: Navigate to Login/Home
     context.replacePage(AppRoutes.login);
+  }
+
+  void _moveToCurrentPage(int index) {
+    _pageController.animateToPage(
+      index,
+      duration: const Duration(milliseconds: 300),
+      curve: Curves.easeInOut,
+    );
   }
 
   @override
@@ -69,25 +104,27 @@ class _OnboardingState extends State<Onboarding> {
               itemBuilder: (context, index) {
                 final page = pages[index];
                 return Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     AppImage(
                       path: page.image,
                       isAsset: true,
+                      fit: BoxFit.contain,
                       width: context.screenWidth,
                       height: context.h(0.35),
                     ),
-                    const SizedBox(height: Dimens.spacingMLarge),
+                    const SizedBox(height: Dimens.spacingXL),
                     AppText(
                       page.title,
                       style: context.textTheme.headlineSmall,
                       textAlign: TextAlign.center,
                     ),
-                    const SizedBox(height: Dimens.spacingS),
+                    const SizedBox(height: Dimens.spacingM),
                     AppText(
                       page.description,
-                      style: context.textTheme.bodyMedium,
+                      style: context.textTheme.titleMedium,
                       textAlign: TextAlign.center,
+                      color: AppColors.textSecondary,
+                      maxLines: 3,
                     ),
                   ],
                 );
@@ -96,60 +133,53 @@ class _OnboardingState extends State<Onboarding> {
           ),
 
           // Indicator
-          Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: List.generate(
-              pages.length,
-              (index) => AnimatedContainer(
-                duration: const Duration(milliseconds: 300),
-                margin: const EdgeInsets.symmetric(horizontal: 4),
-                height: 8,
-                width: _currentIndex == index ? 24 : 8,
-                decoration: BoxDecoration(
-                  color: _currentIndex == index
-                      ? AppColors.primary
-                      : Colors.grey.shade400,
-                  borderRadius: BorderRadius.circular(4),
+          Padding(
+            padding: const EdgeInsets.only(bottom: 80),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: List.generate(
+                pages.length,
+                (index) => InkWell(
+                  onTap: () => _moveToCurrentPage(index),
+                  child: AnimatedContainer(
+                    duration: const Duration(milliseconds: 300),
+                    margin: const EdgeInsets.symmetric(horizontal: 8),
+                    height: Dimens.iconS,
+                    width: _currentIndex == index ? Dimens.iconL : Dimens.iconS,
+                    decoration: BoxDecoration(
+                      color: _currentIndex == index
+                          ? AppColors.primary
+                          : AppColors.secondary,
+                      borderRadius: BorderRadius.circular(Dimens.iconS),
+                    ),
+                  ),
                 ),
               ),
             ),
           ),
-          const SizedBox(height: Dimens.spacingMLarge),
 
           // Buttons
           Row(
             children: [
-              if (_currentIndex != pages.length - 1)
+              if (_currentIndex != pages.length - 1) ...[
+                // AppIcon(icon: icon)
                 Expanded(
-                  child: AppButton(title: "Skip", onPressed: _skip),
+                  child: AppButton(title: Common.skip, onPressed: _skip),
                 ),
-              if (_currentIndex != pages.length - 1)
                 const SizedBox(width: Dimens.spacingM),
-
-              Expanded(
-                child: AppButton(
-                  title: _currentIndex == pages.length - 1
-                      ? "Get Started"
-                      : "Next",
-                  onPressed: _nextPage,
+              ] else
+                Expanded(
+                  child: AppButton(
+                    title: _currentIndex == pages.length - 1
+                        ? Common.getStarted
+                        : Common.next,
+                    onPressed: _nextPage,
+                  ),
                 ),
-              ),
             ],
           ),
         ],
       ),
     );
   }
-}
-
-class _OnboardingPage {
-  final String image;
-  final String title;
-  final String description;
-
-  _OnboardingPage({
-    required this.image,
-    required this.title,
-    required this.description,
-  });
 }
