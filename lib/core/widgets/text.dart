@@ -34,16 +34,14 @@ class AppText extends StatelessWidget {
   Widget build(BuildContext context) {
     final defaultStyle = context.textTheme.bodyMedium;
 
-    // Merge defaultStyle + parameters + optional style
-    final textStyle = defaultStyle
-        ?.copyWith(
-          color: color ?? defaultStyle.color,
-          fontSize: fontSize ?? defaultStyle.fontSize,
-          fontWeight: fontWeight ?? defaultStyle.fontWeight,
-          letterSpacing: letterSpacing ?? defaultStyle.letterSpacing,
-          fontStyle: fontStyle ?? defaultStyle.fontStyle,
-        )
-        .merge(style);
+    final textStyle = (defaultStyle?.merge(style))?.copyWith(
+      color: color ?? style?.color ?? defaultStyle?.color,
+      fontSize: fontSize ?? style?.fontSize ?? defaultStyle?.fontSize,
+      fontWeight: fontWeight ?? style?.fontWeight ?? defaultStyle?.fontWeight,
+      letterSpacing:
+          letterSpacing ?? style?.letterSpacing ?? defaultStyle?.letterSpacing,
+      fontStyle: fontStyle ?? style?.fontStyle ?? defaultStyle?.fontStyle,
+    );
 
     return Text(
       context.tr(text, params: params),
