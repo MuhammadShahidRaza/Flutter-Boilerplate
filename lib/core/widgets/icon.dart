@@ -1,64 +1,40 @@
-// import 'package:flutter/material.dart';
-// // import 'package:cached_network_image/cached_network_image.dart';
+import 'package:flutter/material.dart';
 
-// class AppIcon extends StatelessWidget {
-//   final String? path; // asset or network
-//   final IconData? icon; // for Material icons
-//   final double size;
-//   final BoxFit fit;
-//   final Color? color;
-//   final bool isAsset;
-//   final Widget? placeholder;
-//   final Widget? errorWidget;
+class AppIcon extends StatelessWidget {
+  final IconData icon;
+  final double size;
+  final Color? color;
+  final EdgeInsetsGeometry? padding;
+  final VoidCallback? onTap;
 
-//   const AppIcon({
-//     super.key,
-//     this.path,
-//     this.icon,
-//     this.size = 24,
-//     this.fit = BoxFit.contain,
-//     this.color,
-//     this.isAsset = false,
-//     this.placeholder,
-//     this.errorWidget,
-//   }) : assert(path != null || icon != null,
-//               'Either path or icon must be provided');
+  const AppIcon({
+    super.key,
+    required this.icon,
+    this.size = 24,
+    this.color,
+    this.padding,
+    this.onTap,
+  });
 
-//   @override
-//   Widget build(BuildContext context) {
-//     // If Material Icon
-//     if (icon != null) {
-//       return Icon(
-//         icon,
-//         size: size,
-//         color: color,
-//       );
-//     }
+  @override
+  Widget build(BuildContext context) {
+    final iconWidget = Icon(
+      icon,
+      size: size,
+      color: color ?? Theme.of(context).iconTheme.color,
+    );
 
-//     // If Asset image
-//     if (isAsset) {
-//       return Image.asset(
-//         path!,
-//         width: size,
-//         height: size,
-//         fit: fit,
-//         color: color,
-//         errorBuilder: (_, __, ___) =>
-//             errorWidget ?? const Icon(Icons.broken_image),
-//       );
-//     }
+    if (onTap != null) {
+      return InkWell(
+        onTap: onTap,
+        borderRadius: BorderRadius.circular(size / 2),
+        child: Padding(
+          padding: padding ?? EdgeInsets.all(size * 0.25),
+          child: iconWidget,
+        ),
+      );
+    }
 
-//     // If Network image (cached)
-//     return CachedNetworkImage(
-//       imageUrl: path!,
-//       width: size,
-//       height: size,
-//       fit: fit,
-//       color: color,
-//       placeholder: (_, __) =>
-//           placeholder ?? const Center(child: CircularProgressIndicator(strokeWidth: 2)),
-//       errorWidget: (_, __, ___) =>
-//           errorWidget ?? const Icon(Icons.broken_image),
-//     );
-//   }
-// }
+    return Padding(padding: padding ?? EdgeInsets.zero, child: iconWidget);
+  }
+}
