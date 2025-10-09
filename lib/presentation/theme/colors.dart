@@ -14,6 +14,7 @@ class AppColors {
   static const Color inputBackground = Color(0xFFF9F9F9);
   static const Color border = Color(0xFFCACACA);
   static const Color text = Colors.black;
+  static const Color textSecondary = Color(0xFF818898);
   static const Color greenStatus = Color(0xFF00B406);
 
   // Common
