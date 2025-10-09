@@ -6,6 +6,7 @@ class Common {
   static const resetPassword = "COMMON.RESET_PASSWORD";
   static const signUp = "COMMON.SIGN_UP";
   static const signIn = "COMMON.SIGN_IN";
+  static const getStarted = "COMMON.GET_STARTED";
   static const login = "COMMON.LOGIN";
   static const newPassword = "COMMON.NEW_PASSWORD";
   static const confirmation = "COMMON.CONFIRMATION";
@@ -226,7 +227,7 @@ class Weekdays {
   static const saturday = "WEEKDAYS.SATURDAY";
 }
 
-class Onboarding {
+class OnboardingText {
   static const heading1 = "ONBOARDING.HEADING_1";
   static const heading2 = "ONBOARDING.HEADING_2";
   static const heading3 = "ONBOARDING.HEADING_3";
