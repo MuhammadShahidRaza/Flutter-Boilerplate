@@ -124,7 +124,7 @@ class _OnboardingState extends State<Onboarding> {
                       style: context.textTheme.titleMedium,
                       textAlign: TextAlign.center,
                       color: AppColors.textSecondary,
-                      maxLines: 3,
+                      maxLines: 5,
                     ),
                   ],
                 );
