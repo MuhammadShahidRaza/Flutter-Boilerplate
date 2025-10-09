@@ -30,14 +30,20 @@ class AppButton extends StatelessWidget {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
 
-    final buttonStyle = ButtonStyle(
-      minimumSize: WidgetStatePropertyAll(Size.fromHeight(Dimens.buttonHeight)),
+    final defaultButtonStyle = ButtonStyle(
+      minimumSize: const WidgetStatePropertyAll(
+        Size.fromHeight(Dimens.buttonHeight),
+      ),
       shape: WidgetStatePropertyAll(
         RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(Dimens.radiusS),
         ),
       ),
-    ).merge(style);
+    );
+
+    final buttonStyle = style == null
+        ? defaultButtonStyle
+        : style!.merge(defaultButtonStyle);
 
     // Decide default colors based on button type
     Color textColor;
