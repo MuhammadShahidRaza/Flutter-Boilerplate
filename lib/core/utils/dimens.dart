@@ -34,5 +34,6 @@ class Dimens {
   static const double buttonHeight = 55.0;
   static const double inputHeight = 52.0;
 
-  static const double screenMargin = 25.0;
+  static const double screenMarginHorizontal = 25.0;
+  static const double screenMarginVertical = 10.0;
 }
