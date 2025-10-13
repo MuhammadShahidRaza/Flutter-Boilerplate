@@ -90,92 +90,132 @@ class _OnboardingState extends State<Onboarding> {
     );
   }
 
+  Widget _buildBottomRow() {
+    final isLastPage = _currentIndex == pages.length - 1;
+
+    return SizedBox(
+      height: Dimens.buttonHeight,
+      child: isLastPage
+          ? Center(
+              child: AppButton(
+                title: Common.getStarted,
+                onPressed: _nextPage,
+                width: context.w(0.65),
+              ),
+            )
+          : Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                AppText(
+                  Common.skip,
+                  style: context.textTheme.titleLarge,
+                  onTap: _skip,
+                ),
+                AppIcon(
+                  icon: Icons.arrow_forward,
+                  onTap: _nextPage,
+                  color: AppColors.white,
+                  backgroundColor: AppColors.primary,
+                  padding: const EdgeInsets.all(10),
+                  borderRadius: 30,
+                ),
+              ],
+            ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return AppWrapper(
       scrollable: false,
-      child: Column(
+      child: Stack(
         children: [
-          Expanded(
-            child: PageView.builder(
-              controller: _pageController,
-              itemCount: pages.length,
-              onPageChanged: (index) => setState(() => _currentIndex = index),
-              itemBuilder: (context, index) {
-                final page = pages[index];
-                return Column(
-                  children: [
-                    AppImage(
-                      path: page.image,
-                      isAsset: true,
-                      fit: BoxFit.contain,
-                      width: context.screenWidth,
-                      height: context.h(0.35),
-                    ),
-                    const SizedBox(height: Dimens.spacingXL),
-                    AppText(
-                      page.title,
-                      style: context.textTheme.headlineSmall,
-                      textAlign: TextAlign.center,
-                    ),
-                    const SizedBox(height: Dimens.spacingM),
-                    AppText(
-                      page.description,
-                      style: context.textTheme.titleMedium,
-                      textAlign: TextAlign.center,
-                      color: AppColors.textSecondary,
-                      maxLines: 5,
-                    ),
-                  ],
-                );
-              },
-            ),
-          ),
-
-          // Indicator
-          Padding(
-            padding: const EdgeInsets.only(bottom: 80),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: List.generate(
-                pages.length,
-                (index) => InkWell(
-                  onTap: () => _moveToCurrentPage(index),
-                  child: AnimatedContainer(
-                    duration: const Duration(milliseconds: 300),
-                    margin: const EdgeInsets.symmetric(horizontal: 8),
-                    height: Dimens.iconS,
-                    width: _currentIndex == index ? Dimens.iconL : Dimens.iconS,
-                    decoration: BoxDecoration(
-                      color: _currentIndex == index
-                          ? AppColors.primary
-                          : AppColors.secondary,
-                      borderRadius: BorderRadius.circular(Dimens.iconS),
-                    ),
-                  ),
+          Positioned(
+            bottom: 0,
+            left: 0,
+            right: 0,
+            child: IgnorePointer(
+              child: Opacity(
+                opacity: 0.07,
+                child: AppImage(
+                  path: AppAssets.watermark,
+                  isAsset: true,
+                  width: context.screenWidth,
+                  height: context.h(0.45),
+                  fit: BoxFit.cover,
                 ),
               ),
             ),
           ),
-
-          // Buttons
-          Row(
+          Column(
             children: [
-              if (_currentIndex != pages.length - 1) ...[
-                // AppIcon(icon: icon)
-                Expanded(
-                  child: AppButton(title: Common.skip, onPressed: _skip),
+              Expanded(
+                child: PageView.builder(
+                  controller: _pageController,
+                  itemCount: pages.length,
+                  onPageChanged: (index) =>
+                      setState(() => _currentIndex = index),
+                  itemBuilder: (context, index) {
+                    final page = pages[index];
+                    return Column(
+                      children: [
+                        AppImage(
+                          path: page.image,
+                          isAsset: true,
+                          fit: BoxFit.contain,
+                          width: context.screenWidth,
+                          height: context.h(0.35),
+                        ),
+                        const SizedBox(height: Dimens.spacingXL),
+                        AppText(
+                          page.title,
+                          style: context.textTheme.headlineSmall,
+                          textAlign: TextAlign.center,
+                        ),
+                        const SizedBox(height: Dimens.spacingM),
+                        AppText(
+                          page.description,
+                          style: context.textTheme.titleMedium,
+                          textAlign: TextAlign.center,
+                          color: AppColors.textSecondary,
+                          maxLines: 5,
+                        ),
+                      ],
+                    );
+                  },
                 ),
-                const SizedBox(width: Dimens.spacingM),
-              ] else
-                Expanded(
-                  child: AppButton(
-                    title: _currentIndex == pages.length - 1
-                        ? Common.getStarted
-                        : Common.next,
-                    onPressed: _nextPage,
+              ),
+
+              // Indicator
+              Padding(
+                padding: const EdgeInsets.only(bottom: 80),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: List.generate(
+                    pages.length,
+                    (index) => InkWell(
+                      onTap: () => _moveToCurrentPage(index),
+                      child: AnimatedContainer(
+                        duration: const Duration(milliseconds: 300),
+                        margin: const EdgeInsets.symmetric(horizontal: 8),
+                        height: Dimens.iconS,
+                        width: _currentIndex == index
+                            ? Dimens.iconL
+                            : Dimens.iconS,
+                        decoration: BoxDecoration(
+                          color: _currentIndex == index
+                              ? AppColors.primary
+                              : AppColors.secondary,
+                          borderRadius: BorderRadius.circular(Dimens.iconS),
+                        ),
+                      ),
+                    ),
                   ),
                 ),
+              ),
+
+              _buildBottomRow(),
             ],
           ),
         ],

@@ -12,6 +12,7 @@ class AuthWrapper extends StatelessWidget {
   final String buttonText;
   final VoidCallback onSubmit;
   final GlobalKey<FormState> formKey;
+  final bool showWatermark;
 
   const AuthWrapper({
     super.key,
@@ -21,37 +22,62 @@ class AuthWrapper extends StatelessWidget {
     required this.buttonText,
     required this.onSubmit,
     required this.formKey,
+    this.showWatermark = true,
   });
 
   @override
   Widget build(BuildContext context) {
     return AppWrapper(
-      child: Form(
-        key: formKey,
-        child: Column(
-          spacing: Dimens.spacingMLarge,
-          children: [
-            AppImage(
-              path: AppAssets.logo,
-              isAsset: true,
-              width: context.screenWidth,
-              height: context.h(0.31),
+      scrollable: true,
+      child: Stack(
+        children: [
+          if (showWatermark)
+            Positioned(
+              bottom: 0,
+              left: 0,
+              right: 0,
+              child: IgnorePointer(
+                child: Opacity(
+                  opacity: 0.07,
+                  child: AppImage(
+                    path: AppAssets.watermark,
+                    isAsset: true,
+                    width: context.screenWidth,
+                    height: context.h(0.45),
+                    fit: BoxFit.cover,
+                  ),
+                ),
+              ),
             ),
-            AppText(
-              title,
-              fontSize: context.textTheme.headlineMedium?.fontSize,
-              fontWeight: context.textTheme.headlineMedium?.fontWeight,
+
+          Form(
+            key: formKey,
+            child: Column(
+              spacing: Dimens.spacingMLarge,
+              children: [
+                AppImage(
+                  path: AppAssets.logo,
+                  isAsset: true,
+                  width: context.screenWidth,
+                  height: context.h(0.31),
+                ),
+                AppText(
+                  title,
+                  fontSize: context.textTheme.headlineMedium?.fontSize,
+                  fontWeight: context.textTheme.headlineMedium?.fontWeight,
+                ),
+                AppText(
+                  subtitle,
+                  fontSize: context.textTheme.bodyMedium?.fontSize,
+                  maxLines: 3,
+                  textAlign: TextAlign.center,
+                ),
+                child,
+                AppButton(title: buttonText, onPressed: onSubmit),
+              ],
             ),
-            AppText(
-              subtitle,
-              fontSize: context.textTheme.bodyMedium?.fontSize,
-              maxLines: 3,
-              textAlign: TextAlign.center,
-            ),
-            child,
-            AppButton(title: buttonText, onPressed: onSubmit),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }
