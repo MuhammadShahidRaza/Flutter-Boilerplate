@@ -25,7 +25,7 @@ class LightTheme {
       backgroundColor: AppColors.primary,
       foregroundColor: AppColors.white,
     ),
-    iconTheme: const IconThemeData(color: AppColors.icons, size: Dimens.iconS),
+    iconTheme: const IconThemeData(color: AppColors.icons, size: Dimens.iconM),
     elevatedButtonTheme: ElevatedButtonThemeData(
       style: ButtonStyle(
         minimumSize: WidgetStatePropertyAll(
