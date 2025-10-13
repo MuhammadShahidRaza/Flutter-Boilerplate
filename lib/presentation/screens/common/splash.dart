@@ -32,11 +32,10 @@ class _SplashState extends State<Splash> {
     if (!mounted) return;
     final authProvider = context.read<AuthProvider>();
 
-    // if (authProvider.hasVisitedApp) {
-    if (!authProvider.hasVisitedApp) {
+    if (authProvider.hasVisitedApp) {
       context.go(AppRoutes.onboarding);
     } else if (!authProvider.isLoggedIn) {
-      context.go(AppRoutes.login);
+      context.go(AppRoutes.getStarted);
     } else {
       context.go(AppRoutes.home);
     }
