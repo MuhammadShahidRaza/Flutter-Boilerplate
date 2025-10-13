@@ -14,6 +14,7 @@ class AppText extends StatelessWidget {
   final FontStyle? fontStyle;
   final TextStyle? style;
   final Map<String, String>? params;
+  final VoidCallback? onTap;
 
   const AppText(
     this.text, {
@@ -28,6 +29,7 @@ class AppText extends StatelessWidget {
     this.fontStyle,
     this.style,
     this.params,
+    this.onTap,
   });
 
   @override
@@ -43,12 +45,18 @@ class AppText extends StatelessWidget {
       fontStyle: fontStyle ?? style?.fontStyle ?? defaultStyle?.fontStyle,
     );
 
-    return Text(
+    Widget textWidget = Text(
       context.tr(text, params: params),
       maxLines: maxLines,
       textAlign: textAlign ?? TextAlign.start,
       overflow: overflow ?? TextOverflow.ellipsis,
       style: textStyle,
     );
+
+    if (onTap != null) {
+      textWidget = GestureDetector(onTap: onTap, child: textWidget);
+    }
+
+    return textWidget;
   }
 }
