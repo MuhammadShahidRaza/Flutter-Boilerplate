@@ -13,7 +13,10 @@ class AppWrapper extends StatelessWidget {
       child: GestureDetector(
         onTap: () => FocusScope.of(context).unfocus(),
         child: Padding(
-          padding: const EdgeInsets.all(Dimens.screenMargin),
+          padding: const EdgeInsets.symmetric(
+            horizontal: Dimens.screenMarginHorizontal,
+            vertical: Dimens.screenMarginVertical,
+          ),
           child: scrollable ? SingleChildScrollView(child: child) : child,
         ),
       ),
