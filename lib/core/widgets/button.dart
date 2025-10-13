@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:sanam_laundry/core/extensions/dimensions.dart';
 import 'package:sanam_laundry/core/utils/dimens.dart';
 import 'package:sanam_laundry/core/widgets/text.dart';
 
@@ -13,6 +14,7 @@ class AppButton extends StatelessWidget {
   final ButtonStyle? style;
   final TextStyle? textStyle;
   final TextStyle? iconStyle;
+  final double? width;
 
   const AppButton({
     super.key,
@@ -22,6 +24,7 @@ class AppButton extends StatelessWidget {
     this.isLoading = false,
     this.icon,
     this.style,
+    this.width,
     this.textStyle,
     this.iconStyle,
   });
@@ -31,8 +34,8 @@ class AppButton extends StatelessWidget {
     final theme = Theme.of(context);
 
     final defaultButtonStyle = ButtonStyle(
-      minimumSize: const WidgetStatePropertyAll(
-        Size.fromHeight(Dimens.buttonHeight),
+      minimumSize: WidgetStatePropertyAll(
+        Size(width ?? context.w(0.85), Dimens.buttonHeight),
       ),
       shape: WidgetStatePropertyAll(
         RoundedRectangleBorder(
