@@ -79,7 +79,7 @@ class _OnboardingState extends State<Onboarding> {
   void _skip() => _finish();
 
   void _finish() {
-    context.replacePage(AppRoutes.login);
+    context.replacePage(AppRoutes.getStarted);
   }
 
   void _moveToCurrentPage(int index) {
@@ -96,13 +96,7 @@ class _OnboardingState extends State<Onboarding> {
     return SizedBox(
       height: Dimens.buttonHeight,
       child: isLastPage
-          ? Center(
-              child: AppButton(
-                title: Common.getStarted,
-                onPressed: _nextPage,
-                width: context.w(0.65),
-              ),
-            )
+          ? AppButton(title: Common.getStarted, onPressed: _nextPage)
           : Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               crossAxisAlignment: CrossAxisAlignment.center,
