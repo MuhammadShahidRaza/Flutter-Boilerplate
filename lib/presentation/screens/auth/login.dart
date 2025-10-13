@@ -30,7 +30,7 @@ class _LoginState extends State<Login> {
     return AuthWrapper(
       formKey: _formKey,
       title: Auth.welcomeBackLogin,
-      subtitle: TemporaryText.lorumIpsum,
+      subtitle: Auth.helloAgainLogin,
       buttonText: Common.signIn,
       onSubmit: _submit,
       child: Column(

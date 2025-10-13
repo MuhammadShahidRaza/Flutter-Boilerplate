@@ -23,7 +23,7 @@ class DarkTheme {
       backgroundColor: AppColors.primary,
       foregroundColor: Colors.white,
     ),
-    iconTheme: const IconThemeData(color: AppColors.icons, size: 16),
+    iconTheme: const IconThemeData(color: AppColors.icons, size: Dimens.iconM),
     elevatedButtonTheme: ElevatedButtonThemeData(
       style: ButtonStyle(
         minimumSize: WidgetStatePropertyAll(const Size.fromHeight(48)),
