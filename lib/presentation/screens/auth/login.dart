@@ -15,8 +15,7 @@ class Login extends StatefulWidget {
 
 class _LoginState extends State<Login> {
   final _formKey = GlobalKey<FormState>();
-  final emailController = TextEditingController();
-  final passwordController = TextEditingController();
+  final phoneController = TextEditingController();
 
   void _submit() {
     if (_formKey.currentState?.validate() ?? false) {
@@ -29,6 +28,7 @@ class _LoginState extends State<Login> {
   Widget build(BuildContext context) {
     return AuthWrapper(
       formKey: _formKey,
+      height: true,
       title: Auth.welcomeBackLogin,
       subtitle: Auth.helloAgainLogin,
       buttonText: Common.signIn,
@@ -36,17 +36,10 @@ class _LoginState extends State<Login> {
       child: Column(
         children: [
           AppInput(
-            label: Common.email,
-            hint: Common.enterYourEmail,
-            fieldKey: FieldType.email,
-            controller: emailController,
-          ),
-          AppInput(
-            title: Common.password,
-            hint: Common.enterYourPassword,
-            fieldKey: FieldType.password,
-            controller: passwordController,
-            obscureText: true,
+            title: Common.phoneNumber,
+            hint: Common.enterYourPhoneNumber,
+            fieldKey: FieldType.phone,
+            controller: phoneController,
           ),
         ],
       ),
