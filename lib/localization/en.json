@@ -7,6 +7,7 @@
     "RESET_PASSWORD": "Reset Password",
     "SIGN_UP": "Sign Up",
     "SIGN_IN": "Sign In",
+    "SIGN_IN_WITH_PHONE": "Sign in with Phone",
     "GET_STARTED": "Get Started",
     "LOGIN": "Login",
     "NEW_PASSWORD": "New Password",
@@ -235,10 +236,12 @@
   },
   "AUTH": {
     "WELCOME_BACK_LOGIN": "Hello, Welcome! 👋",
-    "HELLO_AGAIN_LOGIN": "Hello again, you've been missed!",
+    "WELCOME_BACK_GET_STARTED": "Hi, Welcome Back! 👋",
+    "HELLO_AGAIN_LOGIN": "Hello again, you've been missed! Log in to continue where you left off and keep your journey going.",
     "DONT_WORRY_FORGOT": "Don't worry we are here to help!",
     "RESET_YOUR_PASSWORD": "Reset your password with email to use your account.",
-    "CONNECT_WITH_SIGNUP": "Connect with experts today!"
+    "GET_STARTED_DESCRIPTION": "Experience hassle-free pickup, fast delivery, and professional care — all through one simple app. Tap below to get started.",
+    "CONNECT_WITH_SIGNUP": "Join now and experience hassle-free laundry service!"
   },
   "CHAT": {
     "HEADING_1": "Take care of your body",
