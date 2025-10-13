@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:sanam_laundry/core/routes/app_routes.dart';
-import 'package:sanam_laundry/presentation/screens/auth/login.dart';
-import 'package:sanam_laundry/presentation/screens/auth/onboarding.dart';
+import 'package:sanam_laundry/presentation/screens/auth/index.dart';
 import 'package:sanam_laundry/presentation/screens/common/splash.dart';
 import 'package:sanam_laundry/presentation/screens/user/home.dart';
 
@@ -24,8 +23,16 @@ class GoRouterSetup {
         builder: (context, state) => const Onboarding(),
       ),
       GoRoute(
+        path: AppRoutes.getStarted,
+        builder: (context, state) => const GetStarted(),
+      ),
+      GoRoute(
         path: AppRoutes.login,
         builder: (context, state) => const Login(),
+      ),
+      GoRoute(
+        path: AppRoutes.signUp,
+        builder: (context, state) => const SignUp(),
       ),
 
       // App stack using ShellRoute for nested navigation
