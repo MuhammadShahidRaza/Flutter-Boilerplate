@@ -35,7 +35,7 @@ class AppButton extends StatelessWidget {
 
     final defaultButtonStyle = ButtonStyle(
       minimumSize: WidgetStatePropertyAll(
-        Size(width ?? context.w(0.85), Dimens.buttonHeight),
+        Size(width ?? context.w(0.65), Dimens.buttonHeight),
       ),
       shape: WidgetStatePropertyAll(
         RoundedRectangleBorder(
