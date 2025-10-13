@@ -6,6 +6,7 @@ class Common {
   static const resetPassword = "COMMON.RESET_PASSWORD";
   static const signUp = "COMMON.SIGN_UP";
   static const signIn = "COMMON.SIGN_IN";
+  static const signInWithPhone = "COMMON.SIGN_IN_WITH_PHONE";
   static const getStarted = "COMMON.GET_STARTED";
   static const login = "COMMON.LOGIN";
   static const newPassword = "COMMON.NEW_PASSWORD";
@@ -238,9 +239,11 @@ class OnboardingText {
 
 class Auth {
   static const welcomeBackLogin = "AUTH.WELCOME_BACK_LOGIN";
+  static const welcomeBackGetStarted = "AUTH.WELCOME_BACK_GET_STARTED";
   static const helloAgainLogin = "AUTH.HELLO_AGAIN_LOGIN";
   static const dontWorryForgot = "AUTH.DONT_WORRY_FORGOT";
   static const resetYourPassword = "AUTH.RESET_YOUR_PASSWORD";
+  static const getStartedDescription = "AUTH.GET_STARTED_DESCRIPTION";
   static const connectWithSignup = "AUTH.CONNECT_WITH_SIGNUP";
 }
 
