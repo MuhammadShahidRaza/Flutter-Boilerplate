@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:sanam_laundry/core/constants/index.dart';
 import 'package:sanam_laundry/core/routes/app_routes.dart';
 import 'package:sanam_laundry/core/utils/index.dart';
+import 'package:sanam_laundry/core/widgets/phone_input.dart';
 import 'package:sanam_laundry/data/services/index.dart';
 import 'package:sanam_laundry/core/widgets/index.dart';
 import 'package:sanam_laundry/core/extensions/index.dart';
@@ -72,19 +73,18 @@ class _SignUpState extends State<SignUp> {
           ),
 
           AppDropdown<String>(
-            title: 'Gender',
-            hint: 'Select Gender',
+            title: Common.gender,
+            hint: Common.selectGender,
             items: genderOptions,
             value: selectedGender,
             onChanged: (value) => setState(() => selectedGender = value),
           ),
-          // AppInput(
-          //   title: Common.password,
-          //   hint: Common.enterYourPassword,
-          //   fieldKey: FieldType.password,
-          //   controller: passwordController,
-          //   obscureText: true,
-          // ),
+
+          AppPhoneInput(
+            title: Common.phoneNumber,
+            hint: Common.enterYourPhoneNumber,
+            controller: emailController,
+          ),
         ],
       ),
     );
