@@ -13,6 +13,7 @@ class AppDropdown<T> extends StatelessWidget {
   final ValueChanged<T?> onChanged;
   final bool isRequired;
   final bool enabled;
+  final double marginBottom;
 
   const AppDropdown({
     super.key,
@@ -22,56 +23,80 @@ class AppDropdown<T> extends StatelessWidget {
     required this.onChanged,
     this.getLabel,
     this.value,
+    this.marginBottom = Dimens.spacingS,
     this.isRequired = false,
     this.enabled = true,
   });
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      spacing: Dimens.spacingS,
-      children: [
-        // Label
-        Row(
-          children: [
-            AppText(
-              title,
-              fontSize: context.textTheme.bodyMedium?.fontSize,
-              fontWeight: FontWeight.w600,
-            ),
-            if (isRequired)
-              const Text(' *', style: TextStyle(color: Colors.red)),
-          ],
-        ),
+    final theme = Theme.of(context);
 
-        // Dropdown field
-        Container(
-          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
-          decoration: BoxDecoration(
-            color: enabled ? Colors.white : Colors.grey.shade200,
-            borderRadius: BorderRadius.circular(Dimens.radiusM),
-            border: Border.all(color: AppColors.border),
+    return Padding(
+      padding: EdgeInsets.only(bottom: marginBottom),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        spacing: Dimens.spacingS,
+        children: [
+          // Label
+          Row(
+            children: [
+              AppText(title, style: context.textTheme.titleSmall),
+              if (isRequired) const AppText(' *', color: AppColors.red),
+            ],
           ),
-          child: DropdownButtonHideUnderline(
-            child: DropdownButton<T>(
-              isExpanded: true,
-              value: value,
-              hint: Text(
-                hint,
-                style: context.textTheme.bodyMedium?.copyWith(
-                  color: AppColors.text,
+
+          FormField<T>(
+            autovalidateMode: AutovalidateMode.onUserInteraction,
+            validator: (val) {
+              if (isRequired) {
+                return AppValidators.requiredField(
+                  context,
+                  val as String?,
+                  fieldName: title,
+                );
+              }
+              return null;
+            },
+            builder: (FormFieldState<T> field) {
+              return InputDecorator(
+                decoration: InputDecoration(
+                  contentPadding: const EdgeInsets.symmetric(
+                    horizontal: 12,
+                    vertical: 2,
+                  ),
+                  errorText: field.errorText,
+                  errorMaxLines: 3,
                 ),
-              ),
-              items: items.map((item) {
-                final label = getLabel?.call(item) ?? item.toString();
-                return DropdownMenuItem<T>(value: item, child: Text(label));
-              }).toList(),
-              onChanged: enabled ? onChanged : null,
-            ),
+                child: DropdownButtonHideUnderline(
+                  child: DropdownButton<T>(
+                    isExpanded: true,
+                    value: value,
+                    hint: AppText(
+                      hint,
+                      style: theme.inputDecorationTheme.hintStyle,
+                    ),
+                    items: items.map((item) {
+                      final label = getLabel?.call(item) ?? item.toString();
+                      return DropdownMenuItem<T>(
+                        value: item,
+                        child: AppText(label),
+                      );
+                    }).toList(),
+                    onChanged: enabled
+                        ? (newVal) {
+                            field.didChange(newVal);
+                            onChanged(newVal);
+                          }
+                        : null,
+                    borderRadius: BorderRadius.circular(Dimens.buttonRadius),
+                  ),
+                ),
+              );
+            },
           ),
-        ),
-      ],
+        ],
+      ),
     );
   }
 }
