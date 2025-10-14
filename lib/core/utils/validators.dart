@@ -100,9 +100,9 @@ class AppValidators {
         params: {"name": Common.phoneNumber},
       );
     }
-    if (!_match(AppRegex.phoneNumber, value)) {
-      return context.tr(ValidationMessages.invalidPhoneNumber);
-    }
+    // if (!_match(AppRegex.phoneNumber, value)) {
+    //   return context.tr(ValidationMessages.invalidPhoneNumber);
+    // }
     return null;
   }
 
