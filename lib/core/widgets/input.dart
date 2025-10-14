@@ -2,7 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:sanam_laundry/core/constants/index.dart';
 import 'package:sanam_laundry/core/extensions/index.dart';
 import 'package:sanam_laundry/core/utils/index.dart';
-import 'package:sanam_laundry/core/widgets/text.dart';
+import 'package:sanam_laundry/core/widgets/index.dart';
+import 'package:sanam_laundry/presentation/theme/index.dart';
 
 enum FieldType { email, password, confirmPassword, name, phone, required }
 
@@ -26,6 +27,7 @@ class AppInput extends StatefulWidget {
   final double marginBottom;
   final int? minLength;
   final int? maxLength;
+  final bool isRequired;
 
   const AppInput({
     super.key,
@@ -40,6 +42,7 @@ class AppInput extends StatefulWidget {
     this.prefixIcon,
     this.suffixIcon,
     this.textInputAction,
+    this.isRequired = false,
     this.maxLines = 1,
     this.minLines,
     this.enabled = true,
@@ -54,13 +57,14 @@ class AppInput extends StatefulWidget {
 }
 
 class _AppInputState extends State<AppInput> {
-  bool _obscure = false;
+  late bool _obscure = false;
 
   @override
   void initState() {
     super.initState();
     _obscure = widget.obscureText;
 
+    // 👇 Watch original password field for confirm-password live validation
     if (widget.fieldKey == FieldType.confirmPassword &&
         widget.originalPasswordController != null) {
       widget.originalPasswordController!.addListener(() {
@@ -131,10 +135,6 @@ class _AppInputState extends State<AppInput> {
         return TextInputType.emailAddress;
       case FieldType.phone:
         return TextInputType.phone;
-      case FieldType.password:
-      case FieldType.confirmPassword:
-      case FieldType.name:
-      case FieldType.required:
       default:
         return TextInputType.text;
     }
@@ -145,14 +145,17 @@ class _AppInputState extends State<AppInput> {
     return Padding(
       padding: EdgeInsets.only(bottom: widget.marginBottom),
       child: Column(
+        spacing: Dimens.spacingS,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           if (widget.title != null) ...[
-            AppText(
-              context.tr(widget.title!),
-              style: context.textTheme.titleSmall,
+            Row(
+              children: [
+                AppText(widget.title!, style: context.textTheme.titleSmall),
+                if (widget.isRequired)
+                  const AppText(' *', color: AppColors.red),
+              ],
             ),
-            const SizedBox(height: Dimens.spacingS),
           ],
           TextFormField(
             controller: widget.controller,
