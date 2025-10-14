@@ -71,7 +71,6 @@ class _SignUpState extends State<SignUp> {
             fieldKey: FieldType.email,
             controller: emailController,
           ),
-.
           AppDropdown<String>(
             title: Common.gender,
             hint: Common.selectGender,
