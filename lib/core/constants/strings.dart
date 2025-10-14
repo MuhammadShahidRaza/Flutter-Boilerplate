@@ -6,6 +6,8 @@ class Common {
   static const resetPassword = "COMMON.RESET_PASSWORD";
   static const signUp = "COMMON.SIGN_UP";
   static const signIn = "COMMON.SIGN_IN";
+  static const gender = "COMMON.GENDER";
+  static const selectGender = "COMMON.SELECT_GENDER";
   static const signInWithPhone = "COMMON.SIGN_IN_WITH_PHONE";
   static const getStarted = "COMMON.GET_STARTED";
   static const login = "COMMON.LOGIN";
