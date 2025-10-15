@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:sanam_laundry/core/constants/index.dart';
 import 'package:sanam_laundry/core/routes/app_routes.dart';
 import 'package:sanam_laundry/core/utils/index.dart';
+import 'package:sanam_laundry/core/widgets/checkbox.dart';
+import 'package:sanam_laundry/core/widgets/image_picker.dart';
 import 'package:sanam_laundry/core/widgets/phone_input.dart';
 import 'package:sanam_laundry/data/services/index.dart';
 import 'package:sanam_laundry/core/widgets/index.dart';
@@ -20,15 +22,16 @@ class _SignUpState extends State<SignUp> {
   final firstNameController = TextEditingController();
   final lastNameController = TextEditingController();
   final emailController = TextEditingController();
-  // final passwordController = TextEditingController();
+  final phoneController = TextEditingController();
 
   String? selectedGender;
+  bool _agreedTerms = false;
 
-  final genderOptions = ['Male', 'Female', 'Other'];
+  final genderOptions = [Common.male, Common.female, Common.other];
 
   void _submit() {
     if (_formKey.currentState?.validate() ?? false) {
-      AuthService.saveToken("token");
+      AuthService.saveToken(Variables.userToken);
       context.replacePage(AppRoutes.home);
     }
   }
@@ -40,10 +43,16 @@ class _SignUpState extends State<SignUp> {
       title: Common.createAnAccount,
       subtitle: Auth.connectWithSignup,
       buttonText: Common.signUp,
+      bottomText: Common.alreadyHaveAnAccount,
+      bottomButtonText: Common.signIn,
+      bottomButtonPress: () {
+        context.replacePage(AppRoutes.login);
+      },
       onSubmit: _submit,
       child: Column(
         spacing: Dimens.spacingXS,
         children: [
+          ImagePickerBox(),
           Row(
             spacing: Dimens.spacingM,
             children: [
@@ -52,7 +61,7 @@ class _SignUpState extends State<SignUp> {
                   title: Common.firstName,
                   hint: Common.enterFirstName,
                   fieldKey: FieldType.name,
-                  controller: emailController,
+                  controller: firstNameController,
                 ),
               ),
               Expanded(
@@ -60,7 +69,7 @@ class _SignUpState extends State<SignUp> {
                   title: Common.lastName,
                   hint: Common.enterLastName,
                   fieldKey: FieldType.name,
-                  controller: emailController,
+                  controller: lastNameController,
                 ),
               ),
             ],
@@ -82,7 +91,14 @@ class _SignUpState extends State<SignUp> {
           AppPhoneInput(
             title: Common.phoneNumber,
             hint: Common.enterYourPhoneNumber,
-            controller: emailController,
+            controller: phoneController,
+            marginBottom: Dimens.spacingM,
+          ),
+
+          AppCheckbox(
+            value: _agreedTerms,
+            onChanged: (bool val) => setState(() => _agreedTerms = val),
+            label: Common.termOfUseAndPrivacy,
           ),
         ],
       ),
