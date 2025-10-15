@@ -52,8 +52,6 @@ class _AppPhoneInputState extends State<AppPhoneInput> {
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-
     return Padding(
       padding: EdgeInsets.only(bottom: widget.marginBottom),
       child: Column(
@@ -67,20 +65,10 @@ class _AppPhoneInputState extends State<AppPhoneInput> {
               if (widget.isRequired) const AppText(' *', color: AppColors.red),
             ],
           ),
-
-          // Phone Input
-          // Container(
-          //   decoration: BoxDecoration(
-          //     border: Border.all(color: AppColors.border),
-          //     borderRadius: BorderRadius.circular(Dimens.inputRadius),
-          //   ),
-          //   padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 2),
-          //   child:
           InternationalPhoneNumberInput(
             key: _fieldKey,
             textFieldController: widget.controller,
             initialValue: _number,
-            hintText: context.tr(widget.hint),
             onInputChanged: (PhoneNumber number) {
               setState(() => _number = number);
               widget.onChanged?.call(number);
@@ -88,29 +76,27 @@ class _AppPhoneInputState extends State<AppPhoneInput> {
             onInputValidated: (bool valid) {
               if (mounted) {
                 setState(() => _isValid = valid);
-                // trigger the FormField validator to run and show error if any
                 _fieldKey.currentState?.validate();
               }
             },
-            inputDecoration: InputDecoration(errorMaxLines: 3),
+            inputDecoration: InputDecoration(
+              errorMaxLines: 3,
+
+              hintText: context.tr(widget.hint),
+            ),
             validator: (value) => _validator(context, value),
             selectorConfig: const SelectorConfig(
               selectorType: PhoneInputSelectorType.BOTTOM_SHEET,
               useBottomSheetSafeArea: true,
               setSelectorButtonAsPrefixIcon: true,
               leadingPadding: 20,
-              useEmoji: true,
             ),
             ignoreBlank: false,
             autoValidateMode: AutovalidateMode.onUserInteraction,
             selectorTextStyle: context.textTheme.bodyMedium,
-            inputBorder: const OutlineInputBorder(
-              borderSide: BorderSide(color: Colors.red),
-            ),
             formatInput: false,
             keyboardType: TextInputType.phone,
           ),
-          // ),
         ],
       ),
     );
