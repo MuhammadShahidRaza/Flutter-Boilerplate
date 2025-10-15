@@ -4,6 +4,7 @@ import 'package:sanam_laundry/core/utils/index.dart';
 import 'package:sanam_laundry/core/widgets/index.dart';
 import 'package:sanam_laundry/core/extensions/index.dart';
 import 'package:sanam_laundry/presentation/screens/common/wrapper.dart';
+import 'package:sanam_laundry/presentation/theme/index.dart';
 
 class AuthWrapper extends StatelessWidget {
   final String title;
@@ -11,6 +12,9 @@ class AuthWrapper extends StatelessWidget {
   final Widget child;
   final String buttonText;
   final VoidCallback onSubmit;
+  final VoidCallback? bottomButtonPress;
+  final String bottomButtonText;
+  final String bottomText;
   final GlobalKey<FormState> formKey;
   final bool showWatermark;
   final bool height;
@@ -25,6 +29,9 @@ class AuthWrapper extends StatelessWidget {
     required this.formKey,
     this.height = false,
     this.showWatermark = true,
+    this.bottomButtonText = "",
+    this.bottomText = "",
+    this.bottomButtonPress,
   });
 
   @override
@@ -57,7 +64,7 @@ class AuthWrapper extends StatelessWidget {
             Form(
               key: formKey,
               child: Column(
-                spacing: Dimens.spacingMLarge,
+                spacing: Dimens.spacingM,
                 children: [
                   AppImage(
                     path: AppAssets.logo,
@@ -78,6 +85,36 @@ class AuthWrapper extends StatelessWidget {
                   ),
                   child,
                   AppButton(title: buttonText, onPressed: onSubmit),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      AppText(
+                        bottomText,
+                        style: context.textTheme.bodyMedium?.copyWith(
+                          color: AppColors.textSecondary,
+                        ),
+                      ),
+                      AppButton(
+                        type: AppButtonType.text,
+                        width: context.w(0.1),
+                        title: bottomButtonText,
+                        style: ButtonStyle(
+                          padding: const WidgetStatePropertyAll(
+                            EdgeInsets.symmetric(horizontal: Dimens.spacingXS),
+                          ), // ✅ no vertical space
+                          minimumSize: const WidgetStatePropertyAll(
+                            Size(0, 0),
+                          ), // ✅ remove height
+                        ),
+                        textStyle: context.textTheme.titleSmall?.copyWith(
+                          color: AppColors.secondary,
+                          fontWeight: FontWeight.bold,
+                        ),
+                        onPressed: bottomButtonPress,
+                      ),
+                    ],
+                  ),
                 ],
               ),
             ),
