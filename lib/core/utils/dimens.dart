@@ -4,12 +4,14 @@ class Dimens {
   // Spacing
   static const double spacingXS = 4.0;
   static const double spacingS = 8.0;
+  static const double spacingMSmall = 12.0;
   static const double spacingM = 16.0;
   static const double spacingMLarge = 20.0;
   static const double spacingLarge = 24.0;
   static const double spacingXL = 32.0;
 
   // Border radius
+  static const double radiusXxs = 6.0;
   static const double radiusXs = 8.0;
   static const double radiusS = 10.0;
   static const double radiusM = 15.0;
