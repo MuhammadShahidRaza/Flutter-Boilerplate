@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:sanam_laundry/localization/setup.dart';
+import 'package:sanam_laundry/localization/index.dart';
 import 'package:sanam_laundry/core/routes/router.dart';
-import 'package:sanam_laundry/presentation/theme/app_theme.dart';
+import 'package:sanam_laundry/presentation/index.dart';
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
