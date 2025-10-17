@@ -1,14 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:sanam_laundry/core/constants/index.dart';
-import 'package:sanam_laundry/core/routes/app_routes.dart';
-import 'package:sanam_laundry/core/utils/index.dart';
-import 'package:sanam_laundry/core/widgets/checkbox.dart';
-import 'package:sanam_laundry/core/widgets/image_picker.dart';
-import 'package:sanam_laundry/core/widgets/phone_input.dart';
-import 'package:sanam_laundry/data/services/index.dart';
-import 'package:sanam_laundry/core/widgets/index.dart';
-import 'package:sanam_laundry/core/extensions/index.dart';
-import 'package:sanam_laundry/presentation/screens/auth/auth_wrapper.dart';
+import 'package:image_picker/image_picker.dart';
+import 'package:sanam_laundry/core/index.dart';
+import 'package:sanam_laundry/data/index.dart';
+import 'package:sanam_laundry/presentation/index.dart';
 
 class SignUp extends StatefulWidget {
   const SignUp({super.key});
@@ -19,21 +13,50 @@ class SignUp extends StatefulWidget {
 
 class _SignUpState extends State<SignUp> {
   final _formKey = GlobalKey<FormState>();
-  final firstNameController = TextEditingController();
-  final lastNameController = TextEditingController();
-  final emailController = TextEditingController();
-  final phoneController = TextEditingController();
+  late final TextEditingController firstNameController;
+  late final TextEditingController lastNameController;
+  late final TextEditingController emailController;
+  late final TextEditingController phoneController;
+  XFile? _profileImage;
 
   String? selectedGender;
   bool _agreedTerms = false;
 
   final genderOptions = [Common.male, Common.female, Common.other];
 
+  @override
+  void initState() {
+    super.initState();
+    firstNameController = TextEditingController();
+    lastNameController = TextEditingController();
+    emailController = TextEditingController();
+    phoneController = TextEditingController();
+  }
+
+  @override
+  void dispose() {
+    firstNameController.dispose();
+    lastNameController.dispose();
+    emailController.dispose();
+    phoneController.dispose();
+    super.dispose();
+  }
+
   void _submit() {
-    if (_formKey.currentState?.validate() ?? false) {
-      AuthService.saveToken(Variables.userToken);
-      context.replacePage(AppRoutes.home);
+    if (!(_formKey.currentState?.validate() ?? false)) return;
+
+    if (_profileImage == null) {
+      // AppUtils.showToast(Common.pleaseUploadProfilePicture);
+      return;
     }
+
+    if (!_agreedTerms) {
+      // AppUtils.showToast(Common.acceptTerms);
+      return;
+    }
+
+    AuthService.saveToken(Variables.userToken);
+    context.replacePage(AppRoutes.home);
   }
 
   @override
@@ -52,7 +75,11 @@ class _SignUpState extends State<SignUp> {
       child: Column(
         spacing: Dimens.spacingXS,
         children: [
-          ImagePickerBox(),
+          ImagePickerBox(
+            onImagePicked: (file) {
+              setState(() => _profileImage = file);
+            },
+          ),
           Row(
             spacing: Dimens.spacingM,
             children: [
@@ -97,8 +124,15 @@ class _SignUpState extends State<SignUp> {
 
           AppCheckbox(
             value: _agreedTerms,
-            onChanged: (bool val) => setState(() => _agreedTerms = val),
+            onChanged: (bool val) => {},
             label: Common.termOfUseAndPrivacy,
+            onTapLabel: () async {
+              final agreed = await AppTermsDialog.show(
+                context,
+                agreed: _agreedTerms,
+              );
+              setState(() => _agreedTerms = agreed != null ? true : false);
+            },
           ),
         ],
       ),
