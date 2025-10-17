@@ -52,7 +52,6 @@ class AuthWrapper extends StatelessWidget {
                     opacity: 0.07,
                     child: AppImage(
                       path: AppAssets.watermark,
-                      isAsset: true,
                       width: context.screenWidth,
                       height: context.h(0.45),
                       fit: BoxFit.cover,
@@ -68,7 +67,6 @@ class AuthWrapper extends StatelessWidget {
                 children: [
                   AppImage(
                     path: AppAssets.logo,
-                    isAsset: true,
                     width: context.screenWidth,
                     height: context.h(0.31),
                   ),
