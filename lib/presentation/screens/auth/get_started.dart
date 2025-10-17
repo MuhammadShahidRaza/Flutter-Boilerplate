@@ -51,7 +51,6 @@ class _GetStartedState extends State<GetStarted> {
           AppImage(
             onTap: () => _handleImageTap(context),
             path: AppAssets.getStarted,
-            isAsset: true,
             width: context.screenWidth,
             height: context.h(0.63),
             fit: BoxFit.cover,
