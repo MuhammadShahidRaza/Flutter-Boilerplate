@@ -5,14 +5,15 @@ class AppAssets {
   // Images
 
   //COMMON
+  static const imagePath = "assets/images/";
 
-  static const logo = 'assets/images/common/logo.png';
+  static const logo = "${imagePath}common/logo.png";
+  static const user = "${imagePath}common/user.png";
 
-  // Auth
-
-  static const onboardingOne = 'assets/images/auth/onboarding_one.png';
-  static const onboardingTwo = 'assets/images/auth/onboarding_two.png';
-  static const onboardingThree = 'assets/images/auth/onboarding_three.png';
-  static const watermark = 'assets/images/auth/watermark.png';
-  static const getStarted = 'assets/images/auth/getStarted.png';
+  // AUTH
+  static const onboardingOne = "${imagePath}auth/onboarding_one.png";
+  static const onboardingTwo = "${imagePath}auth/onboarding_two.png";
+  static const onboardingThree = "${imagePath}auth/onboarding_three.png";
+  static const watermark = "${imagePath}auth/watermark.png";
+  static const getStarted = "${imagePath}auth/getStarted.png";
 }
