@@ -2,8 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 import 'package:sanam_laundry/providers/auth.dart';
-import 'package:sanam_laundry/core/routes/app_routes.dart';
-import 'package:sanam_laundry/core/constants/assets.dart';
+import 'package:sanam_laundry/core/index.dart';
 import 'package:video_player/video_player.dart';
 
 class Splash extends StatefulWidget {
@@ -36,6 +35,7 @@ class _SplashState extends State<Splash> {
       context.go(AppRoutes.onboarding);
     } else if (!authProvider.isLoggedIn) {
       context.go(AppRoutes.getStarted);
+      // context.go(AppRoutes.verification);
     } else {
       context.go(AppRoutes.home);
     }
