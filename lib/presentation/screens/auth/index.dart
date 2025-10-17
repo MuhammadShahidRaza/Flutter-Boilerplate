@@ -3,3 +3,4 @@ export 'login.dart';
 export 'signup.dart';
 export 'get_started.dart';
 export 'onboarding.dart';
+export 'verification.dart';
