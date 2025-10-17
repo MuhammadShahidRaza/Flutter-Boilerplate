@@ -6,12 +6,15 @@ class Common {
   static const resetPassword = "COMMON.RESET_PASSWORD";
   static const signUp = "COMMON.SIGN_UP";
   static const signIn = "COMMON.SIGN_IN";
+  static const continue_ = "COMMON.CONTINUE";
   static const uploadProfilePicture = "COMMON.UPLOAD_PROFILE_PICTURE";
   static const gender = "COMMON.GENDER";
   static const termOfUseAndPrivacy = "COMMON.TERM_OF_USE_PRIVACY_POLICY";
   static const male = "COMMON.MALE";
   static const female = "COMMON.FEMALE";
   static const other = "COMMON.OTHER";
+  static const pickFromGallery = "COMMON.PICK_FROM_GALLERY";
+  static const pickFromCamera = "COMMON.PICK_FROM_CAMERA";
   static const selectGender = "COMMON.SELECT_GENDER";
   static const signInWithPhone = "COMMON.SIGN_IN_WITH_PHONE";
   static const getStarted = "COMMON.GET_STARTED";
