@@ -93,8 +93,8 @@ class _OnboardingState extends State<Onboarding> {
   Widget _buildBottomRow() {
     final isLastPage = _currentIndex == pages.length - 1;
 
-    return SizedBox(
-      height: Dimens.buttonHeight,
+    return Container(
+      padding: EdgeInsets.only(bottom: Dimens.spacingXL),
       child: isLastPage
           ? AppButton(title: Common.getStarted, onPressed: _nextPage)
           : Row(
