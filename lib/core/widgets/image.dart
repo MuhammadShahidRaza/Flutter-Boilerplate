@@ -1,3 +1,4 @@
+import 'dart:io';
 import 'package:flutter/material.dart';
 
 class AppImage extends StatelessWidget {
@@ -8,7 +9,6 @@ class AppImage extends StatelessWidget {
   final Color? color;
   final Widget? placeholder;
   final Widget? errorWidget;
-  final bool isAsset;
   final VoidCallback? onTap;
 
   const AppImage({
@@ -20,16 +20,25 @@ class AppImage extends StatelessWidget {
     this.color,
     this.placeholder,
     this.errorWidget,
-    this.isAsset = false,
     this.onTap,
   });
+
+  bool get _isLocalFile {
+    try {
+      return File(path).existsSync();
+    } catch (_) {
+      return false;
+    }
+  }
+
+  bool get _isAssetPath => path.startsWith('assets/');
 
   @override
   Widget build(BuildContext context) {
     Widget image;
 
-    // Handle Asset Image
-    if (isAsset) {
+    if (_isAssetPath) {
+      // 🟢 Asset image
       image = Image.asset(
         path,
         width: width,
@@ -39,17 +48,27 @@ class AppImage extends StatelessWidget {
         errorBuilder: (_, __, ___) =>
             errorWidget ?? const Icon(Icons.broken_image),
       );
-    }
-    // Handle Network Image
-    else {
+    } else if (_isLocalFile) {
+      // 🟢 File image
+      image = Image.file(
+        File(path),
+        width: width,
+        height: height,
+        fit: fit,
+        color: color,
+        errorBuilder: (_, __, ___) =>
+            errorWidget ?? const Icon(Icons.broken_image),
+      );
+    } else {
+      // 🟢 Network image
       image = Image.network(
         path,
         width: width,
         height: height,
         fit: fit,
         color: color,
-        loadingBuilder: (context, child, loadingProgress) {
-          if (loadingProgress == null) return child;
+        loadingBuilder: (context, child, progress) {
+          if (progress == null) return child;
           return placeholder ??
               Center(
                 child: SizedBox(
@@ -57,9 +76,9 @@ class AppImage extends StatelessWidget {
                   height: 24,
                   child: CircularProgressIndicator(
                     strokeWidth: 2,
-                    value: loadingProgress.expectedTotalBytes != null
-                        ? loadingProgress.cumulativeBytesLoaded /
-                              (loadingProgress.expectedTotalBytes ?? 1)
+                    value: progress.expectedTotalBytes != null
+                        ? progress.cumulativeBytesLoaded /
+                              (progress.expectedTotalBytes ?? 1)
                         : null,
                   ),
                 ),
@@ -70,7 +89,6 @@ class AppImage extends StatelessWidget {
       );
     }
 
-    // Add tap support if provided
     if (onTap != null) {
       image = GestureDetector(onTap: onTap, child: image);
     }
