@@ -1,0 +1,12 @@
+class AppRoutes {
+  // Auth Navigation route names
+  static const String splash = '/splash';
+  static const onboarding = '/onboarding';
+  static const String login = '/login';
+  static const String signUp = '/signUp';
+  static const String getStarted = '/getStarted';
+
+  // App Navigation route names
+  static const String home = '/';
+  static const String homes = '/ghvj';
+}

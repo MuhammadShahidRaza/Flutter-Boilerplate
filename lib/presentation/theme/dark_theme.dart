@@ -1,0 +1,72 @@
+import 'package:flutter/material.dart';
+import 'package:sanam_laundry/core/utils/index.dart';
+import 'package:sanam_laundry/presentation/theme/colors.dart';
+import 'package:sanam_laundry/presentation/theme/text.dart';
+
+class DarkTheme {
+  static ThemeData get theme => ThemeData(
+    brightness: Brightness.dark,
+    colorScheme: ColorScheme.dark(
+      primary: AppColors.white,
+      onPrimary: Colors.white,
+      secondary: AppColors.secondary,
+      onSecondary: Colors.black,
+      surface: AppColors.darkScaffoldBackground,
+      onSurface: Colors.white,
+      error: AppColors.error,
+      onError: Colors.white,
+    ),
+    scaffoldBackgroundColor: AppColors.darkScaffoldBackground,
+    textTheme: CustomTextTheme.getTextTheme(Colors.white, AppColors.secondary),
+    appBarTheme: const AppBarTheme(
+      elevation: 0,
+      backgroundColor: AppColors.primary,
+      foregroundColor: Colors.white,
+    ),
+    iconTheme: const IconThemeData(color: AppColors.icons, size: Dimens.iconM),
+    elevatedButtonTheme: ElevatedButtonThemeData(
+      style: ButtonStyle(
+        minimumSize: WidgetStatePropertyAll(const Size.fromHeight(48)),
+        shape: WidgetStatePropertyAll(
+          RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(Dimens.buttonRadius),
+          ),
+        ),
+        backgroundColor: WidgetStatePropertyAll(AppColors.primary),
+        foregroundColor: WidgetStatePropertyAll(Colors.white),
+      ),
+    ),
+
+    // Outlined Button
+    outlinedButtonTheme: OutlinedButtonThemeData(
+      style: ButtonStyle(
+        minimumSize: WidgetStatePropertyAll(
+          const Size.fromHeight(Dimens.buttonHeight),
+        ),
+        shape: WidgetStatePropertyAll(
+          RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(Dimens.buttonRadius),
+          ),
+        ),
+        foregroundColor: WidgetStatePropertyAll(Colors.white), // text + icon
+        side: WidgetStatePropertyAll(BorderSide(color: Colors.white)),
+      ),
+    ),
+
+    // Text Button
+    textButtonTheme: TextButtonThemeData(
+      style: ButtonStyle(foregroundColor: WidgetStatePropertyAll(Colors.white)),
+    ),
+
+    //input
+    inputDecorationTheme: InputDecorationTheme(
+      border: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(Dimens.inputRadius),
+      ),
+      filled: true,
+      fillColor: Colors.grey.shade100,
+      labelStyle: TextStyle(color: Colors.grey.shade700),
+      hintStyle: TextStyle(color: Colors.grey.shade500),
+    ),
+  );
+}

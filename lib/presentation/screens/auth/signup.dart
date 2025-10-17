@@ -1,0 +1,141 @@
+import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart';
+import 'package:sanam_laundry/core/index.dart';
+import 'package:sanam_laundry/data/index.dart';
+import 'package:sanam_laundry/presentation/index.dart';
+
+class SignUp extends StatefulWidget {
+  const SignUp({super.key});
+
+  @override
+  State<SignUp> createState() => _SignUpState();
+}
+
+class _SignUpState extends State<SignUp> {
+  final _formKey = GlobalKey<FormState>();
+  late final TextEditingController firstNameController;
+  late final TextEditingController lastNameController;
+  late final TextEditingController emailController;
+  late final TextEditingController phoneController;
+  XFile? _profileImage;
+
+  String? selectedGender;
+  bool _agreedTerms = false;
+
+  final genderOptions = [Common.male, Common.female, Common.other];
+
+  @override
+  void initState() {
+    super.initState();
+    firstNameController = TextEditingController();
+    lastNameController = TextEditingController();
+    emailController = TextEditingController();
+    phoneController = TextEditingController();
+  }
+
+  @override
+  void dispose() {
+    firstNameController.dispose();
+    lastNameController.dispose();
+    emailController.dispose();
+    phoneController.dispose();
+    super.dispose();
+  }
+
+  void _submit() {
+    if (!(_formKey.currentState?.validate() ?? false)) return;
+
+    if (_profileImage == null) {
+      // AppUtils.showToast(Common.pleaseUploadProfilePicture);
+      return;
+    }
+
+    if (!_agreedTerms) {
+      // AppUtils.showToast(Common.acceptTerms);
+      return;
+    }
+
+    AuthService.saveToken(Variables.userToken);
+    context.replacePage(AppRoutes.home);
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return AuthWrapper(
+      formKey: _formKey,
+      title: Common.createAnAccount,
+      subtitle: Auth.connectWithSignup,
+      buttonText: Common.signUp,
+      bottomText: Common.alreadyHaveAnAccount,
+      bottomButtonText: Common.signIn,
+      bottomButtonPress: () {
+        context.replacePage(AppRoutes.login);
+      },
+      onSubmit: _submit,
+      child: Column(
+        spacing: Dimens.spacingXS,
+        children: [
+          ImagePickerBox(
+            onImagePicked: (file) {
+              setState(() => _profileImage = file);
+            },
+          ),
+          Row(
+            spacing: Dimens.spacingM,
+            children: [
+              Expanded(
+                child: AppInput(
+                  title: Common.firstName,
+                  hint: Common.enterFirstName,
+                  fieldKey: FieldType.name,
+                  controller: firstNameController,
+                ),
+              ),
+              Expanded(
+                child: AppInput(
+                  title: Common.lastName,
+                  hint: Common.enterLastName,
+                  fieldKey: FieldType.name,
+                  controller: lastNameController,
+                ),
+              ),
+            ],
+          ),
+          AppInput(
+            title: Common.email,
+            hint: Common.enterYourEmail,
+            fieldKey: FieldType.email,
+            controller: emailController,
+          ),
+          AppDropdown<String>(
+            title: Common.gender,
+            hint: Common.selectGender,
+            items: genderOptions,
+            value: selectedGender,
+            onChanged: (value) => setState(() => selectedGender = value),
+          ),
+
+          AppPhoneInput(
+            title: Common.phoneNumber,
+            hint: Common.enterYourPhoneNumber,
+            controller: phoneController,
+            marginBottom: Dimens.spacingM,
+          ),
+
+          AppCheckbox(
+            value: _agreedTerms,
+            onChanged: (bool val) => {},
+            label: Common.termOfUseAndPrivacy,
+            onTapLabel: () async {
+              final agreed = await AppTermsDialog.show(
+                context,
+                agreed: _agreedTerms,
+              );
+              setState(() => _agreedTerms = agreed != null ? true : false);
+            },
+          ),
+        ],
+      ),
+    );
+  }
+}
