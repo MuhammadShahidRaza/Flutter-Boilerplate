@@ -9,6 +9,7 @@ enum FieldType { email, password, confirmPassword, name, phone, required }
 
 class AppInput extends StatefulWidget {
   final String? label;
+  final String? counterText;
   final String? hint;
   final String? title;
   final FieldType? fieldKey;
@@ -16,13 +17,18 @@ class AppInput extends StatefulWidget {
   final TextEditingController?
   originalPasswordController; // 👈 for confirm password
   final TextInputType? keyboardType;
+  final void Function(String)? onChanged;
   final bool obscureText;
   final Widget? prefixIcon;
   final Widget? suffixIcon;
   final TextInputAction? textInputAction;
   final int? maxLines;
+  final GestureTapCallback? onTap;
   final int? minLines;
   final bool enabled;
+  final TextAlign textAlign;
+  final TextStyle? style;
+  final FocusNode? focusNode;
   final TextCapitalization textCapitalization;
   final double marginBottom;
   final int? minLength;
@@ -33,7 +39,10 @@ class AppInput extends StatefulWidget {
     super.key,
     this.label,
     this.title,
+    this.onChanged,
+    this.onTap,
     this.hint,
+    this.textAlign = TextAlign.start,
     this.fieldKey,
     required this.controller,
     this.originalPasswordController,
@@ -41,15 +50,18 @@ class AppInput extends StatefulWidget {
     this.obscureText = false,
     this.prefixIcon,
     this.suffixIcon,
+    this.focusNode,
     this.textInputAction,
     this.isRequired = false,
     this.maxLines = 1,
+    this.counterText,
     this.minLines,
     this.enabled = true,
     this.textCapitalization = TextCapitalization.none,
     this.marginBottom = Dimens.spacingS,
     this.minLength,
     this.maxLength,
+    this.style,
   });
 
   @override
@@ -165,12 +177,18 @@ class _AppInputState extends State<AppInput> {
             maxLines: widget.maxLines,
             minLines: widget.minLines,
             enabled: widget.enabled,
+            textAlign: widget.textAlign,
+            onChanged: widget.onChanged,
+            maxLength: widget.maxLength,
+            onTap: widget.onTap,
             validator: (value) => _validator(context, value),
             textCapitalization: widget.textCapitalization,
-            style: context.textTheme.bodyMedium,
+            style: widget.style ?? context.textTheme.bodyMedium,
+            focusNode: widget.focusNode,
             autovalidateMode: AutovalidateMode.onUserInteraction,
             decoration: InputDecoration(
               errorMaxLines: 3,
+              counterText: widget.counterText,
               labelText: widget.label != null
                   ? context.tr(widget.label!)
                   : null,
