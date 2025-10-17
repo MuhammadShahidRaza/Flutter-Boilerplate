@@ -15,6 +15,7 @@ class AppButton extends StatelessWidget {
   final TextStyle? textStyle;
   final TextStyle? iconStyle;
   final double? width;
+  final bool isEnabled;
 
   const AppButton({
     super.key,
@@ -24,6 +25,7 @@ class AppButton extends StatelessWidget {
     this.isLoading = false,
     this.icon,
     this.style,
+    this.isEnabled = true,
     this.width,
     this.textStyle,
     this.iconStyle,
@@ -32,6 +34,12 @@ class AppButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+
+    final effectiveOnPressed = (!isEnabled || isLoading) ? null : onPressed;
+
+    final backgroundColor = type == AppButtonType.elevated
+        ? (isEnabled ? theme.colorScheme.primary : theme.disabledColor)
+        : null;
 
     final defaultButtonStyle = ButtonStyle(
       minimumSize: WidgetStatePropertyAll(
@@ -42,6 +50,9 @@ class AppButton extends StatelessWidget {
           borderRadius: BorderRadius.circular(Dimens.radiusS),
         ),
       ),
+      backgroundColor: backgroundColor != null
+          ? WidgetStatePropertyAll(backgroundColor)
+          : null,
     );
 
     final buttonStyle = style == null
@@ -99,21 +110,21 @@ class AppButton extends StatelessWidget {
     switch (type) {
       case AppButtonType.elevated:
         return ElevatedButton(
-          onPressed: isLoading ? null : onPressed,
+          onPressed: effectiveOnPressed,
           style: buttonStyle,
           child: buttonChild,
         );
 
       case AppButtonType.outlined:
         return OutlinedButton(
-          onPressed: isLoading ? null : onPressed,
+          onPressed: effectiveOnPressed,
           style: buttonStyle,
           child: buttonChild,
         );
 
       case AppButtonType.text:
         return TextButton(
-          onPressed: isLoading ? null : onPressed,
+          onPressed: effectiveOnPressed,
           style: buttonStyle,
           child: buttonChild,
         );
