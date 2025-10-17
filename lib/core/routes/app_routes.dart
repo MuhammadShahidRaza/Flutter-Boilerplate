@@ -4,6 +4,7 @@ class AppRoutes {
   static const onboarding = '/onboarding';
   static const String login = '/login';
   static const String signUp = '/signUp';
+  static const String verification = '/verification';
   static const String getStarted = '/getStarted';
 
   // App Navigation route names
