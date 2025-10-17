@@ -1,9 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:sanam_laundry/core/routes/app_routes.dart';
-import 'package:sanam_laundry/presentation/screens/auth/index.dart';
-import 'package:sanam_laundry/presentation/screens/common/splash.dart';
-import 'package:sanam_laundry/presentation/screens/user/home.dart';
+import 'package:sanam_laundry/core/index.dart';
+import 'package:sanam_laundry/presentation/index.dart';
 
 class GoRouterSetup {
   static final GlobalKey<NavigatorState> navigatorKey =
@@ -33,6 +31,10 @@ class GoRouterSetup {
       GoRoute(
         path: AppRoutes.signUp,
         builder: (context, state) => const SignUp(),
+      ),
+      GoRoute(
+        path: AppRoutes.verification,
+        builder: (context, state) => const Verification(),
       ),
 
       // App stack using ShellRoute for nested navigation
