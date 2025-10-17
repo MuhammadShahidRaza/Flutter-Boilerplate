@@ -18,6 +18,7 @@ class AuthWrapper extends StatelessWidget {
   final GlobalKey<FormState> formKey;
   final bool showWatermark;
   final bool height;
+  final bool isButtonEnabled;
 
   const AuthWrapper({
     super.key,
@@ -31,6 +32,7 @@ class AuthWrapper extends StatelessWidget {
     this.showWatermark = true,
     this.bottomButtonText = "",
     this.bottomText = "",
+    this.isButtonEnabled = true,
     this.bottomButtonPress,
   });
 
@@ -82,7 +84,11 @@ class AuthWrapper extends StatelessWidget {
                     textAlign: TextAlign.center,
                   ),
                   child,
-                  AppButton(title: buttonText, onPressed: onSubmit),
+                  AppButton(
+                    title: buttonText,
+                    onPressed: onSubmit,
+                    isEnabled: isButtonEnabled,
+                  ),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     crossAxisAlignment: CrossAxisAlignment.center,
