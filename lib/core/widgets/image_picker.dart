@@ -1,15 +1,16 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:dotted_border/dotted_border.dart';
-import 'package:sanam_laundry/core/constants/assets.dart';
-import 'package:sanam_laundry/core/constants/strings.dart';
-import 'package:sanam_laundry/core/utils/dimens.dart';
-import 'package:sanam_laundry/core/widgets/index.dart';
-import 'package:sanam_laundry/presentation/theme/colors.dart';
+import 'package:sanam_laundry/core/index.dart';
+import 'package:sanam_laundry/data/index.dart';
+import 'package:sanam_laundry/presentation/index.dart';
 
 class ImagePickerBox extends StatefulWidget {
-  const ImagePickerBox({super.key});
+  final ValueChanged<XFile?>? onImagePicked;
+
+  const ImagePickerBox({super.key, this.onImagePicked});
 
   @override
   State<ImagePickerBox> createState() => _ImagePickerBoxState();
@@ -22,7 +23,9 @@ class _ImagePickerBoxState extends State<ImagePickerBox> {
   Future<void> _pickImage(ImageSource source) async {
     final XFile? pickedFile = await _picker.pickImage(source: source);
     if (pickedFile != null) {
-      setState(() => _imageFile = File(pickedFile.path));
+      final file = File(pickedFile.path);
+      setState(() => _imageFile = file);
+      widget.onImagePicked?.call(pickedFile);
     }
   }
 
@@ -30,30 +33,30 @@ class _ImagePickerBoxState extends State<ImagePickerBox> {
     showModalBottomSheet(
       context: context,
       shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
+        borderRadius: BorderRadius.vertical(
+          top: Radius.circular(Dimens.radiusM),
+        ),
       ),
-      builder: (BuildContext bc) {
-        return SafeArea(
-          child: Wrap(
-            children: [
-              ListTile(
-                leading: const Icon(Icons.photo_library),
-                title: const Text('Pick from Gallery'),
-                onTap: () {
-                  Navigator.pop(context);
-                  _pickImage(ImageSource.gallery);
-                },
-              ),
-              ListTile(
-                leading: const Icon(Icons.camera_alt),
-                title: const Text('Take a Photo'),
-                onTap: () {
-                  Navigator.pop(context);
-                  _pickImage(ImageSource.camera);
-                },
-              ),
-            ],
-          ),
+      builder: (_) {
+        return AppBottomSheet(
+          options: [
+            AppBottomSheetOption(
+              icon: Icons.photo_library,
+              title: Common.pickFromGallery,
+              onTap: () {
+                context.pop();
+                _pickImage(ImageSource.gallery);
+              },
+            ),
+            AppBottomSheetOption(
+              icon: Icons.camera_alt,
+              title: Common.pickFromCamera,
+              onTap: () {
+                context.pop();
+                _pickImage(ImageSource.camera);
+              },
+            ),
+          ],
         );
       },
     );
@@ -74,17 +77,16 @@ class _ImagePickerBoxState extends State<ImagePickerBox> {
             ),
             child: ClipRRect(
               borderRadius: BorderRadius.circular(Dimens.radiusM),
-              child: Container(
-                height: 120,
+              child: AppImage(
+                path: _imageFile?.path ?? AppAssets.user,
                 width: 120,
-                color: AppColors.transparent,
-                child: _imageFile != null
-                    ? Image.file(_imageFile!, fit: BoxFit.cover)
-                    : AppImage(path: AppAssets.logo, isAsset: true),
+                height: 120,
+                fit: BoxFit.cover,
               ),
             ),
           ),
           AppText(Common.uploadProfilePicture),
+          SizedBox(height: Dimens.spacingMSmall),
         ],
       ),
     );
