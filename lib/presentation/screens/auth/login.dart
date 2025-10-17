@@ -1,11 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:sanam_laundry/core/constants/index.dart';
-import 'package:sanam_laundry/core/routes/index.dart';
-import 'package:sanam_laundry/core/utils/index.dart';
-import 'package:sanam_laundry/core/widgets/phone_input.dart';
-import 'package:sanam_laundry/data/services/index.dart';
-import 'package:sanam_laundry/core/extensions/index.dart';
-import 'package:sanam_laundry/presentation/screens/auth/auth_wrapper.dart';
+import 'package:sanam_laundry/core/index.dart';
+import 'package:sanam_laundry/data/index.dart';
+import 'package:sanam_laundry/presentation/index.dart';
 
 class Login extends StatefulWidget {
   const Login({super.key});
