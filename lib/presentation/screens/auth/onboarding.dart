@@ -134,7 +134,6 @@ class _OnboardingState extends State<Onboarding> {
                 opacity: 0.07,
                 child: AppImage(
                   path: AppAssets.watermark,
-                  isAsset: true,
                   width: context.screenWidth,
                   height: context.h(0.45),
                   fit: BoxFit.cover,
@@ -156,7 +155,6 @@ class _OnboardingState extends State<Onboarding> {
                       children: [
                         AppImage(
                           path: page.image,
-                          isAsset: true,
                           fit: BoxFit.contain,
                           width: context.screenWidth,
                           height: context.h(0.35),
