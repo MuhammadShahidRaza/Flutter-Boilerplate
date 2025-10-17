@@ -11,6 +11,8 @@ class Common {
   static const gender = "COMMON.GENDER";
   static const termOfUseAndPrivacy = "COMMON.TERM_OF_USE_PRIVACY_POLICY";
   static const male = "COMMON.MALE";
+  static const enterOtp = "COMMON.ENTER_OTP";
+  static const youCanResendTheCode = "COMMON.YOU_CAN_RESEND_THE_CODE";
   static const female = "COMMON.FEMALE";
   static const other = "COMMON.OTHER";
   static const pickFromGallery = "COMMON.PICK_FROM_GALLERY";
@@ -197,7 +199,7 @@ class Common {
   static const enter4Digit = "COMMON.ENTER_4_DIGIT";
   static const recoveryCode = "COMMON.RECOVERY_CODE";
   static const needAHelp = "COMMON.NEED_A_HELP";
-  static const reSendCode = "COMMON.RE_SEND_CODE";
+  static const reSendCode = "COMMON.RESEND_CODE";
   static const verify = "COMMON.VERIFY";
   static const enterVerificationCodeYou = "COMMON.ENTER_VERIFICATION_CODE_YOU";
   static const resetYourPasswordWith = "COMMON.RESET_YOUR_PASSWORD_WITH";
