@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:sanam_laundry/core/utils/index.dart';
-import 'package:sanam_laundry/core/widgets/index.dart';
-import 'package:sanam_laundry/presentation/theme/index.dart';
+import 'package:sanam_laundry/core/index.dart';
+import 'package:sanam_laundry/presentation/index.dart';
 
 class AppCheckbox extends StatelessWidget {
   final bool value;
@@ -12,6 +11,9 @@ class AppCheckbox extends StatelessWidget {
   final Color checkColor;
   final double size;
   final TextStyle? textStyle;
+  final VoidCallback? onTapLabel;
+  final Color? splashColor;
+  final MainAxisAlignment alignment;
 
   const AppCheckbox({
     super.key,
@@ -23,15 +25,20 @@ class AppCheckbox extends StatelessWidget {
     this.checkColor = AppColors.white,
     this.size = Dimens.iconM,
     this.textStyle,
+    this.onTapLabel,
+    this.alignment = MainAxisAlignment.start,
+    this.splashColor = Colors.transparent,
   });
 
   @override
   Widget build(BuildContext context) {
     return InkWell(
+      splashColor: splashColor,
+      highlightColor: splashColor,
       onTap: () => onChanged(!value),
       child: Row(
         spacing: Dimens.spacingS,
-        mainAxisAlignment: MainAxisAlignment.start,
+        mainAxisAlignment: alignment,
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           AnimatedContainer(
@@ -57,6 +64,7 @@ class AppCheckbox extends StatelessWidget {
           if (label != null) ...[
             AppText(
               label!,
+              onTap: onTapLabel,
               style: Theme.of(context).textTheme.bodyMedium?.merge(textStyle),
             ),
           ],
