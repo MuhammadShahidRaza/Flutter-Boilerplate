@@ -13,7 +13,6 @@ class MyApp extends StatelessWidget {
       theme: AppTheme.lightTheme,
       darkTheme: AppTheme.darkTheme,
       themeMode: ThemeMode.system,
-
       locale: const Locale('en'),
       supportedLocales: AppLocalizationSetup.supportedLocales,
       localizationsDelegates: AppLocalizationSetup.localizationsDelegates,
