@@ -9,6 +9,7 @@ class Dimens {
   static const double spacingMLarge = 20.0;
   static const double spacingLarge = 24.0;
   static const double spacingXL = 32.0;
+  static const double spacingXXL = 42.0;
 
   // Border radius
   static const double radiusXxs = 6.0;
