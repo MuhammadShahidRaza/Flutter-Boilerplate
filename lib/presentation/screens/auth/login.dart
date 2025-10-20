@@ -15,7 +15,7 @@ class _LoginState extends State<Login> {
   final phoneController = TextEditingController();
 
   void _submit() {
-    if (_formKey.currentState?.validate() ?? false) {
+    if (_formKey.isValid) {
       AuthService.saveToken("token");
       context.replacePage(AppRoutes.home);
     }
