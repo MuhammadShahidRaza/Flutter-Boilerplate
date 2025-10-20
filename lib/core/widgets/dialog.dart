@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:sanam_laundry/core/index.dart';
+import 'package:sanam_laundry/presentation/theme/index.dart';
 
 class AppDialog extends StatelessWidget {
   final String title;
@@ -10,6 +11,21 @@ class AppDialog extends StatelessWidget {
   final VoidCallback? onSecondaryPressed;
   final bool isEnabledButton;
   final bool dismissible;
+  final EdgeInsets? insetPadding;
+  final EdgeInsetsGeometry? contentPadding;
+  final double? spacing;
+  final Color? backgroundColor;
+  final double? borderRadius;
+  final TextStyle? titleStyle;
+  final CrossAxisAlignment crossAxisAlignment;
+  final MainAxisAlignment buttonAlignment;
+  final MainAxisAlignment mainAxisAlignment;
+  final String? imagePath;
+  final double borderWidth;
+  final double? imageSize;
+  final Color borderColor;
+  final BoxFit imageFit;
+  final Widget? headerWidget;
 
   const AppDialog({
     super.key,
@@ -19,8 +35,23 @@ class AppDialog extends StatelessWidget {
     this.onPrimaryPressed,
     this.secondaryButtonText,
     this.onSecondaryPressed,
+    this.insetPadding,
     this.dismissible = true,
     this.isEnabledButton = true,
+    this.contentPadding,
+    this.spacing,
+    this.backgroundColor,
+    this.borderRadius,
+    this.titleStyle,
+    this.crossAxisAlignment = CrossAxisAlignment.center,
+    this.buttonAlignment = MainAxisAlignment.center,
+    this.mainAxisAlignment = MainAxisAlignment.start,
+    this.imagePath,
+    this.imageSize,
+    this.imageFit = BoxFit.contain,
+    this.headerWidget,
+    this.borderWidth = 0,
+    this.borderColor = AppColors.transparent,
   });
 
   static Future<void> show(
@@ -31,8 +62,24 @@ class AppDialog extends StatelessWidget {
     VoidCallback? onPrimaryPressed,
     String? secondaryButtonText,
     VoidCallback? onSecondaryPressed,
-    bool dismissible = true,
     bool isEnabledButton = true,
+    bool dismissible = true,
+    EdgeInsets? insetPadding,
+    EdgeInsetsGeometry? contentPadding,
+    double? spacing,
+    Color? backgroundColor,
+    double? borderRadius,
+    TextStyle? titleStyle,
+    CrossAxisAlignment crossAxisAlignment = CrossAxisAlignment.center,
+    MainAxisAlignment mainAxisAlignment = MainAxisAlignment.start,
+    MainAxisAlignment buttonAlignment = MainAxisAlignment.center,
+    String? imagePath,
+    double borderWidth = 0,
+    Color borderColor = AppColors.transparent,
+
+    double? imageSize,
+    BoxFit imageFit = BoxFit.contain,
+    Widget? headerWidget,
   }) {
     return showDialog(
       context: context,
@@ -44,33 +91,66 @@ class AppDialog extends StatelessWidget {
         onPrimaryPressed: onPrimaryPressed,
         secondaryButtonText: secondaryButtonText,
         onSecondaryPressed: onSecondaryPressed,
+        isEnabledButton: isEnabledButton,
         dismissible: dismissible,
+        insetPadding: insetPadding,
+        contentPadding: contentPadding,
+        spacing: spacing,
+        backgroundColor: backgroundColor,
+        borderRadius: borderRadius,
+        titleStyle: titleStyle,
+        crossAxisAlignment: crossAxisAlignment,
+        mainAxisAlignment: mainAxisAlignment,
+        buttonAlignment: buttonAlignment,
+        imagePath: imagePath,
+        imageSize: imageSize,
+        imageFit: imageFit,
+        headerWidget: headerWidget,
+        borderWidth: borderWidth,
+        borderColor: borderColor,
       ),
     );
   }
 
   @override
   Widget build(BuildContext context) {
+    final effectiveTitleStyle =
+        titleStyle ??
+        context.textTheme.titleLarge?.copyWith(fontWeight: FontWeight.bold);
+
+    final effectiveRadius = borderRadius ?? Dimens.radiusM;
+
     return Dialog(
       shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(Dimens.radiusM),
+        borderRadius: BorderRadius.circular(effectiveRadius),
+        side: BorderSide(width: borderWidth, color: borderColor),
       ),
-      insetPadding: const EdgeInsets.all(Dimens.spacingM),
+      backgroundColor:
+          backgroundColor ?? Theme.of(context).scaffoldBackgroundColor,
+      insetPadding: insetPadding ?? const EdgeInsets.all(Dimens.spacingM),
       child: Padding(
-        padding: const EdgeInsets.all(Dimens.screenMarginHorizontal),
+        padding:
+            contentPadding ??
+            const EdgeInsets.all(Dimens.screenMarginHorizontal),
         child: Column(
           mainAxisSize: MainAxisSize.min,
-          spacing: Dimens.spacingMLarge,
+          crossAxisAlignment: crossAxisAlignment,
+          mainAxisAlignment: mainAxisAlignment,
+          spacing: spacing ?? Dimens.spacingMLarge,
           children: [
-            // Title
-            AppText(
-              title,
-              style: context.textTheme.titleLarge?.copyWith(
-                fontWeight: FontWeight.bold,
+            if (headerWidget != null)
+              headerWidget!
+            else if (imagePath != null)
+              AppImage(
+                path: imagePath!,
+                height: imageSize ?? 80,
+                width: imageSize ?? 80,
+                fit: imageFit,
               ),
-            ),
 
-            // Scrollable content
+            // Title
+            AppText(title, style: effectiveTitleStyle),
+            // Content
             Flexible(child: SingleChildScrollView(child: content)),
 
             Row(
