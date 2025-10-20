@@ -201,6 +201,7 @@
     "RECOVERY_CODE": "Recovery code",
     "NEED_A_HELP": "Need a help?",
     "RESEND_CODE": "Resend code",
+    "SUCCESSFULLY_LOGGED_IN": "Successfully logged In",
     "VERIFY": "VERIFY",
     "ENTER_VERIFICATION_CODE_YOU": "Enter verification code you received on your phone number",
     "RESET_YOUR_PASSWORD_WITH": "Reset your password to get back into your account safely.",
@@ -253,7 +254,11 @@
     "DONT_WORRY_FORGOT": "Don't worry we are here to help!",
     "RESET_YOUR_PASSWORD": "Reset your password with email to use your account.",
     "GET_STARTED_DESCRIPTION": "Experience hassle-free pickup, fast delivery, and professional care — all through one simple app. Tap below to get started.",
-    "CONNECT_WITH_SIGNUP": "Join now and experience hassle-free laundry service!"
+    "CONNECT_WITH_SIGNUP": "Join now and experience hassle-free laundry service!",
+    "GLAD_TO_HAD_YOU_BACK": "Welcome to Sanam Laundry!. Glad to have you back!",
+    "SOON_YOU_WILL_RECIEVE": "Soon you will receive all instructions. Excited for you meeting your future bestie!",
+    "OKAY_ALL_SET": "Okay All Set!",
+    "LETS_EXPLORE_APP": "Let’s Explore The App!"
   },
   "CHAT": {
     "HEADING_1": "Take care of your body",
