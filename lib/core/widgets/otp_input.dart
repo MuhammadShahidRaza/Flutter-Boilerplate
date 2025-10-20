@@ -34,34 +34,7 @@ class _AppOtpInputState extends State<AppOtpInput> {
     super.dispose();
   }
 
-  void _handlePaste(String pastedText) {
-    // ✅ Clean and limit to length
-    final cleanText = pastedText.replaceAll(
-      RegExp(r'\D'),
-      '',
-    ); // remove non-digits
-    final limitedText = cleanText.substring(0, widget.length);
-
-    for (int i = 0; i < widget.length; i++) {
-      _controllers[i].text = i < limitedText.length ? limitedText[i] : '';
-    }
-
-    if (limitedText.length == widget.length) {
-      _focusNodes.last.unfocus();
-      widget.onCompleted?.call(limitedText);
-    } else {
-      _focusNodes[limitedText.length].requestFocus();
-      widget.onCompleted?.call(limitedText);
-    }
-  }
-
   void _onChanged(String value, int index) {
-    // ✅ Detect paste manually from clipboard when more than 1 char
-    if (value.length > 1) {
-      _handlePaste(value);
-      return;
-    }
-
     // ✅ Move focus forward or backward
     if (value.isNotEmpty && index < widget.length - 1) {
       _focusNodes[index + 1].requestFocus();
@@ -90,15 +63,6 @@ class _AppOtpInputState extends State<AppOtpInput> {
             style: context.textTheme.titleLarge?.copyWith(letterSpacing: 2),
             counterText: "",
             onChanged: (value) => _onChanged(value, index),
-            onTap: () async {
-              // Detect paste directly from clipboard on tap (optional)
-              final data = await Clipboard.getData('text/plain');
-              if (data != null &&
-                  data.text != null &&
-                  data.text!.trim().length > 1) {
-                _handlePaste(data.text!.trim());
-              }
-            },
           ),
         );
       }),
