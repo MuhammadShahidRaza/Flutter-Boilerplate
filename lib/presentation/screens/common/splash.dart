@@ -35,7 +35,6 @@ class _SplashState extends State<Splash> {
       context.go(AppRoutes.onboarding);
     } else if (!authProvider.isLoggedIn) {
       context.go(AppRoutes.getStarted);
-      // context.go(AppRoutes.verification);
     } else {
       context.go(AppRoutes.home);
     }
