@@ -28,6 +28,7 @@ class Common {
   static const enterFullName = "COMMON.ENTER_FULL_NAME";
   static const noInternetConnection = "COMMON.NO_INTERNET_CONNECTION";
   static const country = "COMMON.COUNTRY";
+  static const successfullyLoggedIn = "COMMON.SUCCESSFULLY_LOGGED_IN";
   static const enterCountry = "COMMON.ENTER_COUNTRY";
   static const enterCurrentPassword = "COMMON.ENTER_CURRENT_PASSWORD";
   static const enterUserName = "COMMON.ENTER_USER_NAME";
@@ -257,6 +258,10 @@ class Auth {
   static const resetYourPassword = "AUTH.RESET_YOUR_PASSWORD";
   static const getStartedDescription = "AUTH.GET_STARTED_DESCRIPTION";
   static const connectWithSignup = "AUTH.CONNECT_WITH_SIGNUP";
+  static const gladToHadYouBack = "AUTH.GLAD_TO_HAD_YOU_BACK";
+  static const soonYouWillRecieve = "AUTH.SOON_YOU_WILL_RECIEVE";
+  static const okayAllSet = "AUTH.OKAY_ALL_SET";
+  static const letsExploreApp = "AUTH.LETS_EXPLORE_APP";
 }
 
 class Chat {
