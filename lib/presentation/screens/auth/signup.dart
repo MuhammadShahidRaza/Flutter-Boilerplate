@@ -43,7 +43,7 @@ class _SignUpState extends State<SignUp> {
   }
 
   void _submit() {
-    if (!(_formKey.currentState?.validate() ?? false)) return;
+    if (!(_formKey.isValid)) return;
 
     if (_profileImage == null) {
       // AppUtils.showToast(Common.pleaseUploadProfilePicture);
