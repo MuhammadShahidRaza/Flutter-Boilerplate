@@ -28,16 +28,21 @@ class _SplashState extends State<Splash> {
 
   Future<void> _initFlow() async {
     await Future.delayed(const Duration(seconds: 4));
-    if (!mounted) return;
-    final authProvider = context.read<AuthProvider>();
 
-    if (authProvider.hasVisitedApp) {
-      context.go(AppRoutes.onboarding);
-    } else if (!authProvider.isLoggedIn) {
-      context.go(AppRoutes.getStarted);
-    } else {
-      context.go(AppRoutes.home);
-    }
+    if (!mounted) return;
+
+    final authProvider = context.read<AuthProvider>();
+    await authProvider.loadLoginStatus();
+
+    if (!mounted) return;
+
+    final route = authProvider.isLoggedIn
+        ? AppRoutes.home
+        : !authProvider.hasVisitedApp
+        ? AppRoutes.onboarding
+        : AppRoutes.getStarted;
+
+    context.go(route);
   }
 
   @override
