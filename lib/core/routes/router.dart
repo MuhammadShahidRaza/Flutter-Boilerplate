@@ -37,27 +37,49 @@ class GoRouterSetup {
         builder: (context, state) => const Verification(),
       ),
 
-      // App stack using ShellRoute for nested navigation
-      ShellRoute(
-        builder: (context, state, child) => Scaffold(body: child),
-        routes: [
-          GoRoute(
-            path: AppRoutes.home,
-            builder: (context, state) => const Home(),
+      // App stack with persistent tab navigation
+      StatefulShellRoute.indexedStack(
+        builder: (context, state, navigationShell) =>
+            AppShell(navigationShell: navigationShell),
+        branches: [
+          StatefulShellBranch(
+            routes: [
+              GoRoute(
+                path: AppRoutes.home,
+                builder: (context, state) => const Home(),
+              ),
+            ],
+          ),
+          StatefulShellBranch(
+            routes: [
+              GoRoute(
+                path: AppRoutes.orders,
+                builder: (context, state) => const Orders(),
+              ),
+            ],
+          ),
+          StatefulShellBranch(
+            routes: [
+              GoRoute(
+                path: AppRoutes.services,
+                builder: (context, state) => const Services(),
+              ),
+            ],
+          ),
+          StatefulShellBranch(
+            routes: [
+              GoRoute(
+                path: AppRoutes.myAccount,
+                builder: (context, state) => const MyAccount(),
+              ),
+            ],
           ),
         ],
       ),
     ],
 
-    // // Redirect based on login state
-    // redirect: (context, state) async {
-    //   final authProvider = context.read<AuthProvider>();
-    //   if (!authProvider.isLoggedIn) return AppRoutes.login;
-    //   if (state.uri.toString() == AppRoutes.login) return AppRoutes.home;
-    //   // No redirect
-    //   return null;
-    // },
-    errorBuilder: (context, state) =>
-        Scaffold(body: Center(child: Text('Page not found: ${state.error}'))),
+    errorBuilder: (context, state) => AppWrapper(
+      child: Center(child: AppText('Page not found: ${state.error}')),
+    ),
   );
 }
