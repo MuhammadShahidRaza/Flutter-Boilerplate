@@ -1,13 +1,8 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
-import 'package:sanam_laundry/core/routes/index.dart';
-import 'package:sanam_laundry/core/utils/index.dart';
-import 'package:sanam_laundry/core/widgets/index.dart';
-import 'package:sanam_laundry/core/constants/index.dart';
-import 'package:sanam_laundry/core/extensions/index.dart';
-import 'package:sanam_laundry/data/models/onboarding.dart';
-import 'package:sanam_laundry/presentation/screens/common/wrapper.dart';
-import 'package:sanam_laundry/presentation/theme/index.dart';
+import 'package:sanam_laundry/core/index.dart';
+import 'package:sanam_laundry/data/index.dart';
+import 'package:sanam_laundry/presentation/index.dart';
 
 class Onboarding extends StatefulWidget {
   const Onboarding({super.key});
@@ -79,6 +74,7 @@ class _OnboardingState extends State<Onboarding> {
   void _skip() => _finish();
 
   void _finish() {
+    AuthService.saveHasVisitedApp(Variables.hasVisitedApp);
     context.replacePage(AppRoutes.getStarted);
   }
 
