@@ -17,6 +17,7 @@ class Dimens {
   static const double radiusS = 10.0;
   static const double radiusM = 15.0;
   static const double radiusL = 20.0;
+  static const double radiusXL = 50.0;
   static const double buttonRadius = 10.0;
   static const double inputRadius = 10.0;
 
