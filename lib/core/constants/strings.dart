@@ -6,7 +6,14 @@ class Common {
   static const resetPassword = "COMMON.RESET_PASSWORD";
   static const signUp = "COMMON.SIGN_UP";
   static const signIn = "COMMON.SIGN_IN";
+  static const home = "COMMON.HOME";
+  static const service = "COMMON.SERVICE";
+  static const myOrders = "COMMON.MY_ORDERS";
+  static const myAccount = "COMMON.MY_ACCOUNT";
+  static const myAddress = "COMMON.MY_ADDRESS";
+  static const deleteAccount = "COMMON.DELETE_ACCOUNT";
   static const continue_ = "COMMON.CONTINUE";
+  static const categories = "COMMON.CATEGORIES";
   static const uploadProfilePicture = "COMMON.UPLOAD_PROFILE_PICTURE";
   static const gender = "COMMON.GENDER";
   static const termOfUseAndPrivacy = "COMMON.TERM_OF_USE_PRIVACY_POLICY";
@@ -116,6 +123,7 @@ class Common {
   static const next = "COMMON.NEXT";
   static const previous = "COMMON.PREVIOUS";
   static const welcome = "COMMON.WELCOME";
+  static const welcomeComma = "COMMON.WELCOME_COMMA";
   static const loading = "COMMON.LOADING";
   static const noResults = "COMMON.NO_RESULTS";
   static const chooseLanguage = "COMMON.CHOOSE_LANGUAGE";
