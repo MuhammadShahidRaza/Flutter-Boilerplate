@@ -16,6 +16,7 @@ class AppColors {
   static const Color text = Colors.black;
   static const Color textSecondary = Color(0xFF818898);
   static const Color greenStatus = Color(0xFF00B406);
+  static const Color bottomTabText = Color(0xFF0D0D12);
 
   // Common
   static const Color white = Color(0xFFFFFFFF);

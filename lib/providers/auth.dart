@@ -7,16 +7,12 @@ class AuthProvider extends ChangeNotifier {
 
   bool get isLoggedIn => _isLoggedIn;
   bool get hasVisitedApp => _hasVisitedApp;
-
-  AuthProvider() {
-    _loadLoginStatus();
-  }
-
-  Future<void> _loadLoginStatus() async {
+  Future<void> loadLoginStatus() async {
     final token = await AuthService.loadToken();
-    final isVisted = await AuthService.loadToken();
+    final isVisted = await AuthService.hasVisitedApp();
     _isLoggedIn = token != null && token.isNotEmpty;
     _hasVisitedApp = isVisted != null && isVisted.isNotEmpty;
+
     notifyListeners();
   }
 
