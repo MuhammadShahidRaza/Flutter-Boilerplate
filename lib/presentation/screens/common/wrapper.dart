@@ -6,12 +6,15 @@ class AppWrapper extends StatelessWidget {
   final Widget child;
   final bool scrollable;
   final EdgeInsetsGeometry? padding;
-  final bool safeArea;
   // final Future<bool> Function()? onWillPop;
+  final bool safeArea;
   final bool showBackButton;
   final VoidCallback? onBackPressed;
   final String? heading;
   final Color? backgroundColor;
+  final Widget? bottomNavigationBar;
+  final bool useScaffold;
+  final PreferredSizeWidget? appBar;
 
   const AppWrapper({
     super.key,
@@ -24,12 +27,25 @@ class AppWrapper extends StatelessWidget {
     this.onBackPressed,
     this.heading,
     this.backgroundColor,
+    this.bottomNavigationBar,
+    this.useScaffold = true,
+    this.appBar,
   });
 
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    PreferredSizeWidget? appBar;
+    final resolvedBackground = backgroundColor ?? theme.scaffoldBackgroundColor;
+
+    // // 🔙 Handle hardware back press
+    // content = WillPopScope(
+    //   onWillPop:
+    //       onWillPop ??
+    //       () async {
+    //         return true;
+    //       },
+    //   child: content,
+    // );
 
     Widget content = GestureDetector(
       onTap: () => FocusScope.of(context).unfocus(),
@@ -48,49 +64,27 @@ class AppWrapper extends StatelessWidget {
       content = SafeArea(bottom: false, child: content);
     }
 
-    // // 🔙 Handle hardware back press
-    // content = WillPopScope(
-    //   onWillPop:
-    //       onWillPop ??
-    //       () async {
-    //         return true;
-    //       },
-    //   child: content,
-    // );
-
-    if (showBackButton || heading != null) {
-      appBar = AppBar(
-        automaticallyImplyLeading: false,
-        elevation: 0,
-        scrolledUnderElevation: 0,
-        backgroundColor: backgroundColor ?? theme.scaffoldBackgroundColor,
-        leading: showBackButton
-            ? Center(
-                child: SizedBox(
-                  width: 35,
-                  height: 35,
-                  child: AppIcon(
-                    icon: Icons.arrow_back_ios_new,
-                    borderColor: AppColors.primary,
-                    borderWidth: 1,
-                    size: Dimens.iconS,
-                    backgroundColor: AppColors.lightWhite,
-                    onTap: onBackPressed ?? () => Navigator.pop(context),
-                  ),
-                ),
+    // ✅ Use the property directly (don’t redeclare `appBar`)
+    final PreferredSizeWidget? resolvedAppBar =
+        appBar ??
+        ((showBackButton || heading != null)
+            ? AppBarComponent(
+                heading: heading,
+                showBackButton: showBackButton,
+                onBackPressed: onBackPressed,
+                backgroundColor: backgroundColor,
               )
-            : null,
-        title: heading != null
-            ? AppText(heading!, style: theme.textTheme.titleLarge)
-            : null,
-        centerTitle: true,
-      );
+            : null);
+
+    if (!useScaffold) {
+      return ColoredBox(color: resolvedBackground, child: content);
     }
 
     return Scaffold(
-      backgroundColor: backgroundColor ?? theme.scaffoldBackgroundColor,
-      appBar: appBar,
+      backgroundColor: resolvedBackground,
+      appBar: resolvedAppBar,
       body: content,
+      bottomNavigationBar: bottomNavigationBar,
     );
   }
 }
