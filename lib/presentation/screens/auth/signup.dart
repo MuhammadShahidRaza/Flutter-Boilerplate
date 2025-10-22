@@ -13,12 +13,13 @@ class SignUp extends StatefulWidget {
 
 class _SignUpState extends State<SignUp> {
   final _formKey = GlobalKey<FormState>();
+  final AuthRepository _authRepository = AuthRepository();
   late final TextEditingController firstNameController;
   late final TextEditingController lastNameController;
   late final TextEditingController emailController;
   late final TextEditingController phoneController;
   XFile? _profileImage;
-
+  bool loading = false;
   String? selectedGender;
   bool _agreedTerms = false;
 
@@ -42,21 +43,48 @@ class _SignUpState extends State<SignUp> {
     super.dispose();
   }
 
-  void _submit() {
-    if (!(_formKey.isValid)) return;
+  Future<void> _submit() async {
+    try {
+      // if (_profileImage == null) {
+      //   AppToast.showToast("Please select a profile image.");
+      //   return;
+      // }
 
-    if (_profileImage == null) {
-      // AppUtils.showToast(Common.pleaseUploadProfilePicture);
-      return;
+      if (!_agreedTerms) {
+        AppToast.showToast("Please agree to the terms and conditions.");
+        return;
+      }
+
+      setState(() => loading = true);
+
+      // device_type:Testing Tool
+      // device_token:abcdefghijklmnopqrstuvwxyz
+      // udid:123456789
+      // device_brand:Postman
+      // device_os:Linux
+      // app_version:1.0.0
+
+      final user = await _authRepository.register(
+        email: emailController.text.trim(),
+        first_name: firstNameController.text.trim(),
+        last_name: lastNameController.text.trim(),
+        phone: phoneController.text.trim(),
+        gender: selectedGender,
+        // profileImage: _profileImage!,
+      );
+      if (!mounted) return;
+      if (user != null) {
+        print(user);
+        // AuthService.saveToken(Variables.userToken);
+        context.navigate(AppRoutes.verification);
+        setState(() => loading = false);
+      }
+    } on Exception catch (error) {
+      setState(() => loading = false);
+      context.navigate(AppRoutes.verification);
+    } finally {
+      setState(() => loading = false);
     }
-
-    if (!_agreedTerms) {
-      // AppUtils.showToast(Common.acceptTerms);
-      return;
-    }
-
-    AuthService.saveToken(Variables.userToken);
-    context.replacePage(AppRoutes.home);
   }
 
   @override
@@ -66,6 +94,7 @@ class _SignUpState extends State<SignUp> {
       title: Common.createAnAccount,
       subtitle: Auth.connectWithSignup,
       buttonText: Common.signUp,
+      isLoading: loading,
       bottomText: Common.alreadyHaveAnAccount,
       bottomButtonText: Common.signIn,
       bottomButtonPress: () {
@@ -82,6 +111,7 @@ class _SignUpState extends State<SignUp> {
           ),
           Row(
             spacing: Dimens.spacingM,
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Expanded(
                 child: AppInput(
@@ -124,7 +154,7 @@ class _SignUpState extends State<SignUp> {
 
           AppCheckbox(
             value: _agreedTerms,
-            onChanged: (bool val) => {},
+            onChanged: (bool val) {},
             label: Common.termOfUseAndPrivacy,
             onTapLabel: () async {
               final agreed = await AppTermsDialog.show(

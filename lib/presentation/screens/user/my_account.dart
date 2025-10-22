@@ -50,7 +50,7 @@ class MyAccount extends StatelessWidget {
         title: Common.deleteAccount,
         onTap: () {
           AuthService.removeToken();
-          context.replacePage(AppRoutes.login);
+          context.replacePage(AppRoutes.getStarted);
         },
       ),
     ];
@@ -88,7 +88,7 @@ class MyAccount extends StatelessWidget {
             title: Common.logout,
             onPressed: () {
               AuthService.removeToken();
-              context.replacePage(AppRoutes.login);
+              context.replacePage(AppRoutes.getStarted);
             },
           ),
         ],

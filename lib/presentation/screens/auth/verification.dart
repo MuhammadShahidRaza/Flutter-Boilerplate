@@ -46,46 +46,44 @@ class _VerificationState extends State<Verification> {
   void _submit() {
     if (!_isOtpComplete) return;
 
-    if (_formKey.isValid) {
-      // Handle OTP verification here
-      print("Verifying OTP: $_otpCode");
+    // Handle OTP verification here
+    print("Verifying OTP: $_otpCode");
 
-      // AppDialog.show(
-      //   context,
-      //   title: Common.successfullyLoggedIn,
-      //   imagePath: AppAssets.rightTick,
-      //   spacing: Dimens.spacingMSmall,
-      //   content: AppText(
-      //     maxLines: 3,
-      //     textAlign: TextAlign.center,
-      //     Auth.gladToHadYouBack,
-      //   ),
-      //   crossAxisAlignment: CrossAxisAlignment.center,
-      //   insetPadding: EdgeInsets.all(Dimens.spacingXXL),
-      // );
+    // AppDialog.show(
+    //   context,
+    //   title: Common.successfullyLoggedIn,
+    //   imagePath: AppAssets.rightTick,
+    //   spacing: Dimens.spacingMSmall,
+    //   content: AppText(
+    //     maxLines: 3,
+    //     textAlign: TextAlign.center,
+    //     Auth.gladToHadYouBack,
+    //   ),
+    //   crossAxisAlignment: CrossAxisAlignment.center,
+    //   insetPadding: EdgeInsets.all(Dimens.spacingXXL),
+    // );
 
-      // AppDialog.show(
-      //   context,
-      //   title: Auth.okayAllSet,
-      //   imagePath: AppAssets.allSet,
-      //   borderColor: AppColors.primary,
-      //   borderWidth: 4,
-      //   borderRadius: Dimens.radiusL,
-      //   imageSize: 150,
-      //   content: AppText(
-      //     maxLines: 3,
-      //     textAlign: TextAlign.center,
-      //     Auth.soonYouWillRecieve,
-      //   ),
-      //   primaryButtonText: Auth.letsExploreApp,
-      //   onPrimaryPressed: () => context.replacePage(AppRoutes.home),
-      //   backgroundColor: AppColors.lightWhite,
-      //   crossAxisAlignment: CrossAxisAlignment.center,
-      //   insetPadding: EdgeInsets.all(Dimens.spacingXXL),
-      // );
+    // AppDialog.show(
+    //   context,
+    //   title: Auth.okayAllSet,
+    //   imagePath: AppAssets.allSet,
+    //   borderColor: AppColors.primary,
+    //   borderWidth: 4,
+    //   borderRadius: Dimens.radiusL,
+    //   imageSize: 150,
+    //   content: AppText(
+    //     maxLines: 3,
+    //     textAlign: TextAlign.center,
+    //     Auth.soonYouWillRecieve,
+    //   ),
+    //   primaryButtonText: Auth.letsExploreApp,
+    //   onPrimaryPressed: () => context.replacePage(AppRoutes.home),
+    //   backgroundColor: AppColors.lightWhite,
+    //   crossAxisAlignment: CrossAxisAlignment.center,
+    //   insetPadding: EdgeInsets.all(Dimens.spacingXXL),
+    // );
 
-      // context.replacePage(AppRoutes.home);
-    }
+    // context.replacePage(AppRoutes.home);
   }
 
   void _onOtpCompleted(String code) {
@@ -105,6 +103,8 @@ class _VerificationState extends State<Verification> {
 
   @override
   Widget build(BuildContext context) {
+    final phone = context.getParam<String>('phone') ?? '';
+
     return AuthWrapper(
       formKey: _formKey,
       height: true,

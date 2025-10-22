@@ -22,6 +22,7 @@ class AuthWrapper extends StatelessWidget {
   final bool isButtonEnabled;
   final bool showBackButton;
   final String? heading;
+  final bool isLoading;
 
   const AuthWrapper({
     super.key,
@@ -39,6 +40,7 @@ class AuthWrapper extends StatelessWidget {
     this.bottomButtonPress,
     this.heading,
     this.showBackButton = false,
+    this.isLoading = false,
   });
 
   @override
@@ -113,7 +115,11 @@ class AuthWrapper extends StatelessWidget {
                   child,
                   AppButton(
                     title: buttonText,
-                    onPressed: onSubmit,
+                    onPressed: () {
+                      if (!(formKey.isValid)) return;
+                      onSubmit();
+                    },
+                    isLoading: isLoading,
                     isEnabled: isButtonEnabled,
                   ),
                   Row(

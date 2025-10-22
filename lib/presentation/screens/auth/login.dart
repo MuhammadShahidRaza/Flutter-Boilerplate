@@ -11,13 +11,35 @@ class Login extends StatefulWidget {
 }
 
 class _LoginState extends State<Login> {
+  final AuthRepository _authRepository = AuthRepository();
   final _formKey = GlobalKey<FormState>();
   final phoneController = TextEditingController();
+  bool loading = false;
 
-  void _submit() {
-    if (_formKey.isValid) {
-      AuthService.saveToken("token");
-      context.replacePage(AppRoutes.home);
+  Future<void> _submit() async {
+    try {
+      setState(() => loading = true);
+      final user = await _authRepository.login(
+        phone: phoneController.text.trim(),
+      );
+      if (!mounted) return;
+
+      if (user != null) {
+        print(user);
+        context.navigate(AppRoutes.verification);
+        setState(() => loading = false);
+      }
+    } on Exception catch (error) {
+      if (!mounted) return;
+      setState(() => loading = false);
+      if (error.toString() == "User not found!") {
+        context.navigate(AppRoutes.signUp);
+      } else if (error.toString() == "Your account is inactive") {
+        context.navigate(
+          AppRoutes.verification,
+          params: {'phone': phoneController.text.trim()},
+        );
+      }
     }
   }
 
@@ -27,6 +49,7 @@ class _LoginState extends State<Login> {
       formKey: _formKey,
       height: true,
       title: Auth.welcomeBackLogin,
+      isLoading: loading,
       subtitle: Auth.helloAgainLogin,
       buttonText: Common.signIn,
       onSubmit: _submit,
