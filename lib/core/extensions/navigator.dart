@@ -29,4 +29,10 @@ extension NavigationX on BuildContext {
   void back() {
     if (GoRouter.of(this).canPop()) pop();
   }
+
+  T? getParam<T>(String key) {
+    final state = GoRouterState.of(this);
+    final value = state.uri.queryParameters[key] ?? state.pathParameters[key];
+    return value as T?;
+  }
 }
