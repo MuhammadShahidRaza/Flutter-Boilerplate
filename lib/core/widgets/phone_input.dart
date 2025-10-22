@@ -67,10 +67,10 @@ class _AppPhoneInputState extends State<AppPhoneInput> {
           ),
           InternationalPhoneNumberInput(
             key: _fieldKey,
-            textFieldController: widget.controller,
             initialValue: _number,
             onInputChanged: (PhoneNumber number) {
               setState(() => _number = number);
+              widget.controller.text = number.phoneNumber ?? '';
               widget.onChanged?.call(number);
             },
             onInputValidated: (bool valid) {
