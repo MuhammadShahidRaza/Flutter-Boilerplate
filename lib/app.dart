@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:sanam_laundry/core/index.dart';
 import 'package:sanam_laundry/localization/index.dart';
-import 'package:sanam_laundry/core/routes/router.dart';
 import 'package:sanam_laundry/presentation/index.dart';
 
 class MyApp extends StatelessWidget {
@@ -11,6 +11,7 @@ class MyApp extends StatelessWidget {
       routerConfig: GoRouterSetup.router,
       debugShowCheckedModeBanner: false,
       theme: AppTheme.lightTheme,
+      scaffoldMessengerKey: AppToast.scaffoldMessengerKey,
       darkTheme: AppTheme.darkTheme,
       themeMode: ThemeMode.light,
       locale: const Locale('en'),
@@ -18,7 +19,8 @@ class MyApp extends StatelessWidget {
       localizationsDelegates: AppLocalizationSetup.localizationsDelegates,
       localeResolutionCallback: AppLocalizationSetup.resolveLocale,
       // builder: (context, child) {
-      //   return SafeArea(bottom: false, child: child!); // 👈 Global SafeArea
+      //   if (child == null) return const SizedBox.shrink();
+      //   return AppLoaderOverlay(child: child);
       // },
     );
   }
