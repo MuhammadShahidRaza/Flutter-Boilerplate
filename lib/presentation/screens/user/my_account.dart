@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:sanam_laundry/core/index.dart';
 import 'package:sanam_laundry/data/index.dart';
 import 'package:sanam_laundry/presentation/index.dart';
+import 'package:sanam_laundry/providers/auth.dart';
 
 class MyAccount extends StatelessWidget {
   const MyAccount({super.key});
@@ -9,62 +11,101 @@ class MyAccount extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final List<_AccountOption> options = [
-      _AccountOption(icon: Icons.edit, title: Common.editProfile, onTap: () {}),
+      _AccountOption(
+        icon: Icons.edit,
+        title: Common.editProfile,
+        onTap: () {
+          context.navigate(AppRoutes.editProfile);
+        },
+      ),
       _AccountOption(
         icon: Icons.shopping_bag_outlined,
         title: Common.myOrders,
-        onTap: () {},
+        onTap: () {
+          // context.navigate(AppRoutes.myOrders);
+        },
       ),
       _AccountOption(
         icon: Icons.location_on_outlined,
         title: Common.myAddress,
-        onTap: () {},
+        onTap: () {
+          // context.navigate(AppRoutes.myAddress);
+        },
       ),
       _AccountOption(
         icon: Icons.payment_outlined,
         title: Common.payment,
-        onTap: () {},
+        onTap: () {
+          // context.navigate(AppRoutes.payment);
+        },
       ),
       _AccountOption(
         icon: Icons.language_outlined,
         title: Common.language,
-        onTap: () {},
+        onTap: () {
+          // context.navigate(AppRoutes.language);
+        },
       ),
       _AccountOption(
         icon: Icons.contact_mail_outlined,
         title: Common.contactUs,
-        onTap: () {},
+        onTap: () {
+          context.navigate(AppRoutes.contactUs);
+        },
       ),
       _AccountOption(
         icon: Icons.article_outlined,
         title: Common.termsAndConditions,
-        onTap: () {},
+        onTap: () {
+          context.navigate(AppRoutes.termsAndConditions);
+        },
       ),
       _AccountOption(
         icon: Icons.privacy_tip_outlined,
         title: Common.privacyPolicy,
-        onTap: () {},
+        onTap: () {
+          context.navigate(AppRoutes.privacyPolicy);
+        },
       ),
       _AccountOption(
         icon: Icons.delete_outline,
         title: Common.deleteAccount,
         onTap: () {
-          AuthService.removeToken();
-          context.replacePage(AppRoutes.getStarted);
+          AppDialog.show(
+            context,
+            title: Common.deleteAccount,
+            borderColor: AppColors.primary,
+            borderWidth: 4,
+            borderRadius: Dimens.radiusL,
+            imageSize: 150,
+            content: AppText(
+              maxLines: 3,
+              textAlign: TextAlign.center,
+              Common.doYouWantToDeleteAccount,
+            ),
+            primaryButtonText: Auth.letsExploreApp,
+            onPrimaryPressed: () => {
+              AuthService.removeToken(),
+              context.replacePage(AppRoutes.getStarted),
+            },
+            backgroundColor: AppColors.lightWhite,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            insetPadding: EdgeInsets.all(Dimens.spacingXXL),
+          );
         },
       ),
     ];
 
     return AppWrapper(
       scrollable: true,
+      safeArea: false,
       padding: EdgeInsets.zero,
       child: Column(
-        spacing: Dimens.spacingLarge,
         children: [
           _buildHeader(context),
           Padding(
             padding: const EdgeInsets.symmetric(
-              horizontal: Dimens.screenMarginHorizontal,
+              horizontal: Dimens.screenMarginVertical,
             ),
             child: Column(
               children: options
@@ -83,13 +124,15 @@ class MyAccount extends StatelessWidget {
                   .toList(),
             ),
           ),
-
-          AppButton(
-            title: Common.logout,
-            onPressed: () {
-              AuthService.removeToken();
-              context.replacePage(AppRoutes.getStarted);
-            },
+          Padding(
+            padding: const EdgeInsets.symmetric(vertical: Dimens.spacingM),
+            child: AppButton(
+              title: Common.logout,
+              onPressed: () {
+                AuthService.removeToken();
+                context.replacePage(AppRoutes.getStarted);
+              },
+            ),
           ),
         ],
       ),
@@ -97,50 +140,78 @@ class MyAccount extends StatelessWidget {
   }
 
   Widget _buildHeader(BuildContext context) {
-    return Stack(
-      alignment: Alignment.center,
-      children: [
-        Container(
-          height: 180,
-          width: double.infinity,
-          decoration: const BoxDecoration(
-            color: AppColors.primary,
-            borderRadius: BorderRadius.only(
-              bottomLeft: Radius.circular(40),
-              bottomRight: Radius.circular(40),
+    return SizedBox(
+      height: 270,
+      child: Stack(
+        alignment: Alignment.topCenter,
+        children: [
+          // 🔹 Header background
+          Container(
+            height: 160,
+            width: double.infinity,
+            decoration: const BoxDecoration(
+              color: AppColors.primary,
+              borderRadius: BorderRadius.only(
+                bottomLeft: Radius.circular(Dimens.radiusL),
+                bottomRight: Radius.circular(Dimens.radiusL),
+              ),
             ),
           ),
-        ),
-        Positioned(
-          top: 90,
-          child: CircleAvatar(
-            radius: 45,
-            backgroundColor: Colors.white,
-            child: CircleAvatar(
-              radius: 42,
-              backgroundImage: AssetImage(
-                AppAssets.user,
-              ), // or NetworkImage(profileImage)
+
+          // 🔹 Profile image
+          Positioned(
+            top: 110, // half overlaps header
+            child: Consumer<AuthProvider>(
+              builder: (context, auth, child) {
+                final profileImage = auth.user?.profileImage ?? AppAssets.user;
+                return CircleAvatar(
+                  radius: 42,
+                  child: AppImage(
+                    path: profileImage,
+                    height: context.h(0.2),
+                    width: context.screenWidth,
+                    fit: BoxFit.contain,
+                  ),
+                );
+              },
             ),
           ),
-        ),
-        Positioned(
-          top: 210,
-          child: Column(
-            children: const [
-              Text(
-                'Aldo Bareto',
-                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-              ),
-              SizedBox(height: 4),
-              Text(
-                'Customer ID: 15643FJU541',
-                style: TextStyle(fontSize: 14, color: Colors.grey),
-              ),
-            ],
+
+          // 🔹 Name / info below avatar
+          Positioned(
+            top: 210, // adjust spacing below avatar
+            child: Consumer<AuthProvider>(
+              builder: (context, auth, child) {
+                final name = auth.fullName.isNotEmpty
+                    ? auth.fullName
+                    : Common.guest;
+                final customerId = auth.user?.customerId ?? '-';
+                return Column(
+                  spacing: Dimens.spacingS,
+                  children: [
+                    AppText(
+                      name,
+                      style: context.textTheme.titleMedium?.copyWith(
+                        fontWeight: FontWeight.bold,
+                        color: AppColors.mediumGrey,
+                      ),
+                    ),
+
+                    // Customer ID
+                    AppText(
+                      "Customer ID: $customerId",
+                      style: context.textTheme.titleMedium?.copyWith(
+                        fontWeight: FontWeight.bold,
+                        color: AppColors.black,
+                      ),
+                    ),
+                  ],
+                );
+              },
+            ),
           ),
-        ),
-      ],
+        ],
+      ),
     );
   }
 }
