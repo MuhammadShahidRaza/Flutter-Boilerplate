@@ -14,15 +14,16 @@ class Home extends StatelessWidget {
     ];
 
     return AppWrapper(
-      appBar: HomeAppBar(userName: "Aldo Bareto"),
+      appBar: HomeAppBar(),
       child: Column(
         children: [
           AppImage(
             path: AppAssets.temp,
-            height: 200,
+            height: context.h(0.3),
             width: context.screenWidth,
             fit: BoxFit.contain,
           ),
+
           AppText(Common.categories),
           Expanded(
             child: ListView.separated(

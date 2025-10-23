@@ -1,15 +1,17 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:sanam_laundry/core/index.dart';
 import 'package:sanam_laundry/presentation/index.dart';
+import 'package:sanam_laundry/providers/auth.dart';
 
 class HomeAppBar extends StatelessWidget implements PreferredSizeWidget {
-  final String userName;
+  final String? userName;
   final String? profileImage;
   final VoidCallback? onNotificationTap;
 
   const HomeAppBar({
     super.key,
-    required this.userName,
+    this.userName,
     this.profileImage,
     this.onNotificationTap,
   });
@@ -36,7 +38,6 @@ class HomeAppBar extends StatelessWidget implements PreferredSizeWidget {
               ),
             ),
 
-            // 🧑‍💼 Welcome text and name
             Expanded(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -51,12 +52,19 @@ class HomeAppBar extends StatelessWidget implements PreferredSizeWidget {
                   Row(
                     spacing: Dimens.spacingS,
                     children: [
-                      AppText(
-                        userName,
-                        style: theme.textTheme.titleMedium?.copyWith(
-                          fontWeight: FontWeight.bold,
-                          color: AppColors.bottomTabText,
-                        ),
+                      Consumer<AuthProvider>(
+                        builder: (context, user, child) {
+                          final name = user.fullName.isNotEmpty
+                              ? user.fullName
+                              : Common.guest;
+                          return AppText(
+                            name,
+                            style: theme.textTheme.titleMedium?.copyWith(
+                              fontWeight: FontWeight.bold,
+                              color: AppColors.bottomTabText,
+                            ),
+                          );
+                        },
                       ),
                       AppText('👋', style: TextStyle(fontSize: Dimens.fontXL)),
                     ],
