@@ -66,22 +66,24 @@ class _SignUpState extends State<SignUp> {
 
       final user = await _authRepository.register(
         email: emailController.text.trim(),
-        first_name: firstNameController.text.trim(),
-        last_name: lastNameController.text.trim(),
+        firstName: firstNameController.text.trim(),
+        lastName: lastNameController.text.trim(),
         phone: phoneController.text.trim(),
         gender: selectedGender,
         // profileImage: _profileImage!,
       );
       if (!mounted) return;
       if (user != null) {
-        print(user);
-        // AuthService.saveToken(Variables.userToken);
-        context.navigate(AppRoutes.verification);
-        setState(() => loading = false);
+        context.navigate(
+          AppRoutes.verification,
+          params: {'phone': phoneController.text.trim(), "isFromLogin": false},
+        );
+        // setState(() => loading = false);
       }
     } on Exception catch (error) {
-      setState(() => loading = false);
-      context.navigate(AppRoutes.verification);
+      print(error);
+      // setState(() => loading = false);
+      // context.navigate(AppRoutes.verification);
     } finally {
       setState(() => loading = false);
     }
