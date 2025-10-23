@@ -4,38 +4,46 @@ import 'package:sanam_laundry/core/index.dart';
 class ApiResponseHandler {
   ApiResponseHandler._();
 
-  /// Generic method for handling API calls safely
   static Future<T?> handleRequest<T>(
     Future<Response> Function() request, {
-    T Function(dynamic data)? onSuccess,
-    void Function(DioExceptions error)? onError,
-    bool showErrorToast = true,
+    T Function(dynamic data, int? statusCode)? onSuccess,
+    T Function(DioExceptions error, int? statusCode)? onError,
   }) async {
     try {
       final response = await request();
-
-      if (response.statusCode != null &&
-          response.statusCode! >= 200 &&
-          response.statusCode! < 300) {
-        final data = response.data;
-        return onSuccess != null ? onSuccess(data) : data;
-      } else {
-        final message =
-            DioExceptions.extractMessage(response.data) ??
-            'Unexpected error occurred.';
-        if (showErrorToast) AppToast.showToast(message, isError: true);
-        return null;
-      }
+      final parsedData = _extractResponseData(response.data);
+      return onSuccess != null
+          ? onSuccess(parsedData, response.statusCode)
+          : parsedData;
     } on DioException catch (e) {
       final error = DioExceptions.fromDioError(e);
-      if (showErrorToast) AppToast.showToast(error.message, isError: true);
-      if (onError != null) onError(error);
+      final statusCode = e.response?.statusCode;
+      if (onError != null) return onError(error, statusCode);
       return null;
-    } catch (e) {
-      if (showErrorToast) {
-        AppToast.showToast('Something went wrong', isError: true);
-      }
+    } catch (_) {
       return null;
     }
+  }
+
+  /// Extracts the correct portion of API response
+  static dynamic _extractResponseData(dynamic response) {
+    if (response is Map && response.containsKey('response')) {
+      final inner = response['response'];
+
+      if (inner is Map && inner.containsKey('data')) {
+        final data = inner['data'];
+
+        // ✅ return data only if not empty
+        if (data is List && data.isNotEmpty) return data;
+        if (data is Map && data.isNotEmpty) return data;
+
+        // ✅ fallback: return full inner response
+        return inner;
+      }
+
+      return inner;
+    }
+
+    return response;
   }
 }
