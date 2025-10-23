@@ -1,17 +1,5 @@
-import 'package:dio/dio.dart'
-    show
-        BaseOptions,
-        Dio,
-        DioException,
-        ErrorInterceptorHandler,
-        Interceptor,
-        LogInterceptor,
-        Options,
-        RequestInterceptorHandler,
-        RequestOptions,
-        Response,
-        ResponseInterceptorHandler;
-import 'package:flutter/foundation.dart' show ValueNotifier;
+import 'package:dio/dio.dart';
+import 'package:flutter/foundation.dart';
 import 'package:sanam_laundry/core/config/environment.dart';
 import 'package:sanam_laundry/core/network/api_exceptions.dart';
 import 'package:sanam_laundry/core/network/api_request_config.dart';
