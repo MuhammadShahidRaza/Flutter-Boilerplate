@@ -1,15 +1,15 @@
 import 'package:sanam_laundry/core/index.dart';
 import 'package:sanam_laundry/core/network/api_response.dart';
-import 'package:sanam_laundry/data/models/user.dart';
+import 'package:sanam_laundry/data/index.dart';
 import 'package:sanam_laundry/data/services/endpoints.dart';
 
 class AuthRepository {
   final ApiService _apiService = ApiService();
 
-  /// 🔹 LOGIN
-  Future<UserModel?> login({required String phone}) async {
-    return ApiResponseHandler.handleRequest<UserModel>(
-      showErrorToast: false,
+  Future<String?> login({required String phone}) async {
+    String? message;
+
+    await ApiResponseHandler.handleRequest(
       () => _apiService.post(
         Endpoints.login,
         data: {'phone': phone},
@@ -18,38 +18,59 @@ class AuthRepository {
           showErrorToast: false,
         ),
       ),
-      // onSuccess: (data) {
-      //   // Some APIs wrap user inside "data" or "user" — handle both cases safely
-      //   final userData = data['user'] ?? data['data'] ?? data;
-      //   return UserModel.fromJson(userData);
-      // },
-      onError: (error) => {throw error},
+      onSuccess: (data, statusCode) {
+        if (statusCode == 200) {
+          message = "loginSuccessful";
+        }
+      },
+      onError: (error, statusCode) {
+        if (statusCode == 404) {
+          message = "userNotFound";
+        } else if (statusCode == 403) {
+          message = "userNotVerified";
+        } else {
+          message = error.toString();
+        }
+      },
     );
+    return message;
   }
 
   /// 🔹 REGISTER
-  Future<UserModel?> register({
-    required String first_name,
+  Future register({
+    required String firstName,
     required String email,
-    required String last_name,
+    required String lastName,
     required String phone,
     String? gender,
     // required String profileImage,
   }) async {
-    return await ApiResponseHandler.handleRequest<UserModel>(
-      showErrorToast: false,
+    return await ApiResponseHandler.handleRequest(
       () => _apiService.post(
         Endpoints.register,
         data: {
-          'first_name': first_name,
+          'first_name': firstName,
           'email': email,
-          'last_name': last_name,
+          'last_name': lastName,
           'phone': phone,
           'gender': gender,
           // 'profile_image': profileImage,
         },
         config: const ApiRequestConfig(requiresAuth: false),
       ),
+
+      // onError: (error, statusCode) {
+      //   if (statusCode == 404) {
+      //     return ErrorMessages.userNotFound;
+      //   } else if (statusCode == 403) {
+      //     return ErrorMessages.userNotVerified;
+      //   } else if (statusCode == 401) {
+      //     return ErrorMessages.invalidUser;
+      //   } else {
+      //     return null;
+      //   }
+      // },
+
       // onSuccess: (data) {
       //   final userData = data['user'] ?? data['data'] ?? data;
       //   return UserModel.fromJson(userData);
@@ -64,7 +85,7 @@ class AuthRepository {
         Endpoints.profile,
         config: const ApiRequestConfig(requiresAuth: true, showLoader: true),
       ),
-      onSuccess: (data) => UserModel.fromJson(data),
+      onSuccess: (data, _) => UserModel.fromJson(data),
     );
   }
 
@@ -78,7 +99,97 @@ class AuthRepository {
           showErrorToast: false,
         ),
       ),
-      showErrorToast: false,
+    );
+  }
+
+  /// 🔹 VERIFY OTP
+  Future<UserModel?> verifyOtp({
+    required String phone,
+    required String otp,
+  }) async {
+    return await ApiResponseHandler.handleRequest<UserModel>(
+      () => _apiService.post(
+        Endpoints.verifyOtp,
+        data: {
+          'phone': phone,
+          'otp': otp,
+          // device_type:Testing Tool
+          // device_token:abcdefghijklmnopqrstuvwxyz
+          // udid:123456789
+          // device_brand:Postman
+          // device_os:Linux
+          // app_version:1.0.0
+        },
+        config: const ApiRequestConfig(requiresAuth: false),
+      ),
+      onSuccess: (data, _) {
+        final userData = data['user'];
+        return UserModel.fromJson(userData);
+      },
+    );
+  }
+
+  Future<UserModel?> resendCode({required String phone}) async {
+    return ApiResponseHandler.handleRequest<UserModel>(
+      () => _apiService.post(
+        Endpoints.login,
+        data: {'phone': phone},
+        config: const ApiRequestConfig(
+          requiresAuth: false,
+          showErrorToast: false,
+        ),
+      ),
+    );
+  }
+
+  /// 🔹 EDIT PROFILE
+  Future editProfile({
+    required String firstName,
+    required String email,
+    required String lastName,
+    required String phone,
+    String? gender,
+    // required String profileImage,
+  }) async {
+    return await ApiResponseHandler.handleRequest(
+      () => _apiService.post(
+        Endpoints.updateUserProfile,
+        data: {
+          "_method": "PATCH",
+          'first_name': firstName,
+          'email': email,
+          'last_name': lastName,
+          'phone': phone,
+          'gender': gender,
+          // 'profile_image': profileImage,
+        },
+      ),
+
+      // onSuccess: (data) {
+      //   final userData = data['user'] ?? data['data'] ?? data;
+      //   return UserModel.fromJson(userData);
+      // },
+    );
+  }
+
+  /// 🔹 CONTACT US
+  Future contactUs({
+    required String fullName,
+    required String email,
+    required String description,
+    required String phone,
+  }) async {
+    return await ApiResponseHandler.handleRequest(
+      () => _apiService.post(
+        Endpoints.contactUs,
+        data: {
+          'name': fullName,
+          'email': email,
+          'phone': phone,
+          'description': description,
+        },
+        config: const ApiRequestConfig(showSuccessToast: true),
+      ),
     );
   }
 }
