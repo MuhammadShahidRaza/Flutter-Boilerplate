@@ -17,28 +17,29 @@ class _LoginState extends State<Login> {
   bool loading = false;
 
   Future<void> _submit() async {
-    try {
-      setState(() => loading = true);
-      final user = await _authRepository.login(
-        phone: phoneController.text.trim(),
-      );
-      if (!mounted) return;
+    setState(() => loading = true);
 
-      if (user != null) {
-        print(user);
-        context.navigate(AppRoutes.verification);
-        setState(() => loading = false);
-      }
-    } on Exception catch (error) {
-      if (!mounted) return;
-      setState(() => loading = false);
-      if (error.toString() == "User not found!") {
-        context.navigate(AppRoutes.signUp);
-      } else if (error.toString() == "Your account is inactive") {
+    final message = await _authRepository.login(
+      phone: phoneController.text.trim(),
+    );
+    if (!mounted) return;
+    setState(() => loading = false);
+
+    if (message != null) {
+      if (message == "loginSuccessful") {
         context.navigate(
           AppRoutes.verification,
-          params: {'phone': phoneController.text.trim()},
+          params: {'phone': phoneController.text.trim(), 'isFromLogin': true},
         );
+      } else if (message == "userNotFound") {
+        context.navigate(AppRoutes.signUp);
+      } else if (message == "userNotVerified") {
+        context.navigate(
+          AppRoutes.verification,
+          params: {'phone': phoneController.text.trim(), 'isFromLogin': true},
+        );
+      } else {
+        AppToast.showToast(message, isError: true);
       }
     }
   }
