@@ -11,6 +11,9 @@ class Common {
   static const myOrders = "COMMON.MY_ORDERS";
   static const myAccount = "COMMON.MY_ACCOUNT";
   static const myAddress = "COMMON.MY_ADDRESS";
+  static const doYouWantToDeleteAccount =
+      "COMMON.DO_YOU_WANT_TO_DELETE_ACCOUNT";
+  static const guest = "COMMON.GUEST";
   static const deleteAccount = "COMMON.DELETE_ACCOUNT";
   static const continue_ = "COMMON.CONTINUE";
   static const categories = "COMMON.CATEGORIES";
@@ -309,6 +312,8 @@ class ErrorMessages {
   static const invalidInput = "ERROR_MESSAGES.INVALID_INPUT";
   static const timeoutError = "ERROR_MESSAGES.TIMEOUT_ERROR";
   static const notFound = "ERROR_MESSAGES.NOT_FOUND";
+  static const userNotFound = "ERROR_MESSAGES.USER_NOT_FOUND";
+  static const userNotVerified = "ERROR_MESSAGES.USER_NOT_VERIFIED";
   static const authenticationFailed = "ERROR_MESSAGES.AUTHENTICATION_FAILED";
   static const conflictError = "ERROR_MESSAGES.CONFLICT_ERROR";
   static const databaseError = "ERROR_MESSAGES.DATABASE_ERROR";
