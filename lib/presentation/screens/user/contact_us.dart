@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:sanam_laundry/core/index.dart';
 import 'package:sanam_laundry/data/index.dart';
 import 'package:sanam_laundry/presentation/index.dart';
+import 'package:sanam_laundry/providers/auth.dart';
 
 class ContactUs extends StatefulWidget {
   const ContactUs({super.key});
@@ -18,13 +20,16 @@ class _ContactUsState extends State<ContactUs> {
   late final TextEditingController phoneController;
   late final TextEditingController descriptionController;
   bool loading = false;
+  late final UserModel? user;
 
   @override
   void initState() {
     super.initState();
-    fullNameController = TextEditingController();
-    emailController = TextEditingController();
-    phoneController = TextEditingController();
+    final authUser = context.read<AuthProvider>();
+    user = authUser.user;
+    fullNameController = TextEditingController(text: authUser.fullName);
+    emailController = TextEditingController(text: user?.email);
+    phoneController = TextEditingController(text: user?.phone);
     descriptionController = TextEditingController();
   }
 
@@ -86,10 +91,12 @@ class _ContactUsState extends State<ContactUs> {
                   title: Common.fullName,
                   hint: Common.enterFullName,
                   fieldKey: FieldType.name,
+                  enabled: false,
                   controller: fullNameController,
                 ),
                 AppInput(
                   title: Common.email,
+                  enabled: false,
                   hint: Common.enterYourEmail,
                   fieldKey: FieldType.email,
                   controller: emailController,
@@ -99,6 +106,7 @@ class _ContactUsState extends State<ContactUs> {
                   title: Common.phoneNumber,
                   hint: Common.enterYourPhoneNumber,
                   controller: phoneController,
+                  enabled: false,
                   marginBottom: Dimens.spacingM,
                 ),
 
@@ -107,6 +115,9 @@ class _ContactUsState extends State<ContactUs> {
                   hint: Common.enterYourMessage,
                   controller: descriptionController,
                   maxLines: 5,
+                  minLength: 50,
+                  fieldKey: FieldType.required,
+                  maxLength: 500,
                   marginBottom: Dimens.spacingM,
                 ),
 
