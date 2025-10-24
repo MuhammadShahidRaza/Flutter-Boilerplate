@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:provider/provider.dart';
 import 'package:sanam_laundry/core/index.dart';
 import 'package:sanam_laundry/data/index.dart';
 import 'package:sanam_laundry/presentation/index.dart';
+import 'package:sanam_laundry/providers/auth.dart';
 
 class EditProfile extends StatefulWidget {
   const EditProfile({super.key});
@@ -21,17 +23,22 @@ class _EditProfileState extends State<EditProfile> {
   XFile? _profileImage;
   bool loading = false;
   String? selectedGender;
-  bool _agreedTerms = false;
 
   final genderOptions = [Common.male, Common.female, Common.other];
+  late final UserModel? user;
 
   @override
   void initState() {
     super.initState();
-    firstNameController = TextEditingController();
-    lastNameController = TextEditingController();
-    emailController = TextEditingController();
-    phoneController = TextEditingController();
+    final authUser = context.read<AuthProvider>().user;
+    user = authUser;
+    firstNameController = TextEditingController(text: user?.firstName ?? '');
+    lastNameController = TextEditingController(text: user?.lastName ?? '');
+    emailController = TextEditingController(text: user?.email ?? '');
+    phoneController = TextEditingController(text: user?.phone ?? '');
+    selectedGender = genderOptions.firstWhere(
+      (g) => g.toLowerCase() == (user?.gender ?? '').toLowerCase(),
+    );
   }
 
   @override
@@ -44,49 +51,19 @@ class _EditProfileState extends State<EditProfile> {
   }
 
   Future<void> _submit() async {
-    try {
-      // if (_profileImage == null) {
-      //   AppToast.showToast("Please select a profile image.");
-      //   return;
-      // }
-
-      if (!_agreedTerms) {
-        AppToast.showToast("Please agree to the terms and conditions.");
-        return;
-      }
-
-      setState(() => loading = true);
-
-      // device_type:Testing Tool
-      // device_token:abcdefghijklmnopqrstuvwxyz
-      // udid:123456789
-      // device_brand:Postman
-      // device_os:Linux
-      // app_version:1.0.0
-
-      final user = await _authRepository.editProfile(
-        email: emailController.text.trim(),
-        firstName: firstNameController.text.trim(),
-        lastName: lastNameController.text.trim(),
-        phone: phoneController.text.trim(),
-        gender: selectedGender,
-        // profileImage: _profileImage!,
-      );
-      if (!mounted) return;
-      if (user != null) {
-        context.navigate(
-          AppRoutes.verification,
-          params: {'phone': phoneController.text.trim(), "isFromLogin": false},
-        );
-        // setState(() => loading = false);
-      }
-    } on Exception catch (error) {
-      print(error);
-      // setState(() => loading = false);
-      // context.navigate(AppRoutes.verification);
-    } finally {
-      setState(() => loading = false);
+    setState(() => loading = true);
+    final user = await _authRepository.editProfile(
+      firstName: firstNameController.text.trim(),
+      lastName: lastNameController.text.trim(),
+      gender: selectedGender,
+      profileImage: _profileImage!,
+    );
+    if (!mounted) return;
+    if (user != null) {
+      context.read<AuthProvider>().updateUser(user);
+      context.back();
     }
+    setState(() => loading = false);
   }
 
   @override
@@ -150,6 +127,7 @@ class _EditProfileState extends State<EditProfile> {
                   title: Common.email,
                   hint: Common.enterYourEmail,
                   fieldKey: FieldType.email,
+                  enabled: false,
                   controller: emailController,
                 ),
                 AppDropdown<String>(
@@ -165,6 +143,7 @@ class _EditProfileState extends State<EditProfile> {
                   hint: Common.enterYourPhoneNumber,
                   controller: phoneController,
                   marginBottom: Dimens.spacingM,
+                  enabled: false,
                 ),
 
                 AppButton(

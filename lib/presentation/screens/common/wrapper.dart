@@ -61,7 +61,7 @@ class AppWrapper extends StatelessWidget {
     );
 
     if (safeArea) {
-      content = SafeArea(bottom: false, child: content);
+      content = SafeArea(child: content);
     }
 
     // ✅ Use the property directly (don’t redeclare `appBar`)

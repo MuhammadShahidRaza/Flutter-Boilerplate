@@ -12,14 +12,14 @@ class MyAccount extends StatelessWidget {
   Widget build(BuildContext context) {
     final List<_AccountOption> options = [
       _AccountOption(
-        icon: Icons.edit,
+        icon: Icons.edit_outlined,
         title: Common.editProfile,
         onTap: () {
           context.navigate(AppRoutes.editProfile);
         },
       ),
       _AccountOption(
-        icon: Icons.shopping_bag_outlined,
+        icon: Icons.list,
         title: Common.myOrders,
         onTap: () {
           // context.navigate(AppRoutes.myOrders);
@@ -33,14 +33,14 @@ class MyAccount extends StatelessWidget {
         },
       ),
       _AccountOption(
-        icon: Icons.payment_outlined,
+        icon: Icons.credit_card,
         title: Common.payment,
         onTap: () {
           // context.navigate(AppRoutes.payment);
         },
       ),
       _AccountOption(
-        icon: Icons.language_outlined,
+        icon: Icons.translate,
         title: Common.language,
         onTap: () {
           // context.navigate(AppRoutes.language);
@@ -57,14 +57,20 @@ class MyAccount extends StatelessWidget {
         icon: Icons.article_outlined,
         title: Common.termsAndConditions,
         onTap: () {
-          context.navigate(AppRoutes.termsAndConditions);
+          context.navigate(
+            AppRoutes.staticPage,
+            params: {'name': Common.termsAndConditions},
+          );
         },
       ),
       _AccountOption(
         icon: Icons.privacy_tip_outlined,
         title: Common.privacyPolicy,
         onTap: () {
-          context.navigate(AppRoutes.privacyPolicy);
+          context.navigate(
+            AppRoutes.staticPage,
+            params: {'name': Common.privacyPolicy},
+          );
         },
       ),
       _AccountOption(
@@ -79,11 +85,11 @@ class MyAccount extends StatelessWidget {
             borderRadius: Dimens.radiusL,
             imageSize: 150,
             content: AppText(
+              Common.doYouWantToDeleteAccount,
               maxLines: 3,
               textAlign: TextAlign.center,
-              Common.doYouWantToDeleteAccount,
             ),
-            primaryButtonText: Auth.letsExploreApp,
+            primaryButtonText: Common.deleteAccount,
             onPrimaryPressed: () => {
               AuthService.removeToken(),
               context.replacePage(AppRoutes.getStarted),

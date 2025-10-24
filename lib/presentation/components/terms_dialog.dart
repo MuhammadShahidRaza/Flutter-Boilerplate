@@ -35,7 +35,7 @@ class _AppTermsDialogState extends State<AppTermsDialog> {
         spacing: Dimens.spacingM,
         children: [
           AppText(
-            TemporaryText.lorumIpsumTooLong,
+            "This Privacy Policy outlines how we collect, use, disclose, and safeguard your information when you visit our website or use our services. We are committed to protecting your privacy and ensuring that your personal information is handled with care. This policy explains the types of information we collect, how it is used, and the steps we take to ensure its security. By using our services, you agree to the collection and use of information in accordance with this policy. Please review it carefully.",
             overflow: TextOverflow.visible,
           ),
           AppCheckbox(

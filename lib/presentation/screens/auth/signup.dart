@@ -70,7 +70,7 @@ class _SignUpState extends State<SignUp> {
         lastName: lastNameController.text.trim(),
         phone: phoneController.text.trim(),
         gender: selectedGender,
-        // profileImage: _profileImage!,
+        profileImage: _profileImage,
       );
       if (!mounted) return;
       if (user != null) {
