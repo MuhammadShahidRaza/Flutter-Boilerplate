@@ -1,3 +1,4 @@
+import 'package:image_picker/image_picker.dart';
 import 'package:sanam_laundry/core/index.dart';
 import 'package:sanam_laundry/core/network/api_response.dart';
 import 'package:sanam_laundry/data/index.dart';
@@ -43,10 +44,10 @@ class AuthRepository {
     required String lastName,
     required String phone,
     String? gender,
-    // required String profileImage,
+    XFile? profileImage,
   }) async {
     return await ApiResponseHandler.handleRequest(
-      () => _apiService.post(
+      () => _apiService.multipartPost(
         Endpoints.register,
         data: {
           'first_name': firstName,
@@ -54,7 +55,7 @@ class AuthRepository {
           'last_name': lastName,
           'phone': phone,
           'gender': gender,
-          // 'profile_image': profileImage,
+          'profile_image': profileImage,
         },
         config: const ApiRequestConfig(requiresAuth: false),
       ),
@@ -145,30 +146,25 @@ class AuthRepository {
   /// 🔹 EDIT PROFILE
   Future editProfile({
     required String firstName,
-    required String email,
     required String lastName,
-    required String phone,
     String? gender,
-    // required String profileImage,
+    XFile? profileImage,
   }) async {
     return await ApiResponseHandler.handleRequest(
-      () => _apiService.post(
+      () => _apiService.multipartPost(
         Endpoints.updateUserProfile,
         data: {
           "_method": "PATCH",
           'first_name': firstName,
-          'email': email,
           'last_name': lastName,
-          'phone': phone,
-          'gender': gender,
-          // 'profile_image': profileImage,
+          ...(gender != null ? {'gender': gender} : {}),
+          ...(profileImage != null ? {'profile_image': profileImage} : {}),
         },
       ),
-
-      // onSuccess: (data) {
-      //   final userData = data['user'] ?? data['data'] ?? data;
-      //   return UserModel.fromJson(userData);
-      // },
+      onSuccess: (data, _) {
+        final userData = data['user'];
+        return UserModel.fromJson(userData);
+      },
     );
   }
 
@@ -188,8 +184,20 @@ class AuthRepository {
           'phone': phone,
           'description': description,
         },
-        config: const ApiRequestConfig(showSuccessToast: true),
+        // config: const ApiRequestConfig(showSuccessToast: true),
       ),
+    );
+  }
+
+  Future privacyPolicy(name) async {
+    // final endpoint = switch (name) {
+    //   Common.termsAndConditions => Endpoints.termsAndConditions,
+    //   Common.privacyPolicy => Endpoints.privacyPolicy,
+    //   _ => Endpoints.privacyPolicy,
+    // };
+
+    return await ApiResponseHandler.handleRequest(
+      () => _apiService.get(Endpoints.privacyPolicy),
     );
   }
 }
