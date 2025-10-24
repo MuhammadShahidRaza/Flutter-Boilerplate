@@ -6,6 +6,7 @@ import 'package:sanam_laundry/core/network/api_request_config.dart';
 // import 'package:sanam_laundry/core/network/retry_interceptor.dart';
 import 'package:sanam_laundry/core/utils/toast.dart';
 import 'package:sanam_laundry/data/services/auth.dart';
+import 'package:sanam_laundry/providers/auth.dart';
 
 class ApiClient {
   ApiClient._({String? customBaseUrl}) {
@@ -20,6 +21,7 @@ class ApiClient {
 
     _dio.interceptors.addAll([
       _AuthInterceptor(),
+      _LanguageInterceptor(),
       _LoaderInterceptor(),
       _SuccessInterceptor(),
       _ErrorInterceptor(),
@@ -71,6 +73,18 @@ class ApiClient {
     if (_activeLoaderCount == 0) {
       loaderNotifier.value = false;
     }
+  }
+}
+
+class _LanguageInterceptor extends Interceptor {
+  @override
+  Future<void> onRequest(
+    RequestOptions options,
+    RequestInterceptorHandler handler,
+  ) async {
+    final language = await AuthService.loadLanguage();
+    options.headers['Accept-Language'] = language ?? Language.en.name;
+    handler.next(options);
   }
 }
 
