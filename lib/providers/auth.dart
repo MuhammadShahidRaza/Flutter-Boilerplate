@@ -1,23 +1,33 @@
 import 'package:flutter/material.dart';
 import 'package:sanam_laundry/data/index.dart';
 
+enum Language { en, ar }
+
 class AuthProvider extends ChangeNotifier {
   bool _isLoggedIn = false;
   bool _hasVisitedApp = false;
   UserModel? _user;
+  Language _language = Language.en;
 
   UserModel? get user => _user;
-
   bool get isLoggedIn => _isLoggedIn;
   bool get hasVisitedApp => _hasVisitedApp;
+  Locale get locale => Locale(_language.name);
+
   Future<void> loadLoginStatus() async {
-    final token = await AuthService.loadToken();
     final isVisted = await AuthService.hasVisitedApp();
+    final token = await AuthService.loadToken();
+    final language = await AuthService.loadLanguage();
     final storedUser = await AuthService.loadUser();
 
     _isLoggedIn = token != null && token.isNotEmpty;
     _hasVisitedApp = isVisted != null && isVisted.isNotEmpty;
     _user = storedUser;
+    if (language != null && language == Language.ar.name) {
+      _language = Language.ar;
+    } else {
+      _language = Language.en;
+    }
 
     notifyListeners();
   }
@@ -28,6 +38,18 @@ class AuthProvider extends ChangeNotifier {
 
     _user = user;
     _isLoggedIn = true;
+    notifyListeners();
+  }
+
+  Future<void> updateUser(UserModel user) async {
+    await AuthService.saveUser(user);
+    _user = user;
+    notifyListeners();
+  }
+
+  Future<void> changeLanguage(Language language) async {
+    await AuthService.saveLanguage(language.name);
+    _language = language;
     notifyListeners();
   }
 
