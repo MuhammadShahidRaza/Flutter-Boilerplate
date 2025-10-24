@@ -9,6 +9,7 @@ class Common {
   static const home = "COMMON.HOME";
   static const service = "COMMON.SERVICE";
   static const myOrders = "COMMON.MY_ORDERS";
+  static const noDataAvailable = "COMMON.NO_DATA_AVAILABLE";
   static const myAccount = "COMMON.MY_ACCOUNT";
   static const myAddress = "COMMON.MY_ADDRESS";
   static const doYouWantToDeleteAccount =
@@ -122,6 +123,8 @@ class Common {
   static const sendOtp = "COMMON.SEND_OTP";
   static const delete = "COMMON.DELETE";
   static const search = "COMMON.SEARCH";
+  static const searchByCountryNameOrDialCode =
+      "COMMON.SEARCH_BY_COUNTRY_NAME_OR_DIAL_CODE";
   static const clear = "COMMON.CLEAR";
   static const next = "COMMON.NEXT";
   static const previous = "COMMON.PREVIOUS";
