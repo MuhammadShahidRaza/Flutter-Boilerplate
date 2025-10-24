@@ -4,8 +4,7 @@ import 'package:sanam_laundry/core/index.dart';
 import 'package:sanam_laundry/presentation/index.dart';
 import 'package:sanam_laundry/presentation/screens/user/contact_us.dart';
 import 'package:sanam_laundry/presentation/screens/user/edit_profile.dart';
-import 'package:sanam_laundry/presentation/screens/user/privacy_policy.dart';
-import 'package:sanam_laundry/presentation/screens/user/terms_condition.dart';
+import 'package:sanam_laundry/presentation/screens/user/static_page.dart';
 
 class GoRouterSetup {
   static final GlobalKey<NavigatorState> navigatorKey =
@@ -86,13 +85,10 @@ class GoRouterSetup {
         builder: (context, state) => const ContactUs(),
       ),
       GoRoute(
-        path: AppRoutes.privacyPolicy,
-        builder: (context, state) => const PrivacyPolicy(),
+        path: AppRoutes.staticPage,
+        builder: (context, state) => const StaticPage(),
       ),
-      GoRoute(
-        path: AppRoutes.termsAndConditions,
-        builder: (context, state) => const TermsAndCondition(),
-      ),
+
       GoRoute(
         path: AppRoutes.editProfile,
         builder: (context, state) => const EditProfile(),
