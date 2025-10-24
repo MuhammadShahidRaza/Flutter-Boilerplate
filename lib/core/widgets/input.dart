@@ -109,7 +109,7 @@ class _AppInputState extends State<AppInput> {
         error = AppValidators.name(
           context,
           value,
-          fieldName: widget.label ?? Common.name,
+          fieldName: widget.title ?? widget.label ?? Common.name,
         );
         break;
 
@@ -121,7 +121,7 @@ class _AppInputState extends State<AppInput> {
         error = AppValidators.requiredField(
           context,
           value,
-          fieldName: widget.label ?? Common.feild,
+          fieldName: widget.title ?? widget.label ?? Common.feild,
         );
         break;
 
