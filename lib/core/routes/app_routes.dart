@@ -22,6 +22,7 @@ class AppRoutes {
   static const String contactUs = '/contact_us';
   static const String termsAndConditions = '/terms_and_conditions';
   static const String privacyPolicy = '/privacy_policy';
+  static const String staticPage = '/static_page';
 
   static const String orders = '/orders';
   static const String services = '/services';
