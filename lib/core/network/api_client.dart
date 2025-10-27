@@ -1,10 +1,7 @@
 import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
-import 'package:sanam_laundry/core/config/environment.dart';
-import 'package:sanam_laundry/core/network/api_exceptions.dart';
-import 'package:sanam_laundry/core/network/api_request_config.dart';
+import 'package:sanam_laundry/core/index.dart';
 // import 'package:sanam_laundry/core/network/retry_interceptor.dart';
-import 'package:sanam_laundry/core/utils/toast.dart';
 import 'package:sanam_laundry/data/services/auth.dart';
 import 'package:sanam_laundry/providers/auth.dart';
 
@@ -170,7 +167,8 @@ class _ErrorInterceptor extends Interceptor {
 
     if (exception.isUnauthorized) {
       AuthService.removeToken();
-      // TODO: handle logout / navigation if required.
+      final router = GoRouterSetup.router;
+      router.go(AppRoutes.getStarted);
     }
 
     handler.next(err);
