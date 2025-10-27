@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:sanam_laundry/core/index.dart';
 
 class AppOtpInput extends StatefulWidget {
