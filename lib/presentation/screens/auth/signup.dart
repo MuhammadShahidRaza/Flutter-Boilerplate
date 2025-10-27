@@ -17,7 +17,6 @@ class _SignUpState extends State<SignUp> {
   late final TextEditingController firstNameController;
   late final TextEditingController lastNameController;
   late final TextEditingController emailController;
-  late final TextEditingController phoneController;
   XFile? _profileImage;
   bool loading = false;
   String? selectedGender;
@@ -31,7 +30,6 @@ class _SignUpState extends State<SignUp> {
     firstNameController = TextEditingController();
     lastNameController = TextEditingController();
     emailController = TextEditingController();
-    phoneController = TextEditingController();
   }
 
   @override
@@ -39,52 +37,41 @@ class _SignUpState extends State<SignUp> {
     firstNameController.dispose();
     lastNameController.dispose();
     emailController.dispose();
-    phoneController.dispose();
     super.dispose();
   }
 
   Future<void> _submit() async {
-    try {
-      // if (_profileImage == null) {
-      //   AppToast.showToast("Please select a profile image.");
-      //   return;
-      // }
+    final phone = context.getParam("phone") ?? '';
+    if (phone.toString().isEmpty) return;
 
-      if (!_agreedTerms) {
-        AppToast.showToast("Please agree to the terms and conditions.");
-        return;
-      }
+    if (!_agreedTerms) {
+      AppToast.showToast("Please agree to the terms and conditions.");
+      return;
+    }
 
-      setState(() => loading = true);
+    setState(() => loading = true);
 
-      // device_type:Testing Tool
-      // device_token:abcdefghijklmnopqrstuvwxyz
-      // udid:123456789
-      // device_brand:Postman
-      // device_os:Linux
-      // app_version:1.0.0
+    // device_type:Testing Tool
+    // device_token:abcdefghijklmnopqrstuvwxyz
+    // udid:123456789
+    // device_brand:Postman
+    // device_os:Linux
+    // app_version:1.0.0
 
-      final user = await _authRepository.register(
-        email: emailController.text.trim(),
-        firstName: firstNameController.text.trim(),
-        lastName: lastNameController.text.trim(),
-        phone: phoneController.text.trim(),
-        gender: selectedGender,
-        profileImage: _profileImage,
+    final user = await _authRepository.register(
+      email: emailController.text.trim(),
+      firstName: firstNameController.text.trim(),
+      lastName: lastNameController.text.trim(),
+      phone: phone,
+      gender: selectedGender,
+      profileImage: _profileImage,
+    );
+    if (!mounted) return;
+    if (user != null) {
+      context.navigate(
+        AppRoutes.verification,
+        params: {'phone': phone, "isFromLogin": false},
       );
-      if (!mounted) return;
-      if (user != null) {
-        context.navigate(
-          AppRoutes.verification,
-          params: {'phone': phoneController.text.trim(), "isFromLogin": false},
-        );
-        // setState(() => loading = false);
-      }
-    } on Exception catch (error) {
-      print(error);
-      // setState(() => loading = false);
-      // context.navigate(AppRoutes.verification);
-    } finally {
       setState(() => loading = false);
     }
   }
@@ -150,8 +137,11 @@ class _SignUpState extends State<SignUp> {
           AppPhoneInput(
             title: Common.phoneNumber,
             hint: Common.enterYourPhoneNumber,
-            controller: phoneController,
+            controller: TextEditingController(
+              text: context.getParam("phone")?.toString() ?? '',
+            ),
             marginBottom: Dimens.spacingM,
+            enabled: false,
           ),
 
           AppCheckbox(
