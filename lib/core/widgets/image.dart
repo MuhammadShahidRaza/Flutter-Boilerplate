@@ -1,5 +1,6 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
+import 'package:sanam_laundry/core/index.dart';
 
 class AppImage extends StatelessWidget {
   final String path;
@@ -10,6 +11,8 @@ class AppImage extends StatelessWidget {
   final Widget? placeholder;
   final Widget? errorWidget;
   final VoidCallback? onTap;
+  final double? borderRadius;
+  final bool isCircular;
 
   const AppImage({
     super.key,
@@ -21,6 +24,8 @@ class AppImage extends StatelessWidget {
     this.placeholder,
     this.errorWidget,
     this.onTap,
+    this.borderRadius,
+    this.isCircular = false,
   });
 
   bool get _isLocalFile {
@@ -32,6 +37,10 @@ class AppImage extends StatelessWidget {
   }
 
   bool get _isAssetPath => path.startsWith('assets/');
+
+  Widget buildPlaceholder() {
+    return Image.asset(AppAssets.user, width: width, height: height, fit: fit);
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -45,8 +54,7 @@ class AppImage extends StatelessWidget {
         height: height,
         fit: fit,
         color: color,
-        errorBuilder: (_, __, ___) =>
-            errorWidget ?? const Icon(Icons.broken_image),
+        errorBuilder: (_, __, ___) => errorWidget ?? buildPlaceholder(),
       );
     } else if (_isLocalFile) {
       // 🟢 File image
@@ -56,11 +64,9 @@ class AppImage extends StatelessWidget {
         height: height,
         fit: fit,
         color: color,
-        errorBuilder: (_, __, ___) =>
-            errorWidget ?? const Icon(Icons.broken_image),
+        errorBuilder: (_, __, ___) => errorWidget ?? buildPlaceholder(),
       );
-    } else {
-      // 🟢 Network image
+    } else if (path.isNotEmpty) {
       image = Image.network(
         path,
         width: width,
@@ -84,15 +90,24 @@ class AppImage extends StatelessWidget {
                 ),
               );
         },
-        errorBuilder: (_, __, ___) =>
-            errorWidget ?? const Icon(Icons.broken_image),
+        errorBuilder: (_, __, ___) => errorWidget ?? buildPlaceholder(),
+      );
+    } else {
+      image = errorWidget ?? buildPlaceholder();
+    }
+
+    if (isCircular) {
+      image = ClipOval(child: image);
+    } else if (borderRadius != null) {
+      image = ClipRRect(
+        borderRadius: BorderRadius.circular(borderRadius!),
+        child: image,
       );
     }
 
     if (onTap != null) {
-      image = GestureDetector(onTap: onTap, child: image);
+      image = InkWell(onTap: onTap, child: image);
     }
-
     return image;
   }
 }
