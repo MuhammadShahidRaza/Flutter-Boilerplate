@@ -87,6 +87,13 @@ class _ContactUsState extends State<ContactUs> {
             child: Column(
               spacing: Dimens.spacingXS,
               children: [
+                AppText(
+                  Common.weAreHereToHelp,
+                  style: context.textTheme.bodyMedium,
+                  maxLines: 5,
+                  textAlign: TextAlign.center,
+                ),
+                SizedBox(height: Dimens.spacingM),
                 AppInput(
                   title: Common.fullName,
                   hint: Common.enterFullName,
