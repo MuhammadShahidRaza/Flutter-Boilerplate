@@ -32,7 +32,10 @@ class _LoginState extends State<Login> {
           params: {'phone': phoneController.text.trim(), 'isFromLogin': true},
         );
       } else if (message == "userNotFound") {
-        context.navigate(AppRoutes.signUp);
+        context.navigate(
+          AppRoutes.signUp,
+          params: {'phone': phoneController.text.trim()},
+        );
       } else if (message == "userNotVerified") {
         context.navigate(
           AppRoutes.verification,
