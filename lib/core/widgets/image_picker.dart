@@ -9,8 +9,9 @@ import 'package:sanam_laundry/presentation/index.dart';
 
 class ImagePickerBox extends StatefulWidget {
   final ValueChanged<XFile?>? onImagePicked;
+  final String? initialImagePath;
 
-  const ImagePickerBox({super.key, this.onImagePicked});
+  const ImagePickerBox({super.key, this.onImagePicked, this.initialImagePath});
 
   @override
   State<ImagePickerBox> createState() => _ImagePickerBoxState();
@@ -75,14 +76,13 @@ class _ImagePickerBoxState extends State<ImagePickerBox> {
               color: AppColors.secondary,
               padding: EdgeInsets.all(Dimens.spacingXS),
             ),
-            child: ClipRRect(
-              borderRadius: BorderRadius.circular(Dimens.radiusM),
-              child: AppImage(
-                path: _imageFile?.path ?? AppAssets.user,
-                width: 120,
-                height: 120,
-                fit: BoxFit.cover,
-              ),
+            child: AppImage(
+              path:
+                  _imageFile?.path ?? widget.initialImagePath ?? AppAssets.user,
+              width: 120,
+              height: 120,
+              fit: BoxFit.cover,
+              borderRadius: Dimens.radiusM,
             ),
           ),
           AppText(Common.uploadProfilePicture),
