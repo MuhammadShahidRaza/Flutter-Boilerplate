@@ -20,4 +20,6 @@ class Endpoints {
   static const String contactUs = "contact/create";
   static const String privacyPolicy = "content/privacy-policy";
   static const String termsAndConditions = "content/terms-conditions";
+  static const String deleteAccount = "user/delete-account";
+  static const String logout = "user/logout";
 }
