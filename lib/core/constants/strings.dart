@@ -6,14 +6,23 @@ class Common {
   static const resetPassword = "COMMON.RESET_PASSWORD";
   static const signUp = "COMMON.SIGN_UP";
   static const signIn = "COMMON.SIGN_IN";
+  static const weAreHereToHelp = "COMMON.WE_ARE_HERE_TO_HELP";
+  static const changeLanguage = "COMMON.CHANGE_LANGUAGE";
+  static const selectLanguageYouAreComfortableWith =
+      "COMMON.SELECT_LANGUAGE_YOU_ARE_COMFORTABLE_WITH";
+  static const areYouSureYouWantToLogout =
+      "COMMON.ARE_YOU_SURE_YOU_WANT_TO_LOGOUT";
   static const home = "COMMON.HOME";
   static const service = "COMMON.SERVICE";
   static const myOrders = "COMMON.MY_ORDERS";
   static const noDataAvailable = "COMMON.NO_DATA_AVAILABLE";
   static const myAccount = "COMMON.MY_ACCOUNT";
   static const myAddress = "COMMON.MY_ADDRESS";
+  static const signUpAgain = "COMMON.SIGN_UP_AGAIN";
   static const doYouWantToDeleteAccount =
       "COMMON.DO_YOU_WANT_TO_DELETE_ACCOUNT";
+  static const yourAccountHasBeenDeleted =
+      "COMMON.YOUR_ACCOUNT_HAS_BEEN_DELETED";
   static const guest = "COMMON.GUEST";
   static const deleteAccount = "COMMON.DELETE_ACCOUNT";
   static const continue_ = "COMMON.CONTINUE";
