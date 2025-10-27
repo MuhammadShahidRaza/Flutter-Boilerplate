@@ -20,6 +20,10 @@ class HomeAppBar extends StatelessWidget implements PreferredSizeWidget {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
 
+    void onProfileTap() {
+      context.navigate(AppRoutes.editProfile);
+    }
+
     return SafeArea(
       child: Padding(
         padding: const EdgeInsets.symmetric(
@@ -30,12 +34,17 @@ class HomeAppBar extends StatelessWidget implements PreferredSizeWidget {
           spacing: Dimens.spacingM,
           children: [
             // 👤 User avatar
-            ClipOval(
-              child: AppImage(
-                path: profileImage ?? AppAssets.user,
-                width: 45,
-                height: 45,
-              ),
+            Consumer<AuthProvider>(
+              builder: (context, auth, child) {
+                final profileImage = auth.user?.profileImage ?? AppAssets.user;
+                return AppImage(
+                  path: profileImage,
+                  width: 45,
+                  height: 45,
+                  onTap: onProfileTap,
+                  isCircular: true,
+                );
+              },
             ),
 
             Expanded(
@@ -48,6 +57,7 @@ class HomeAppBar extends StatelessWidget implements PreferredSizeWidget {
                     style: theme.textTheme.bodySmall?.copyWith(
                       color: AppColors.textSecondary,
                     ),
+                    onTap: onProfileTap,
                   ),
                   Row(
                     spacing: Dimens.spacingS,
@@ -63,10 +73,15 @@ class HomeAppBar extends StatelessWidget implements PreferredSizeWidget {
                               fontWeight: FontWeight.bold,
                               color: AppColors.bottomTabText,
                             ),
+                            onTap: onProfileTap,
                           );
                         },
                       ),
-                      AppText('👋', style: TextStyle(fontSize: Dimens.fontXL)),
+                      AppText(
+                        '👋',
+                        style: TextStyle(fontSize: Dimens.fontXL),
+                        onTap: onProfileTap,
+                      ),
                     ],
                   ),
                 ],
