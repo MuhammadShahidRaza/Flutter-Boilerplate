@@ -56,7 +56,7 @@ class _EditProfileState extends State<EditProfile> {
       firstName: firstNameController.text.trim(),
       lastName: lastNameController.text.trim(),
       gender: selectedGender,
-      profileImage: _profileImage!,
+      profileImage: _profileImage,
     );
     if (!mounted) return;
     if (user != null) {
@@ -97,6 +97,7 @@ class _EditProfileState extends State<EditProfile> {
               spacing: Dimens.spacingXS,
               children: [
                 ImagePickerBox(
+                  initialImagePath: user?.profileImage,
                   onImagePicked: (file) {
                     setState(() => _profileImage = file);
                   },
