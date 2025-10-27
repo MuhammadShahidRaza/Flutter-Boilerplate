@@ -73,6 +73,7 @@ class _VerificationState extends State<Verification> {
           imagePath: AppAssets.allSet,
           borderColor: AppColors.primary,
           borderWidth: 4,
+          dismissible: false,
           borderRadius: Dimens.radiusL,
           imageSize: 150,
           content: AppText(
@@ -92,15 +93,20 @@ class _VerificationState extends State<Verification> {
           title: Common.successfullyLoggedIn,
           imagePath: AppAssets.rightTick,
           spacing: Dimens.spacingMSmall,
+          dismissible: false,
           content: AppText(
             maxLines: 3,
+
             textAlign: TextAlign.center,
             Auth.gladToHadYouBack,
           ),
           crossAxisAlignment: CrossAxisAlignment.center,
           insetPadding: EdgeInsets.all(Dimens.spacingXXL),
         );
-        context.replacePage(AppRoutes.home);
+        Future.delayed(const Duration(seconds: 3), () {
+          if (!mounted) return;
+          context.replacePage(AppRoutes.home);
+        });
       }
     }
   }
