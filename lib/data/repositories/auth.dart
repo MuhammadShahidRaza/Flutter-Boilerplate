@@ -103,6 +103,26 @@ class AuthRepository {
     );
   }
 
+  Future deleteAccount() {
+    return ApiResponseHandler.handleRequest(
+      () => _apiService.delete(
+        Endpoints.deleteAccount,
+        config: const ApiRequestConfig(showErrorToast: false),
+      ),
+    );
+  }
+
+  Future<void> logout() async {
+    await ApiResponseHandler.handleRequest(
+      () => _apiService.post(
+        Endpoints.logout,
+        data: {"udid": "132323"},
+        config: const ApiRequestConfig(showErrorToast: false),
+      ),
+      onSuccess: (data, statusCode) => {AuthService.removeToken()},
+    );
+  }
+
   /// 🔹 VERIFY OTP
   Future<UserModel?> verifyOtp({
     required String phone,
