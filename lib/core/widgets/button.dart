@@ -16,6 +16,8 @@ class AppButton extends StatelessWidget {
   final TextStyle? iconStyle;
   final double? width;
   final bool isEnabled;
+  final EdgeInsetsGeometry? padding;
+  final Color? backgroundColor;
 
   const AppButton({
     super.key,
@@ -28,7 +30,9 @@ class AppButton extends StatelessWidget {
     this.isEnabled = true,
     this.width,
     this.textStyle,
+    this.padding,
     this.iconStyle,
+    this.backgroundColor,
   });
 
   @override
@@ -37,9 +41,11 @@ class AppButton extends StatelessWidget {
 
     final effectiveOnPressed = (!isEnabled || isLoading) ? null : onPressed;
 
-    final backgroundColor = type == AppButtonType.elevated
-        ? (isEnabled ? theme.colorScheme.primary : theme.disabledColor)
-        : null;
+    final background =
+        backgroundColor ??
+        (type == AppButtonType.elevated
+            ? (isEnabled ? theme.colorScheme.primary : theme.disabledColor)
+            : null);
 
     final defaultButtonStyle = ButtonStyle(
       minimumSize: WidgetStatePropertyAll(
@@ -50,8 +56,9 @@ class AppButton extends StatelessWidget {
           borderRadius: BorderRadius.circular(Dimens.radiusS),
         ),
       ),
-      backgroundColor: backgroundColor != null
-          ? WidgetStatePropertyAll(backgroundColor)
+      padding: WidgetStatePropertyAll(padding),
+      backgroundColor: background != null
+          ? WidgetStatePropertyAll(background)
           : null,
     );
 
@@ -97,10 +104,12 @@ class AppButton extends StatelessWidget {
                   color: iconStyle?.color ?? iconColor,
                 ),
               if (icon != null) const SizedBox(width: 8),
-              AppText(
-                title,
-                style: (textStyle ?? theme.textTheme.bodyLarge)?.copyWith(
-                  color: textStyle?.color ?? textColor,
+              Flexible(
+                child: AppText(
+                  title,
+                  style: (textStyle ?? theme.textTheme.bodyLarge)?.copyWith(
+                    color: textStyle?.color ?? textColor,
+                  ),
                 ),
               ),
             ],
