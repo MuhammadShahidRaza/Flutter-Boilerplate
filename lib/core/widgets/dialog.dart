@@ -3,7 +3,7 @@ import 'package:sanam_laundry/core/index.dart';
 import 'package:sanam_laundry/presentation/theme/index.dart';
 
 class AppDialog extends StatelessWidget {
-  final String title;
+  final String? title;
   final Widget content;
   final String? primaryButtonText;
   final VoidCallback? onPrimaryPressed;
@@ -24,12 +24,15 @@ class AppDialog extends StatelessWidget {
   final double borderWidth;
   final double? imageSize;
   final Color borderColor;
+  final bool showTwoPrimaryButtons;
+  final bool isLoading;
+
   final BoxFit imageFit;
   final Widget? headerWidget;
 
   const AppDialog({
     super.key,
-    required this.title,
+    this.title,
     required this.content,
     this.primaryButtonText,
     this.onPrimaryPressed,
@@ -38,6 +41,7 @@ class AppDialog extends StatelessWidget {
     this.insetPadding,
     this.dismissible = true,
     this.isEnabledButton = true,
+    this.isLoading = false,
     this.contentPadding,
     this.spacing,
     this.backgroundColor,
@@ -51,12 +55,13 @@ class AppDialog extends StatelessWidget {
     this.imageFit = BoxFit.contain,
     this.headerWidget,
     this.borderWidth = 0,
+    this.showTwoPrimaryButtons = false,
     this.borderColor = AppColors.transparent,
   });
 
   static Future<void> show(
     BuildContext context, {
-    required String title,
+    String? title,
     required Widget content,
     String? primaryButtonText,
     VoidCallback? onPrimaryPressed,
@@ -64,6 +69,7 @@ class AppDialog extends StatelessWidget {
     VoidCallback? onSecondaryPressed,
     bool isEnabledButton = true,
     bool dismissible = true,
+    bool showTwoPrimaryButtons = false,
     EdgeInsets? insetPadding,
     EdgeInsetsGeometry? contentPadding,
     double? spacing,
@@ -76,7 +82,7 @@ class AppDialog extends StatelessWidget {
     String? imagePath,
     double borderWidth = 0,
     Color borderColor = AppColors.transparent,
-
+    bool isLoading = false,
     double? imageSize,
     BoxFit imageFit = BoxFit.contain,
     Widget? headerWidget,
@@ -108,6 +114,8 @@ class AppDialog extends StatelessWidget {
         headerWidget: headerWidget,
         borderWidth: borderWidth,
         borderColor: borderColor,
+        isLoading: isLoading,
+        showTwoPrimaryButtons: showTwoPrimaryButtons,
       ),
     );
   }
@@ -149,29 +157,44 @@ class AppDialog extends StatelessWidget {
               ),
 
             // Title
-            AppText(title, style: effectiveTitleStyle),
+            if (title != null) AppText(title!, style: effectiveTitleStyle),
             // Content
             Flexible(child: SingleChildScrollView(child: content)),
 
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                if (secondaryButtonText != null)
-                  AppButton(
-                    isEnabled: isEnabledButton,
-                    type: AppButtonType.text,
-                    onPressed:
-                        onSecondaryPressed ?? () => Navigator.pop(context),
-                    title: secondaryButtonText!,
-                  ),
-                if (primaryButtonText != null)
-                  AppButton(
-                    isEnabled: isEnabledButton,
-                    title: primaryButtonText!,
-                    onPressed: onPrimaryPressed ?? () => Navigator.pop(context),
-                  ),
-              ],
-            ),
+            if (primaryButtonText != null || secondaryButtonText != null)
+              Row(
+                mainAxisAlignment: buttonAlignment,
+                spacing: Dimens.spacingS,
+                children: [
+                  if (secondaryButtonText != null)
+                    Expanded(
+                      child: AppButton(
+                        backgroundColor: showTwoPrimaryButtons
+                            ? AppColors.darkBlackOpacity
+                            : null,
+                        isEnabled: isEnabledButton,
+                        title: secondaryButtonText!,
+                        type: showTwoPrimaryButtons
+                            ? AppButtonType.elevated
+                            : AppButtonType.text,
+                        onPressed:
+                            onSecondaryPressed ?? () => Navigator.pop(context),
+                      ),
+                    ),
+
+                  if (primaryButtonText != null)
+                    Expanded(
+                      child: AppButton(
+                        isEnabled: isEnabledButton,
+                        title: primaryButtonText!,
+                        isLoading: isLoading,
+                        type: AppButtonType.elevated,
+                        onPressed:
+                            onPrimaryPressed ?? () => Navigator.pop(context),
+                      ),
+                    ),
+                ],
+              ),
           ],
         ),
       ),
