@@ -4,6 +4,7 @@ import 'package:sanam_laundry/core/index.dart';
 import 'package:sanam_laundry/presentation/index.dart';
 import 'package:sanam_laundry/presentation/screens/user/contact_us.dart';
 import 'package:sanam_laundry/presentation/screens/user/edit_profile.dart';
+import 'package:sanam_laundry/presentation/screens/user/language.dart';
 import 'package:sanam_laundry/presentation/screens/user/static_page.dart';
 
 class GoRouterSetup {
@@ -73,7 +74,7 @@ class GoRouterSetup {
             routes: [
               GoRoute(
                 path: AppRoutes.myAccount,
-                builder: (context, state) => const MyAccount(),
+                builder: (context, state) => MyAccount(),
               ),
             ],
           ),
@@ -92,6 +93,10 @@ class GoRouterSetup {
       GoRoute(
         path: AppRoutes.editProfile,
         builder: (context, state) => const EditProfile(),
+      ),
+      GoRoute(
+        path: AppRoutes.language,
+        builder: (context, state) => const ChangeLanguage(),
       ),
     ],
 
