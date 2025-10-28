@@ -20,6 +20,7 @@ class _SignUpState extends State<SignUp> {
   XFile? _profileImage;
   bool loading = false;
   String? selectedGender;
+  StaticPageModel? termsData;
   bool _agreedTerms = false;
 
   final genderOptions = [Common.male, Common.female, Common.other];
@@ -30,6 +31,7 @@ class _SignUpState extends State<SignUp> {
     firstNameController = TextEditingController();
     lastNameController = TextEditingController();
     emailController = TextEditingController();
+    _loadPage();
   }
 
   @override
@@ -38,6 +40,14 @@ class _SignUpState extends State<SignUp> {
     lastNameController.dispose();
     emailController.dispose();
     super.dispose();
+  }
+
+  Future<void> _loadPage() async {
+    final data = await _authRepository.privacyPolicy(Common.privacyPolicy);
+    if (!mounted) return;
+    setState(() {
+      termsData = data;
+    });
   }
 
   Future<void> _submit() async {
@@ -136,7 +146,7 @@ class _SignUpState extends State<SignUp> {
 
           AppPhoneInput(
             title: Common.phoneNumber,
-            hint: Common.enterYourPhoneNumber,
+            hint: Common.enterPhoneNumber,
             controller: TextEditingController(
               text: context.getParam("phone")?.toString() ?? '',
             ),
@@ -152,6 +162,7 @@ class _SignUpState extends State<SignUp> {
               final agreed = await AppTermsDialog.show(
                 context,
                 agreed: _agreedTerms,
+                termsData: termsData,
               );
               setState(() => _agreedTerms = agreed != null ? true : false);
             },
