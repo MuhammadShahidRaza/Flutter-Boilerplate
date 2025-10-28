@@ -2,7 +2,9 @@ import 'package:image_picker/image_picker.dart';
 import 'package:sanam_laundry/core/index.dart';
 import 'package:sanam_laundry/core/network/api_response.dart';
 import 'package:sanam_laundry/data/index.dart';
+import 'package:sanam_laundry/data/models/static_data.dart';
 import 'package:sanam_laundry/data/services/endpoints.dart';
+import 'package:sanam_laundry/providers/auth.dart';
 
 class AuthRepository {
   final ApiService _apiService = ApiService();
@@ -119,7 +121,9 @@ class AuthRepository {
         data: {"udid": "132323"},
         config: const ApiRequestConfig(showErrorToast: false),
       ),
-      onSuccess: (data, statusCode) => {AuthService.removeToken()},
+      onSuccess: (data, statusCode) async {
+        await AuthProvider().logout();
+      },
     );
   }
 
@@ -209,15 +213,19 @@ class AuthRepository {
     );
   }
 
-  Future privacyPolicy(name) async {
-    // final endpoint = switch (name) {
-    //   Common.termsAndConditions => Endpoints.termsAndConditions,
-    //   Common.privacyPolicy => Endpoints.privacyPolicy,
-    //   _ => Endpoints.privacyPolicy,
-    // };
+  Future<StaticPageModel?> privacyPolicy(name) async {
+    final endpoint = switch (name) {
+      Common.termsAndConditions => Endpoints.termsAndConditions,
+      Common.privacyPolicy => Endpoints.privacyPolicy,
+      _ => Endpoints.privacyPolicy,
+    };
 
     return await ApiResponseHandler.handleRequest(
-      () => _apiService.get(Endpoints.privacyPolicy),
+      () => _apiService.get(
+        endpoint,
+        config: const ApiRequestConfig(showErrorToast: false),
+      ),
+      onSuccess: (data, _) => StaticPageModel.fromJson(data),
     );
   }
 }
