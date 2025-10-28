@@ -61,7 +61,7 @@ class _LoginState extends State<Login> {
         children: [
           AppPhoneInput(
             title: Common.phoneNumber,
-            hint: Common.enterYourPhoneNumber,
+            hint: Common.enterPhoneNumber,
             controller: phoneController,
             marginBottom: Dimens.spacingM,
           ),
