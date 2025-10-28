@@ -4,16 +4,31 @@ import 'package:sanam_laundry/core/index.dart';
 import 'package:sanam_laundry/presentation/index.dart';
 import 'package:sanam_laundry/providers/auth.dart';
 
-class ChangeLanguage extends StatelessWidget {
+class ChangeLanguage extends StatefulWidget {
   const ChangeLanguage({super.key});
+
+  @override
+  State<ChangeLanguage> createState() => _ChangeLanguageState();
+}
+
+class _ChangeLanguageState extends State<ChangeLanguage> {
+  late String _selectedLangCode;
+
+  @override
+  void initState() {
+    super.initState();
+    final provider = context.read<AuthProvider>();
+    _selectedLangCode = provider.locale.languageCode;
+  }
 
   @override
   Widget build(BuildContext context) {
     final provider = context.watch<AuthProvider>();
+    final isFromSplash = context.getParam<bool>('isFromSplash') ?? false;
 
     return AppWrapper(
-      heading: Common.changeLanguage,
-      showBackButton: true,
+      heading: isFromSplash ? Common.chooseLanguage : Common.changeLanguage,
+      showBackButton: isFromSplash ? false : true,
       child: Stack(
         children: [
           // 🔹 Background watermark
@@ -34,34 +49,50 @@ class ChangeLanguage extends StatelessWidget {
             ),
           ),
 
-          // 🔹 Main content
+          // 🔹 Content
           Column(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            spacing: Dimens.spacingLarge,
             children: [
-              // Small description at the top
-              AppText(
-                Common.selectLanguageYouAreComfortableWith,
-                style: context.textTheme.bodyMedium,
-                maxLines: 5,
-                textAlign: TextAlign.center,
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  spacing: Dimens.spacingLarge,
+                  children: [
+                    AppText(
+                      Common.selectLanguageYouAreComfortableWith,
+                      style: context.textTheme.bodyMedium,
+                      maxLines: 5,
+                      textAlign: TextAlign.center,
+                    ),
+                    _LanguageTile(
+                      title: 'English',
+                      selected: _selectedLangCode == 'en',
+                      onTap: () => setState(() => _selectedLangCode = 'en'),
+                    ),
+                    _LanguageTile(
+                      title: 'Arabic (العربية)',
+                      selected: _selectedLangCode == 'ar',
+                      onTap: () => setState(() => _selectedLangCode = 'ar'),
+                    ),
+                  ],
+                ),
               ),
 
-              // Language options
-              Column(
-                spacing: Dimens.spacingLarge,
-                children: [
-                  _LanguageTile(
-                    title: 'English',
-                    selected: provider.locale.languageCode == 'en',
-                    onTap: () => provider.changeLanguage(Language.en),
-                  ),
-                  _LanguageTile(
-                    title: 'Arabic (العربية)',
-                    selected: provider.locale.languageCode == 'ar',
-                    onTap: () => provider.changeLanguage(Language.ar),
-                  ),
-                ],
+              // 🔹 Save button
+              AppButton(
+                title: Common.save,
+                onPressed: () {
+                  // apply the selected language
+                  if (_selectedLangCode == 'ar') {
+                    provider.changeLanguage(Language.ar);
+                  } else {
+                    provider.changeLanguage(Language.en);
+                  }
+
+                  if (isFromSplash) {
+                    context.replacePage(AppRoutes.onboarding);
+                  }
+                  // context.back();
+                },
               ),
             ],
           ),
@@ -99,14 +130,12 @@ class _LanguageTile extends StatelessWidget {
           color: selected ? AppColors.primary : AppColors.bottomTabText,
         ),
       ),
-
       trailing: selected
           ? const Icon(Icons.check_circle, color: AppColors.primary)
           : Container(
               width: 20,
               height: 20,
               decoration: BoxDecoration(
-                color: Colors.transparent,
                 borderRadius: BorderRadius.circular(12),
                 border: Border.all(color: AppColors.border, width: 1),
               ),
