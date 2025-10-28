@@ -36,9 +36,14 @@ class _EditProfileState extends State<EditProfile> {
     lastNameController = TextEditingController(text: user?.lastName ?? '');
     emailController = TextEditingController(text: user?.email ?? '');
     phoneController = TextEditingController(text: user?.phone ?? '');
+    final gender = user?.gender?.toLowerCase();
     selectedGender = genderOptions.firstWhere(
-      (g) => g.toLowerCase() == (user?.gender ?? '').toLowerCase(),
+      (g) => g.toLowerCase() == gender,
+      orElse: () => '',
     );
+    if (selectedGender!.isEmpty) {
+      selectedGender = null;
+    }
   }
 
   @override
@@ -141,7 +146,7 @@ class _EditProfileState extends State<EditProfile> {
 
                 AppPhoneInput(
                   title: Common.phoneNumber,
-                  hint: Common.enterYourPhoneNumber,
+                  hint: Common.enterPhoneNumber,
                   controller: phoneController,
                   marginBottom: Dimens.spacingM,
                   enabled: false,
