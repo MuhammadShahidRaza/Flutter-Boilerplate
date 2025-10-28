@@ -129,6 +129,7 @@ class _AppPhoneInputState extends State<AppPhoneInput> {
               leadingPadding: 20,
             ),
             ignoreBlank: false,
+            countries: ['SA'],
             autoValidateMode: AutovalidateMode.onUserInteraction,
             selectorTextStyle: context.textTheme.bodyMedium,
             formatInput: false,
