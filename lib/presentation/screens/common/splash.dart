@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 import 'package:sanam_laundry/providers/auth.dart';
 import 'package:sanam_laundry/core/index.dart';
@@ -34,15 +33,20 @@ class _SplashState extends State<Splash> {
     final authProvider = context.read<AuthProvider>();
     await authProvider.loadLoginStatus();
 
-    if (!mounted) return;
-
+    final hasLanguage = await authProvider.hasSelectedLanguage();
     final route = authProvider.isLoggedIn
         ? AppRoutes.home
+        : !hasLanguage
+        ? AppRoutes.language
         : !authProvider.hasVisitedApp
         ? AppRoutes.onboarding
         : AppRoutes.getStarted;
 
-    context.go(route);
+    if (!mounted) return;
+    context.replacePage(
+      route,
+      params: !hasLanguage ? {'isFromSplash': true} : {},
+    );
   }
 
   @override
