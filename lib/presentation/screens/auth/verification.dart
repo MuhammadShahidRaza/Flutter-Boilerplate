@@ -112,18 +112,22 @@ class _VerificationState extends State<Verification> {
   }
 
   void _onOtpCompleted(String code) {
+    final isComplete = code.length == 4;
     setState(() {
       _otpCode = code;
-      _isOtpComplete = code.length == 4; // dynamically match OTP length
+      _isOtpComplete = isComplete;
     });
+    if (isComplete) {
+      FocusScope.of(context).unfocus();
+    }
   }
 
   void _onResendPressed() async {
     if (_secondsRemaining == 0) {
+      _startTimer();
       await _authRepository.login(
         phone: context.getParam<String>('phone') ?? '',
       );
-      _startTimer();
     }
   }
 
