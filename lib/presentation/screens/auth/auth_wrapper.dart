@@ -13,6 +13,7 @@ class AuthWrapper extends StatelessWidget {
   final Widget child;
   final String buttonText;
   final VoidCallback onSubmit;
+  final VoidCallback? backButtonPress;
   final VoidCallback? bottomButtonPress;
   final String bottomButtonText;
   final String bottomText;
@@ -38,6 +39,7 @@ class AuthWrapper extends StatelessWidget {
     this.bottomText = "",
     this.isButtonEnabled = true,
     this.bottomButtonPress,
+    this.backButtonPress,
     this.heading,
     this.showBackButton = false,
     this.isLoading = false,
@@ -95,7 +97,8 @@ class AuthWrapper extends StatelessWidget {
                               borderWidth: 1,
                               size: Dimens.iconS,
                               backgroundColor: AppColors.lightWhite,
-                              onTap: () => context.pop(context),
+                              onTap:
+                                  backButtonPress ?? () => context.pop(context),
                             ),
                           ),
                         ),
