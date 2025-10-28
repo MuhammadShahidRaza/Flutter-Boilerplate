@@ -111,7 +111,7 @@ class _ContactUsState extends State<ContactUs> {
 
                 AppPhoneInput(
                   title: Common.phoneNumber,
-                  hint: Common.enterYourPhoneNumber,
+                  hint: Common.enterPhoneNumber,
                   controller: phoneController,
                   enabled: false,
                   marginBottom: Dimens.spacingM,
