@@ -21,10 +21,13 @@ class MyApp extends StatelessWidget {
       supportedLocales: AppLocalizationSetup().supportedLocales,
       localizationsDelegates: AppLocalizationSetup.localizationsDelegates,
       localeResolutionCallback: AppLocalizationSetup.resolveLocale,
-      // builder: (context, child) {
-      //   if (child == null) return const SizedBox.shrink();
-      //   return AppLoaderOverlay(child: child);
-      // },
+      builder: (context, child) {
+        final Widget content = child ?? const SizedBox.shrink();
+        return MediaQuery.withNoTextScaling(
+          // child: AppLoaderOverlay(child: content),
+          child: content,
+        );
+      },
     );
   }
 }
