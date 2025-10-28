@@ -171,10 +171,10 @@ class Common {
   static const retry = "COMMON.RETRY";
   static const sessionExpired = "COMMON.SESSION_EXPIRED";
   static const createAnAccount = "COMMON.CREATE_AN_ACCOUNT";
-  static const enterYourEmail = "COMMON.ENTER_YOUR_EMAIL";
+  static const enterYourEmail = "COMMON.ENTER_EMAIL_ADDRESS";
   static const enterYourName = "COMMON.ENTER_YOUR_NAME";
-  static const enterYourPassword = "COMMON.ENTER_YOUR_PASSWORD";
-  static const enterYourPhoneNumber = "COMMON.ENTER_YOUR_PHONE_NUMBER";
+  static const enterYourPassword = "COMMON.ENTER_PASSWORD";
+  static const enterPhoneNumber = "COMMON.ENTER_PHONE_NUMBER";
   static const enterFirstName = "COMMON.ENTER_FIRST_NAME";
   static const enterLastName = "COMMON.ENTER_LAST_NAME";
   static const enterNewPassword = "COMMON.ENTER_NEW_PASSWORD";
