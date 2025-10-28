@@ -11,6 +11,7 @@ class AppWrapper extends StatelessWidget {
   final bool showBackButton;
   final VoidCallback? onBackPressed;
   final String? heading;
+  final ScrollPhysics? scrollPhysics;
   final Color? backgroundColor;
   final Widget? bottomNavigationBar;
   final bool useScaffold;
@@ -25,6 +26,7 @@ class AppWrapper extends StatelessWidget {
     // this.onWillPop,
     this.showBackButton = false,
     this.onBackPressed,
+    this.scrollPhysics,
     this.heading,
     this.backgroundColor,
     this.bottomNavigationBar,
@@ -56,7 +58,9 @@ class AppWrapper extends StatelessWidget {
               horizontal: Dimens.screenMarginHorizontal,
               vertical: Dimens.screenMarginVertical,
             ),
-        child: scrollable ? SingleChildScrollView(child: child) : child,
+        child: scrollable
+            ? SingleChildScrollView(physics: scrollPhysics, child: child)
+            : child,
       ),
     );
 
