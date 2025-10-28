@@ -115,7 +115,7 @@ class _MyAccountState extends State<MyAccount> {
                 setState(() {
                   isLoading = false;
                 });
-                AuthService.removeToken();
+                AuthProvider().logout();
                 AppDialog.show(
                   context,
                   borderColor: AppColors.primary,
@@ -151,6 +151,7 @@ class _MyAccountState extends State<MyAccount> {
     return AppWrapper(
       scrollable: true,
       safeArea: false,
+      scrollPhysics: ClampingScrollPhysics(),
       padding: EdgeInsets.zero,
       child: Stack(
         children: [
