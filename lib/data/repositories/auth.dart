@@ -2,7 +2,6 @@ import 'package:image_picker/image_picker.dart';
 import 'package:sanam_laundry/core/index.dart';
 import 'package:sanam_laundry/core/network/api_response.dart';
 import 'package:sanam_laundry/data/index.dart';
-import 'package:sanam_laundry/data/models/static_data.dart';
 import 'package:sanam_laundry/data/services/endpoints.dart';
 import 'package:sanam_laundry/providers/auth.dart';
 
