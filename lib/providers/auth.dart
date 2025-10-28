@@ -14,6 +14,11 @@ class AuthProvider extends ChangeNotifier {
   bool get hasVisitedApp => _hasVisitedApp;
   Locale get locale => Locale(_language.name);
 
+  Future<bool> hasSelectedLanguage() async {
+    final lang = await AuthService.loadLanguage();
+    return lang != null;
+  }
+
   Future<void> loadLoginStatus() async {
     final isVisted = await AuthService.hasVisitedApp();
     final token = await AuthService.loadToken();
