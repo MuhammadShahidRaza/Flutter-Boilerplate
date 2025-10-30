@@ -305,7 +305,7 @@
     "INVALID_TOKEN": "Invalid Token",
     "MISSING_PARAMETERS": "Missing Parameters",
     "NOT_IMPLEMENTED": "Not Implemented",
-    "UNEXPECTED_ERROR": "Unexpected Error",
+  "UNEXPECTED_ERROR": "We couldn't complete your request. Please try again in a moment.",
     "BAD_REQUEST": "Bad Request",
     "FORBIDDEN": "Forbidden",
     "SERVICE_UNAVAILABLE": "Service Unavailable",
@@ -325,8 +325,8 @@
     "MISSING_RESOURCE": "Missing Resource",
     "UNPROCESSABLE_ENTITY": "Unprocessable Entity",
     "UNAUTHORIZED_REQUEST": "Unauthorized Request",
-    "INVALID_RESPONSE": "Invalid Response",
-    "UNEXPECTED_RESPONSE": "Unexpected Response",
+  "INVALID_RESPONSE": "Invalid Response",
+  "UNEXPECTED_RESPONSE": "Received an unexpected response from the server. Please try again.",
     "MISSING_PERMISSIONS": "Missing Permissions",
     "NETWORK_ERROR": "Network Error",
     "INVALID_FORMAT": "Invalid Format",
@@ -342,7 +342,11 @@
     "INVALID_CONTENT": "Invalid Content",
     "INVALID_ID": "Invalid ID",
     "INVALID_SESSION": "Invalid Session",
-    "INVALID_DOMAIN": "Invalid Domain"
+    "INVALID_DOMAIN": "Invalid Domain",
+    "CONNECTION_TIMEOUT": "Connection timeout. Please try again.",
+    "CANNOT_VERIFY_CERTIFICATE": "Cannot verify server certificate.",
+    "REQUEST_CANCELLED": "Request cancelled.",
+    "SECURE_CONNECTION_FAILED": "Secure connection failed. Please ensure your network is trusted and try again."
   },
   "VALIDATION_MESSAGES": {
     "INVALID_EMAIL_FORMAT": "Invalid email format",
