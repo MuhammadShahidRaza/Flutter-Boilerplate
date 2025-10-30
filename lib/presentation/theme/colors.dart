@@ -75,5 +75,6 @@ class AppColors {
   static const Color transparent = Colors.transparent;
   static const Color darkBlackOpacity = Color.fromRGBO(2, 2, 2, 0.8);
   static const Color mediumBlackOpacity = Color.fromRGBO(2, 2, 2, 0.6);
+  static const Color lightBlackOpacity = Color.fromRGBO(2, 2, 2, 0.34);
   static const Color whiteOpacity = Color.fromRGBO(255, 255, 255, 0.4);
 }
