@@ -24,8 +24,7 @@ class MyApp extends StatelessWidget {
       builder: (context, child) {
         final Widget content = child ?? const SizedBox.shrink();
         return MediaQuery.withNoTextScaling(
-          // child: AppLoaderOverlay(child: content),
-          child: content,
+          child: AppLoaderOverlay(child: content),
         );
       },
     );
