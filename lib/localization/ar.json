@@ -302,7 +302,7 @@
     "INVALID_TOKEN": "رمز غير صالح",
     "MISSING_PARAMETERS": "المعلمات مفقودة",
     "NOT_IMPLEMENTED": "غير منفذ",
-    "UNEXPECTED_ERROR": "خطأ غير متوقع",
+  "UNEXPECTED_ERROR": "تعذر إكمال طلبك. يرجى المحاولة مرة أخرى بعد قليل.",
     "BAD_REQUEST": "طلب خاطئ",
     "FORBIDDEN": "ممنوع",
     "SERVICE_UNAVAILABLE": "الخدمة غير متوفرة",
@@ -322,8 +322,8 @@
     "MISSING_RESOURCE": "المورد مفقود",
     "UNPROCESSABLE_ENTITY": "كيان غير قابل للمعالجة",
     "UNAUTHORIZED_REQUEST": "طلب غير مصرح به",
-    "INVALID_RESPONSE": "استجابة غير صالحة",
-    "UNEXPECTED_RESPONSE": "استجابة غير متوقعة",
+  "INVALID_RESPONSE": "استجابة غير صالحة",
+  "UNEXPECTED_RESPONSE": "تلقينا استجابة غير متوقعة من الخادم. يرجى المحاولة مرة أخرى.",
     "MISSING_PERMISSIONS": "أذونات مفقودة",
     "NETWORK_ERROR": "خطأ في الشبكة",
     "INVALID_FORMAT": "تنسيق غير صالح",
@@ -339,7 +339,11 @@
     "INVALID_CONTENT": "محتوى غير صالح",
     "INVALID_ID": "معرّف غير صالح",
     "INVALID_SESSION": "جلسة غير صالحة",
-    "INVALID_DOMAIN": "نطاق غير صالح"
+    "INVALID_DOMAIN": "نطاق غير صالح",
+    "CONNECTION_TIMEOUT": "انتهت مهلة الاتصال. يرجى المحاولة مرة أخرى.",
+    "CANNOT_VERIFY_CERTIFICATE": "تعذر التحقق من شهادة الخادم.",
+    "REQUEST_CANCELLED": "تم إلغاء الطلب.",
+    "SECURE_CONNECTION_FAILED": "فشل الاتصال الآمن. يرجى التأكد من أن شبكتك موثوقة ثم حاول مرة أخرى."
   },
   "VALIDATION_MESSAGES": {
     "INVALID_EMAIL_FORMAT": "تنسيق البريد الإلكتروني غير صالح",
