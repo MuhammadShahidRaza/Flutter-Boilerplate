@@ -57,16 +57,16 @@ class GoRouterSetup {
           StatefulShellBranch(
             routes: [
               GoRoute(
-                path: AppRoutes.orders,
-                builder: (context, state) => const Orders(),
+                path: AppRoutes.services,
+                builder: (context, state) => const Services(),
               ),
             ],
           ),
           StatefulShellBranch(
             routes: [
               GoRoute(
-                path: AppRoutes.services,
-                builder: (context, state) => const Services(),
+                path: AppRoutes.orders,
+                builder: (context, state) => const Orders(),
               ),
             ],
           ),
