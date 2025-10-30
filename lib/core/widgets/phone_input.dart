@@ -101,6 +101,7 @@ class _AppPhoneInputState extends State<AppPhoneInput> {
           InternationalPhoneNumberInput(
             key: _fieldKey,
             initialValue: _number,
+            maxLength: 9, //FOR SA PHONE NUMBERS
             isEnabled: widget.enabled,
             onInputChanged: (PhoneNumber number) {
               setState(() => _number = number);
