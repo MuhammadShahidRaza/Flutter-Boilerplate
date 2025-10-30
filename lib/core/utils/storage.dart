@@ -1,4 +1,6 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class Storage {
   // ✅ Android ke liye encryptedSharedPreferences enable
@@ -6,6 +8,22 @@ class Storage {
   static const _storage = FlutterSecureStorage(
     aOptions: AndroidOptions(encryptedSharedPreferences: true),
   );
+
+  static const _firstInstallFlag = '__sanam_laundry_storage_initialized';
+
+  /// Ensure secure storage is wiped the first time the app runs after install.
+  static Future<void> initialize() async {
+    final prefs = await SharedPreferences.getInstance();
+    final alreadyInitialized = prefs.getBool(_firstInstallFlag) ?? false;
+    if (alreadyInitialized) return;
+
+    try {
+      await _storage.deleteAll();
+      await prefs.setBool(_firstInstallFlag, true);
+    } catch (error) {
+      debugPrint('Failed to clear secure storage on first launch: $error');
+    }
+  }
 
   // ✅ Set string
   static Future<void> addDataToStorage(String key, String value) =>
