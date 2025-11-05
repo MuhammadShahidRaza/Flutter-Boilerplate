@@ -3,7 +3,7 @@ import 'package:provider/provider.dart';
 import 'package:sanam_laundry/core/index.dart';
 import 'package:sanam_laundry/data/index.dart';
 import 'package:sanam_laundry/presentation/index.dart';
-import 'package:sanam_laundry/providers/auth.dart';
+import 'package:sanam_laundry/providers/index.dart';
 
 class MyAccount extends StatefulWidget {
   const MyAccount({super.key});
@@ -272,9 +272,10 @@ class _MyAccountState extends State<MyAccount> {
           // 🔹 Profile image
           Positioned(
             top: 110, // half overlaps header
-            child: Consumer<AuthProvider>(
-              builder: (context, auth, child) {
-                final profileImage = auth.user?.profileImage ?? AppAssets.user;
+            child: Consumer<UserProvider>(
+              builder: (context, provider, child) {
+                final profileImage =
+                    provider.user?.profileImage ?? AppAssets.user;
                 return AppImage(
                   path: profileImage,
                   height: 90,
@@ -288,12 +289,12 @@ class _MyAccountState extends State<MyAccount> {
           // 🔹 Name / info below avatar
           Positioned(
             top: 210, // adjust spacing below avatar
-            child: Consumer<AuthProvider>(
-              builder: (context, auth, child) {
-                final name = auth.fullName.isNotEmpty
-                    ? auth.fullName
+            child: Consumer<UserProvider>(
+              builder: (context, provider, child) {
+                final name = provider.fullName.isNotEmpty
+                    ? provider.fullName
                     : Common.guest;
-                final customerId = auth.user?.customerId ?? '-';
+                final customerId = provider.user?.customerId ?? '-';
                 return Column(
                   spacing: Dimens.spacingS,
                   children: [
