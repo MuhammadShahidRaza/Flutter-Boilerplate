@@ -1,22 +1,27 @@
 import 'package:flutter/material.dart';
 import 'package:sanam_laundry/data/index.dart';
 
-enum Language { en, ar }
-
 class UserProvider extends ChangeNotifier {
   UserModel? _user;
 
   UserModel? get user => _user;
+  bool get hasUser => _user != null;
 
   Future<void> loadUserData() async {
-    final storedUser = await AuthService.loadUser();
+    final storedUser = await UserService.loadUser();
     _user = storedUser;
     notifyListeners();
   }
 
   Future<void> updateUser(UserModel user) async {
-    await AuthService.saveUser(user);
+    await UserService.saveUser(user);
     _user = user;
+    notifyListeners();
+  }
+
+  /// Clear user-related state (use on logout)
+  void clear() {
+    _user = null;
     notifyListeners();
   }
 
