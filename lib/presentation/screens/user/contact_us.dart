@@ -3,7 +3,7 @@ import 'package:provider/provider.dart';
 import 'package:sanam_laundry/core/index.dart';
 import 'package:sanam_laundry/data/index.dart';
 import 'package:sanam_laundry/presentation/index.dart';
-import 'package:sanam_laundry/providers/auth.dart';
+import 'package:sanam_laundry/providers/index.dart';
 
 class ContactUs extends StatefulWidget {
   const ContactUs({super.key});
@@ -25,7 +25,7 @@ class _ContactUsState extends State<ContactUs> {
   @override
   void initState() {
     super.initState();
-    final authUser = context.read<AuthProvider>();
+    final authUser = context.read<UserProvider>();
     user = authUser.user;
     fullNameController = TextEditingController(text: authUser.fullName);
     emailController = TextEditingController(text: user?.email);
