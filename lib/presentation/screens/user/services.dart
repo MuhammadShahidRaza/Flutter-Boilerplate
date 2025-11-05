@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:sanam_laundry/core/index.dart';
 import 'package:sanam_laundry/presentation/index.dart';
 
 class Services extends StatefulWidget {
@@ -50,17 +51,22 @@ class _ServicesState extends State<Services> {
     await Future.delayed(const Duration(milliseconds: 800));
     final data = switch (categoryId) {
       "1" => [
-        {"id": "11", "name": "Washing"},
-        {"id": "12", "name": "Ironing"},
-        {"id": "13", "name": "Dry Cleaning"},
+        {"id": "11", "name": "Washing", "image": AppAssets.getStarted},
+        {"id": "12", "name": "Ironing", "image": AppAssets.onboardingOne},
+        {
+          "id": "13",
+          "name": "Dry Cleaning",
+          "image": AppAssets.onboardingThree,
+        },
+        {"id": "14", "name": "Stitching", "image": AppAssets.user},
       ],
       "2" => [
-        {"id": "21", "name": "Stitching"},
-        {"id": "22", "name": "Alteration"},
+        {"id": "21", "name": "Stitching", "image": AppAssets.user},
+        {"id": "22", "name": "Alteration", "image": AppAssets.logo},
       ],
       "3" => [
-        {"id": "31", "name": "Polish"},
-        {"id": "32", "name": "Repair"},
+        {"id": "31", "name": "Polish", "image": AppAssets.logo},
+        {"id": "32", "name": "Repair", "image": AppAssets.logo},
       ],
       _ => [],
     };
@@ -73,11 +79,16 @@ class _ServicesState extends State<Services> {
 
   @override
   Widget build(BuildContext context) {
+    final bool isFromHome = context.getParam<bool>('isFromHome') ?? false;
+
     return AppWrapper(
       heading: "Services",
-      // showBackButton: true,
+      safeArea: false,
+      showBackButton: isFromHome,
+      padding: EdgeInsets.zero,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
+        spacing: Dimens.spacingMSmall,
         children: [
           // 🔹 Category Horizontal List
           // if (loadingCategories)
@@ -88,72 +99,31 @@ class _ServicesState extends State<Services> {
           //     ),
           //   )
           // else
-          SizedBox(
-            height: 60,
-            child: ListView.separated(
-              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-              scrollDirection: Axis.horizontal,
-              itemCount: categories.length,
-              separatorBuilder: (_, __) => const SizedBox(width: 10),
-              itemBuilder: (context, index) {
-                final category = categories[index];
-                final isSelected = category["id"] == selectedCategoryId;
-
-                return GestureDetector(
-                  onTap: () {
-                    if (selectedCategoryId != category["id"]) {
-                      setState(() => selectedCategoryId = category["id"]);
-                      _loadServices(category["id"]);
-                    }
-                  },
-                  child: Container(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 16,
-                      vertical: 10,
-                    ),
-                    decoration: BoxDecoration(
-                      color: isSelected ? Colors.blue : Colors.grey.shade200,
-                      borderRadius: BorderRadius.circular(20),
-                    ),
-                    child: Center(
-                      child: Text(
-                        category["name"],
-                        style: TextStyle(
-                          color: isSelected ? Colors.white : Colors.black,
-                          fontWeight: FontWeight.w600,
-                        ),
-                      ),
-                    ),
-                  ),
-                );
-              },
-            ),
+          TabList(
+            list: categories,
+            selectedId: selectedCategoryId,
+            onTap: (id) {
+              if (selectedCategoryId != id) {
+                setState(() => selectedCategoryId = id);
+                _loadServices(id);
+              }
+            },
           ),
-
-          const SizedBox(height: 10),
 
           // 🔹 Services List
           Expanded(
             child: loadingServices
                 ? const Center(child: CircularProgressIndicator())
                 : services.isEmpty
-                ? const Center(child: Text("No services available"))
+                ? const Center(child: AppText("No services available"))
                 : ListView.builder(
                     padding: const EdgeInsets.symmetric(horizontal: 16),
                     itemCount: services.length,
                     itemBuilder: (context, index) {
                       final service = services[index];
-                      return Card(
-                        child: ListTile(
-                          title: Text(service["name"]),
-                          trailing: const Icon(
-                            Icons.arrow_forward_ios,
-                            size: 16,
-                          ),
-                          onTap: () {
-                            // Navigate to service detail or add to cart
-                          },
-                        ),
+                      return ServiceCard(
+                        service: service,
+                        isFromHome: isFromHome,
                       );
                     },
                   ),
