@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:sanam_laundry/core/index.dart';
 import 'package:sanam_laundry/presentation/index.dart';
-import 'package:sanam_laundry/providers/auth.dart';
+import 'package:sanam_laundry/providers/app.dart';
 
 class ChangeLanguage extends StatefulWidget {
   const ChangeLanguage({super.key});
@@ -17,13 +17,13 @@ class _ChangeLanguageState extends State<ChangeLanguage> {
   @override
   void initState() {
     super.initState();
-    final provider = context.read<AuthProvider>();
+    final provider = context.read<AppProvider>();
     _selectedLangCode = provider.locale.languageCode;
   }
 
   @override
   Widget build(BuildContext context) {
-    final provider = context.watch<AuthProvider>();
+    final provider = context.watch<AppProvider>();
     final isFromSplash = context.getParam<bool>('isFromSplash') ?? false;
 
     return AppWrapper(
