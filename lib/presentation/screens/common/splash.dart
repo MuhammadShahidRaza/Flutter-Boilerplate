@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:sanam_laundry/providers/auth.dart';
+import 'package:sanam_laundry/providers/app.dart';
 import 'package:sanam_laundry/core/index.dart';
 import 'package:video_player/video_player.dart';
 
@@ -31,9 +32,10 @@ class _SplashState extends State<Splash> {
     if (!mounted) return;
 
     final authProvider = context.read<AuthProvider>();
+    final appProvider = context.read<AppProvider>();
     await authProvider.loadLoginStatus();
 
-    final hasLanguage = await authProvider.hasSelectedLanguage();
+    final hasLanguage = await appProvider.hasSelectedLanguage();
     final route = authProvider.isLoggedIn
         ? AppRoutes.home
         : !hasLanguage
