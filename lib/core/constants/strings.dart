@@ -354,6 +354,12 @@ class ErrorMessages {
   static const invalidId = "ERROR_MESSAGES.INVALID_ID";
   static const invalidSession = "ERROR_MESSAGES.INVALID_SESSION";
   static const invalidDomain = "ERROR_MESSAGES.INVALID_DOMAIN";
+  static const connectionTimeout = "ERROR_MESSAGES.CONNECTION_TIMEOUT";
+  static const cannotVerifyCertificate =
+      "ERROR_MESSAGES.CANNOT_VERIFY_CERTIFICATE";
+  static const requestCancelled = "ERROR_MESSAGES.REQUEST_CANCELLED";
+  static const secureConnectionFailed =
+      "ERROR_MESSAGES.SECURE_CONNECTION_FAILED";
 }
 
 class ValidationMessages {
