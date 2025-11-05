@@ -3,13 +3,13 @@ import 'package:provider/provider.dart';
 import 'package:sanam_laundry/core/index.dart';
 import 'package:sanam_laundry/localization/index.dart';
 import 'package:sanam_laundry/presentation/index.dart';
-import 'package:sanam_laundry/providers/auth.dart';
+import 'package:sanam_laundry/providers/app.dart';
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
   @override
   Widget build(BuildContext context) {
-    final locale = context.watch<AuthProvider>().locale;
+    final locale = context.watch<AppProvider>().locale;
     return MaterialApp.router(
       routerConfig: GoRouterSetup.router,
       debugShowCheckedModeBanner: false,
