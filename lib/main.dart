@@ -4,7 +4,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 import 'package:sanam_laundry/app.dart';
 import 'package:sanam_laundry/core/index.dart';
-import 'package:sanam_laundry/providers/index.dart';
+import 'package:sanam_laundry/providers/all_providers.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
