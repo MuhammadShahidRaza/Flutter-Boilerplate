@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:sanam_laundry/core/index.dart';
 import 'package:sanam_laundry/presentation/index.dart';
-import 'package:sanam_laundry/providers/auth.dart';
+import 'package:sanam_laundry/providers/index.dart';
 
 class HomeAppBar extends StatelessWidget implements PreferredSizeWidget {
   final String? userName;
@@ -34,9 +34,10 @@ class HomeAppBar extends StatelessWidget implements PreferredSizeWidget {
           spacing: Dimens.spacingM,
           children: [
             // 👤 User avatar
-            Consumer<AuthProvider>(
-              builder: (context, auth, child) {
-                final profileImage = auth.user?.profileImage ?? AppAssets.user;
+            Consumer<UserProvider>(
+              builder: (context, provider, child) {
+                final profileImage =
+                    provider.user?.profileImage ?? AppAssets.user;
                 return AppImage(
                   path: profileImage,
                   width: 45,
@@ -62,10 +63,10 @@ class HomeAppBar extends StatelessWidget implements PreferredSizeWidget {
                   Row(
                     spacing: Dimens.spacingS,
                     children: [
-                      Consumer<AuthProvider>(
-                        builder: (context, user, child) {
-                          final name = user.fullName.isNotEmpty
-                              ? user.fullName
+                      Consumer<UserProvider>(
+                        builder: (context, provider, child) {
+                          final name = provider.fullName.isNotEmpty == true
+                              ? provider.fullName
                               : Common.guest;
                           return AppText(
                             name,

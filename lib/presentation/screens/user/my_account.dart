@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:sanam_laundry/core/index.dart';
+import 'package:sanam_laundry/core/utils/session.dart';
 import 'package:sanam_laundry/data/index.dart';
 import 'package:sanam_laundry/presentation/index.dart';
 import 'package:sanam_laundry/providers/index.dart';
@@ -235,6 +236,7 @@ class _MyAccountState extends State<MyAccount> {
                       onSecondaryPressed: () => {context.back()},
                       onPrimaryPressed: () async {
                         context.replacePage(AppRoutes.getStarted);
+                        // await performLogout(context);
                         _authRepository.logout();
                       },
                       crossAxisAlignment: CrossAxisAlignment.center,

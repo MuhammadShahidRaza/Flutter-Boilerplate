@@ -6,7 +6,7 @@ import 'package:sanam_laundry/core/extensions/index.dart';
 import 'package:sanam_laundry/core/utils/index.dart';
 import 'package:sanam_laundry/core/widgets/index.dart';
 import 'package:sanam_laundry/presentation/theme/index.dart';
-import 'package:sanam_laundry/providers/auth.dart';
+import 'package:sanam_laundry/providers/app.dart';
 
 class AppPhoneInput extends StatefulWidget {
   final String title;
@@ -108,7 +108,7 @@ class _AppPhoneInputState extends State<AppPhoneInput> {
               widget.controller.text = number.phoneNumber ?? '';
               widget.onChanged?.call(number);
             },
-            locale: context.watch<AuthProvider>().locale.languageCode,
+            locale: context.watch<AppProvider>().locale.languageCode,
             onInputValidated: (bool valid) {
               if (mounted) {
                 setState(() => _isValid = valid);

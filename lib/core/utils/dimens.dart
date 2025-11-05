@@ -15,6 +15,7 @@ class Dimens {
   static const double radiusXxs = 6.0;
   static const double radiusXs = 8.0;
   static const double radiusS = 10.0;
+  static const double radiusMSmall = 12.0;
   static const double radiusM = 15.0;
   static const double radiusL = 20.0;
   static const double radiusXL = 50.0;

@@ -25,6 +25,7 @@ class AppRoutes {
   static const String staticPage = '/static_page';
 
   static const String orders = '/orders';
+  static const String bookingDetails = '/booking_details';
   static const String services = '/services';
 
   // App Navigation route names

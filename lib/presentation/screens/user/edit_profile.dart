@@ -4,7 +4,7 @@ import 'package:provider/provider.dart';
 import 'package:sanam_laundry/core/index.dart';
 import 'package:sanam_laundry/data/index.dart';
 import 'package:sanam_laundry/presentation/index.dart';
-import 'package:sanam_laundry/providers/auth.dart';
+import 'package:sanam_laundry/providers/index.dart';
 
 class EditProfile extends StatefulWidget {
   const EditProfile({super.key});
@@ -30,7 +30,7 @@ class _EditProfileState extends State<EditProfile> {
   @override
   void initState() {
     super.initState();
-    final authUser = context.read<AuthProvider>().user;
+    final authUser = context.read<UserProvider>().user;
     user = authUser;
     firstNameController = TextEditingController(text: user?.firstName ?? '');
     lastNameController = TextEditingController(text: user?.lastName ?? '');
@@ -65,7 +65,7 @@ class _EditProfileState extends State<EditProfile> {
     );
     if (!mounted) return;
     if (user != null) {
-      context.read<AuthProvider>().updateUser(user);
+      context.read<UserProvider>().updateUser(user);
       context.back();
     }
     setState(() => loading = false);

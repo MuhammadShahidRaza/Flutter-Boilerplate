@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:sanam_laundry/core/index.dart';
-import 'package:sanam_laundry/presentation/index.dart';
 
 class AppWrapper extends StatelessWidget {
   final Widget child;

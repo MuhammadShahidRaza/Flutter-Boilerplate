@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:sanam_laundry/core/index.dart';
 import 'package:sanam_laundry/data/index.dart';
-import 'package:sanam_laundry/data/models/static_data.dart';
 import 'package:sanam_laundry/presentation/index.dart';
 
 class StaticPage extends StatefulWidget {

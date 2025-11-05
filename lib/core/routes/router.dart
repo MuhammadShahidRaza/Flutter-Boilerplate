@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:sanam_laundry/core/index.dart';
 import 'package:sanam_laundry/presentation/index.dart';
+import 'package:sanam_laundry/presentation/screens/user/booking_details.dart';
 import 'package:sanam_laundry/presentation/screens/user/contact_us.dart';
 import 'package:sanam_laundry/presentation/screens/user/edit_profile.dart';
 import 'package:sanam_laundry/presentation/screens/user/language.dart';
@@ -93,6 +94,10 @@ class GoRouterSetup {
       GoRoute(
         path: AppRoutes.editProfile,
         builder: (context, state) => const EditProfile(),
+      ),
+      GoRoute(
+        path: AppRoutes.bookingDetails,
+        builder: (context, state) => const BookingDetails(),
       ),
       GoRoute(
         path: AppRoutes.language,
