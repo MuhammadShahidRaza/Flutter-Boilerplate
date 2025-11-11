@@ -6,11 +6,33 @@ class Common {
   static const resetPassword = "COMMON.RESET_PASSWORD";
   static const signUp = "COMMON.SIGN_UP";
   static const signIn = "COMMON.SIGN_IN";
+  static const weAreHereToHelp = "COMMON.WE_ARE_HERE_TO_HELP";
+  static const changeLanguage = "COMMON.CHANGE_LANGUAGE";
+  static const selectLanguageYouAreComfortableWith =
+      "COMMON.SELECT_LANGUAGE_YOU_ARE_COMFORTABLE_WITH";
+  static const areYouSureYouWantToLogout =
+      "COMMON.ARE_YOU_SURE_YOU_WANT_TO_LOGOUT";
+  static const home = "COMMON.HOME";
+  static const service = "COMMON.SERVICE";
+  static const myOrders = "COMMON.MY_ORDERS";
+  static const noDataAvailable = "COMMON.NO_DATA_AVAILABLE";
+  static const myAccount = "COMMON.MY_ACCOUNT";
+  static const myAddress = "COMMON.MY_ADDRESS";
+  static const signUpAgain = "COMMON.SIGN_UP_AGAIN";
+  static const doYouWantToDeleteAccount =
+      "COMMON.DO_YOU_WANT_TO_DELETE_ACCOUNT";
+  static const yourAccountHasBeenDeleted =
+      "COMMON.YOUR_ACCOUNT_HAS_BEEN_DELETED";
+  static const guest = "COMMON.GUEST";
+  static const deleteAccount = "COMMON.DELETE_ACCOUNT";
   static const continue_ = "COMMON.CONTINUE";
+  static const categories = "COMMON.CATEGORIES";
   static const uploadProfilePicture = "COMMON.UPLOAD_PROFILE_PICTURE";
   static const gender = "COMMON.GENDER";
   static const termOfUseAndPrivacy = "COMMON.TERM_OF_USE_PRIVACY_POLICY";
   static const male = "COMMON.MALE";
+  static const enterOtp = "COMMON.ENTER_OTP";
+  static const youCanResendTheCode = "COMMON.YOU_CAN_RESEND_THE_CODE";
   static const female = "COMMON.FEMALE";
   static const other = "COMMON.OTHER";
   static const pickFromGallery = "COMMON.PICK_FROM_GALLERY";
@@ -26,6 +48,7 @@ class Common {
   static const enterFullName = "COMMON.ENTER_FULL_NAME";
   static const noInternetConnection = "COMMON.NO_INTERNET_CONNECTION";
   static const country = "COMMON.COUNTRY";
+  static const successfullyLoggedIn = "COMMON.SUCCESSFULLY_LOGGED_IN";
   static const enterCountry = "COMMON.ENTER_COUNTRY";
   static const enterCurrentPassword = "COMMON.ENTER_CURRENT_PASSWORD";
   static const enterUserName = "COMMON.ENTER_USER_NAME";
@@ -109,10 +132,13 @@ class Common {
   static const sendOtp = "COMMON.SEND_OTP";
   static const delete = "COMMON.DELETE";
   static const search = "COMMON.SEARCH";
+  static const searchByCountryNameOrDialCode =
+      "COMMON.SEARCH_BY_COUNTRY_NAME_OR_DIAL_CODE";
   static const clear = "COMMON.CLEAR";
   static const next = "COMMON.NEXT";
   static const previous = "COMMON.PREVIOUS";
   static const welcome = "COMMON.WELCOME";
+  static const welcomeComma = "COMMON.WELCOME_COMMA";
   static const loading = "COMMON.LOADING";
   static const noResults = "COMMON.NO_RESULTS";
   static const chooseLanguage = "COMMON.CHOOSE_LANGUAGE";
@@ -145,10 +171,10 @@ class Common {
   static const retry = "COMMON.RETRY";
   static const sessionExpired = "COMMON.SESSION_EXPIRED";
   static const createAnAccount = "COMMON.CREATE_AN_ACCOUNT";
-  static const enterYourEmail = "COMMON.ENTER_YOUR_EMAIL";
+  static const enterYourEmail = "COMMON.ENTER_EMAIL_ADDRESS";
   static const enterYourName = "COMMON.ENTER_YOUR_NAME";
-  static const enterYourPassword = "COMMON.ENTER_YOUR_PASSWORD";
-  static const enterYourPhoneNumber = "COMMON.ENTER_YOUR_PHONE_NUMBER";
+  static const enterYourPassword = "COMMON.ENTER_PASSWORD";
+  static const enterPhoneNumber = "COMMON.ENTER_PHONE_NUMBER";
   static const enterFirstName = "COMMON.ENTER_FIRST_NAME";
   static const enterLastName = "COMMON.ENTER_LAST_NAME";
   static const enterNewPassword = "COMMON.ENTER_NEW_PASSWORD";
@@ -197,7 +223,7 @@ class Common {
   static const enter4Digit = "COMMON.ENTER_4_DIGIT";
   static const recoveryCode = "COMMON.RECOVERY_CODE";
   static const needAHelp = "COMMON.NEED_A_HELP";
-  static const reSendCode = "COMMON.RE_SEND_CODE";
+  static const reSendCode = "COMMON.RESEND_CODE";
   static const verify = "COMMON.VERIFY";
   static const enterVerificationCodeYou = "COMMON.ENTER_VERIFICATION_CODE_YOU";
   static const resetYourPasswordWith = "COMMON.RESET_YOUR_PASSWORD_WITH";
@@ -255,6 +281,10 @@ class Auth {
   static const resetYourPassword = "AUTH.RESET_YOUR_PASSWORD";
   static const getStartedDescription = "AUTH.GET_STARTED_DESCRIPTION";
   static const connectWithSignup = "AUTH.CONNECT_WITH_SIGNUP";
+  static const gladToHadYouBack = "AUTH.GLAD_TO_HAD_YOU_BACK";
+  static const soonYouWillRecieve = "AUTH.SOON_YOU_WILL_RECIEVE";
+  static const okayAllSet = "AUTH.OKAY_ALL_SET";
+  static const letsExploreApp = "AUTH.LETS_EXPLORE_APP";
 }
 
 class Chat {
@@ -294,6 +324,8 @@ class ErrorMessages {
   static const invalidInput = "ERROR_MESSAGES.INVALID_INPUT";
   static const timeoutError = "ERROR_MESSAGES.TIMEOUT_ERROR";
   static const notFound = "ERROR_MESSAGES.NOT_FOUND";
+  static const userNotFound = "ERROR_MESSAGES.USER_NOT_FOUND";
+  static const userNotVerified = "ERROR_MESSAGES.USER_NOT_VERIFIED";
   static const authenticationFailed = "ERROR_MESSAGES.AUTHENTICATION_FAILED";
   static const conflictError = "ERROR_MESSAGES.CONFLICT_ERROR";
   static const databaseError = "ERROR_MESSAGES.DATABASE_ERROR";
@@ -322,6 +354,12 @@ class ErrorMessages {
   static const invalidId = "ERROR_MESSAGES.INVALID_ID";
   static const invalidSession = "ERROR_MESSAGES.INVALID_SESSION";
   static const invalidDomain = "ERROR_MESSAGES.INVALID_DOMAIN";
+  static const connectionTimeout = "ERROR_MESSAGES.CONNECTION_TIMEOUT";
+  static const cannotVerifyCertificate =
+      "ERROR_MESSAGES.CANNOT_VERIFY_CERTIFICATE";
+  static const requestCancelled = "ERROR_MESSAGES.REQUEST_CANCELLED";
+  static const secureConnectionFailed =
+      "ERROR_MESSAGES.SECURE_CONNECTION_FAILED";
 }
 
 class ValidationMessages {

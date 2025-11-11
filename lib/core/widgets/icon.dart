@@ -8,6 +8,8 @@ class AppIcon extends StatelessWidget {
   final double? borderRadius;
   final EdgeInsetsGeometry? padding;
   final VoidCallback? onTap;
+  final double? borderWidth;
+  final Color? borderColor;
 
   const AppIcon({
     super.key,
@@ -18,6 +20,8 @@ class AppIcon extends StatelessWidget {
     this.borderRadius,
     this.padding,
     this.onTap,
+    this.borderWidth,
+    this.borderColor,
   });
 
   @override
@@ -33,10 +37,21 @@ class AppIcon extends StatelessWidget {
     Widget content = Material(
       color: backgroundColor ?? Colors.transparent,
       borderRadius: radius,
+
       child: InkWell(
         borderRadius: radius,
         onTap: onTap,
-        child: Padding(padding: padding ?? EdgeInsets.zero, child: iconWidget),
+        child: Container(
+          padding: padding,
+          decoration: BoxDecoration(
+            color: backgroundColor ?? Colors.transparent,
+            borderRadius: radius,
+            border: (borderWidth != null && borderColor != null)
+                ? Border.all(color: borderColor!, width: borderWidth!)
+                : null,
+          ),
+          child: iconWidget,
+        ),
       ),
     );
 

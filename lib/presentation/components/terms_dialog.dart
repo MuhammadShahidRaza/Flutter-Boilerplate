@@ -1,16 +1,27 @@
 import 'package:flutter/material.dart';
 import 'package:sanam_laundry/core/index.dart';
+import 'package:sanam_laundry/data/index.dart';
 
 class AppTermsDialog extends StatefulWidget {
   final bool initialAgreed;
+  final StaticPageModel? termsData;
 
-  const AppTermsDialog({super.key, required this.initialAgreed});
+  const AppTermsDialog({
+    super.key,
+    required this.initialAgreed,
+    this.termsData,
+  });
 
-  static Future<bool?> show(BuildContext context, {required bool agreed}) {
+  static Future<bool?> show(
+    BuildContext context, {
+    required bool agreed,
+    required StaticPageModel? termsData,
+  }) {
     return showDialog<bool>(
       context: context,
       barrierDismissible: true,
-      builder: (_) => AppTermsDialog(initialAgreed: agreed),
+      builder: (_) =>
+          AppTermsDialog(initialAgreed: agreed, termsData: termsData),
     );
   }
 
@@ -20,6 +31,7 @@ class AppTermsDialog extends StatefulWidget {
 
 class _AppTermsDialogState extends State<AppTermsDialog> {
   late bool _agreedTerms;
+  StaticPageModel? pageData;
 
   @override
   void initState() {
@@ -35,15 +47,16 @@ class _AppTermsDialogState extends State<AppTermsDialog> {
         spacing: Dimens.spacingM,
         children: [
           AppText(
-            TemporaryText.lorumIpsumTooLong,
+            widget.termsData?.description ?? Common.noDataAvailable,
             overflow: TextOverflow.visible,
           ),
-          AppCheckbox(
-            value: _agreedTerms,
-            onChanged: (bool val) => setState(() => _agreedTerms = val),
-            label: Common.termOfUseAndPrivacy,
-            alignment: MainAxisAlignment.center,
-          ),
+          if (widget.termsData?.description != null)
+            AppCheckbox(
+              value: _agreedTerms,
+              onChanged: (bool val) => setState(() => _agreedTerms = val),
+              label: Common.termOfUseAndPrivacy,
+              alignment: MainAxisAlignment.center,
+            ),
         ],
       ),
       primaryButtonText: Common.continue_,

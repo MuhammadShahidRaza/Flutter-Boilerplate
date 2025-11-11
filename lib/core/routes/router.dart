@@ -1,9 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:sanam_laundry/core/routes/app_routes.dart';
-import 'package:sanam_laundry/presentation/screens/auth/index.dart';
-import 'package:sanam_laundry/presentation/screens/common/splash.dart';
-import 'package:sanam_laundry/presentation/screens/user/home.dart';
+import 'package:sanam_laundry/core/index.dart';
+import 'package:sanam_laundry/presentation/index.dart';
+import 'package:sanam_laundry/presentation/screens/user/booking_details.dart';
+import 'package:sanam_laundry/presentation/screens/user/contact_us.dart';
+import 'package:sanam_laundry/presentation/screens/user/edit_profile.dart';
+import 'package:sanam_laundry/presentation/screens/user/language.dart';
+import 'package:sanam_laundry/presentation/screens/user/static_page.dart';
 
 class GoRouterSetup {
   static final GlobalKey<NavigatorState> navigatorKey =
@@ -34,28 +37,76 @@ class GoRouterSetup {
         path: AppRoutes.signUp,
         builder: (context, state) => const SignUp(),
       ),
+      GoRoute(
+        path: AppRoutes.verification,
+        builder: (context, state) => const Verification(),
+      ),
 
-      // App stack using ShellRoute for nested navigation
-      ShellRoute(
-        builder: (context, state, child) => Scaffold(body: child),
-        routes: [
-          GoRoute(
-            path: AppRoutes.home,
-            builder: (context, state) => const Home(),
+      // App stack with persistent tab navigation
+      StatefulShellRoute.indexedStack(
+        builder: (context, state, navigationShell) =>
+            AppShell(navigationShell: navigationShell),
+        branches: [
+          StatefulShellBranch(
+            routes: [
+              GoRoute(
+                path: AppRoutes.home,
+                builder: (context, state) => const Home(),
+              ),
+            ],
+          ),
+          StatefulShellBranch(
+            routes: [
+              GoRoute(
+                path: AppRoutes.services,
+                builder: (context, state) => const Services(),
+              ),
+            ],
+          ),
+          StatefulShellBranch(
+            routes: [
+              GoRoute(
+                path: AppRoutes.orders,
+                builder: (context, state) => const Orders(),
+              ),
+            ],
+          ),
+          StatefulShellBranch(
+            routes: [
+              GoRoute(
+                path: AppRoutes.myAccount,
+                builder: (context, state) => MyAccount(),
+              ),
+            ],
           ),
         ],
       ),
+
+      GoRoute(
+        path: AppRoutes.contactUs,
+        builder: (context, state) => const ContactUs(),
+      ),
+      GoRoute(
+        path: AppRoutes.staticPage,
+        builder: (context, state) => const StaticPage(),
+      ),
+
+      GoRoute(
+        path: AppRoutes.editProfile,
+        builder: (context, state) => const EditProfile(),
+      ),
+      GoRoute(
+        path: AppRoutes.bookingDetails,
+        builder: (context, state) => const BookingDetails(),
+      ),
+      GoRoute(
+        path: AppRoutes.language,
+        builder: (context, state) => const ChangeLanguage(),
+      ),
     ],
 
-    // // Redirect based on login state
-    // redirect: (context, state) async {
-    //   final authProvider = context.read<AuthProvider>();
-    //   if (!authProvider.isLoggedIn) return AppRoutes.login;
-    //   if (state.uri.toString() == AppRoutes.login) return AppRoutes.home;
-    //   // No redirect
-    //   return null;
-    // },
-    errorBuilder: (context, state) =>
-        Scaffold(body: Center(child: Text('Page not found: ${state.error}'))),
+    errorBuilder: (context, state) => AppWrapper(
+      child: Center(child: AppText('Page not found: ${state.error}')),
+    ),
   );
 }

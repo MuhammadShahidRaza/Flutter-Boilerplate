@@ -37,7 +37,7 @@ class _GetStartedState extends State<GetStarted> {
   }
 
   void _submit() {
-    context.replacePage(AppRoutes.login);
+    context.navigate(AppRoutes.login);
   }
 
   @override

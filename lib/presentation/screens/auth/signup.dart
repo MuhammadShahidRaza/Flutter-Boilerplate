@@ -13,13 +13,14 @@ class SignUp extends StatefulWidget {
 
 class _SignUpState extends State<SignUp> {
   final _formKey = GlobalKey<FormState>();
+  final AuthRepository _authRepository = AuthRepository();
   late final TextEditingController firstNameController;
   late final TextEditingController lastNameController;
   late final TextEditingController emailController;
-  late final TextEditingController phoneController;
   XFile? _profileImage;
-
+  bool loading = false;
   String? selectedGender;
+  StaticPageModel? termsData;
   bool _agreedTerms = false;
 
   final genderOptions = [Common.male, Common.female, Common.other];
@@ -30,7 +31,7 @@ class _SignUpState extends State<SignUp> {
     firstNameController = TextEditingController();
     lastNameController = TextEditingController();
     emailController = TextEditingController();
-    phoneController = TextEditingController();
+    _loadPage();
   }
 
   @override
@@ -38,25 +39,51 @@ class _SignUpState extends State<SignUp> {
     firstNameController.dispose();
     lastNameController.dispose();
     emailController.dispose();
-    phoneController.dispose();
     super.dispose();
   }
 
-  void _submit() {
-    if (!(_formKey.currentState?.validate() ?? false)) return;
+  Future<void> _loadPage() async {
+    final data = await _authRepository.privacyPolicy(Common.privacyPolicy);
+    if (!mounted) return;
+    setState(() {
+      termsData = data;
+    });
+  }
 
-    if (_profileImage == null) {
-      // AppUtils.showToast(Common.pleaseUploadProfilePicture);
-      return;
-    }
+  Future<void> _submit() async {
+    final phone = context.getParam("phone") ?? '';
+    if (phone.toString().isEmpty) return;
 
     if (!_agreedTerms) {
-      // AppUtils.showToast(Common.acceptTerms);
+      AppToast.showToast("Please agree to the terms and conditions.");
       return;
     }
 
-    AuthService.saveToken(Variables.userToken);
-    context.replacePage(AppRoutes.home);
+    setState(() => loading = true);
+
+    // device_type:Testing Tool
+    // device_token:abcdefghijklmnopqrstuvwxyz
+    // udid:123456789
+    // device_brand:Postman
+    // device_os:Linux
+    // app_version:1.0.0
+
+    final user = await _authRepository.register(
+      email: emailController.text.trim(),
+      firstName: firstNameController.text.trim(),
+      lastName: lastNameController.text.trim(),
+      phone: phone,
+      gender: selectedGender,
+      profileImage: _profileImage,
+    );
+    if (!mounted) return;
+    if (user != null) {
+      context.navigate(
+        AppRoutes.verification,
+        params: {'phone': phone, "isFromLogin": false},
+      );
+      setState(() => loading = false);
+    }
   }
 
   @override
@@ -66,6 +93,7 @@ class _SignUpState extends State<SignUp> {
       title: Common.createAnAccount,
       subtitle: Auth.connectWithSignup,
       buttonText: Common.signUp,
+      isLoading: loading,
       bottomText: Common.alreadyHaveAnAccount,
       bottomButtonText: Common.signIn,
       bottomButtonPress: () {
@@ -82,6 +110,7 @@ class _SignUpState extends State<SignUp> {
           ),
           Row(
             spacing: Dimens.spacingM,
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Expanded(
                 child: AppInput(
@@ -117,19 +146,23 @@ class _SignUpState extends State<SignUp> {
 
           AppPhoneInput(
             title: Common.phoneNumber,
-            hint: Common.enterYourPhoneNumber,
-            controller: phoneController,
+            hint: Common.enterPhoneNumber,
+            controller: TextEditingController(
+              text: context.getParam("phone")?.toString() ?? '',
+            ),
             marginBottom: Dimens.spacingM,
+            enabled: false,
           ),
 
           AppCheckbox(
             value: _agreedTerms,
-            onChanged: (bool val) => {},
+            onChanged: (bool val) {},
             label: Common.termOfUseAndPrivacy,
             onTapLabel: () async {
               final agreed = await AppTermsDialog.show(
                 context,
                 agreed: _agreedTerms,
+                termsData: termsData,
               );
               setState(() => _agreedTerms = agreed != null ? true : false);
             },

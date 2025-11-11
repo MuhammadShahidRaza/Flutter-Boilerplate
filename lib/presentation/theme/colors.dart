@@ -4,6 +4,7 @@ class AppColors {
   // App Specific
   static const Color primary = Color(0xFF009FD7);
   static const Color secondary = Color(0xFFCCA563);
+  static const Color tertiary = Color(0xFFEFF8FB);
   static const Color error = Color(0xFFFB344F);
   static const Color backgroundColor = Colors.white;
   static const Color scaffoldBackground = Colors.white;
@@ -16,6 +17,7 @@ class AppColors {
   static const Color text = Colors.black;
   static const Color textSecondary = Color(0xFF818898);
   static const Color greenStatus = Color(0xFF00B406);
+  static const Color bottomTabText = Color(0xFF0D0D12);
 
   // Common
   static const Color white = Color(0xFFFFFFFF);
@@ -74,5 +76,6 @@ class AppColors {
   static const Color transparent = Colors.transparent;
   static const Color darkBlackOpacity = Color.fromRGBO(2, 2, 2, 0.8);
   static const Color mediumBlackOpacity = Color.fromRGBO(2, 2, 2, 0.6);
+  static const Color lightBlackOpacity = Color.fromRGBO(2, 2, 2, 0.34);
   static const Color whiteOpacity = Color.fromRGBO(255, 255, 255, 0.4);
 }

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:sanam_laundry/core/constants/index.dart';
 import 'package:sanam_laundry/core/utils/index.dart';
 import 'package:sanam_laundry/core/widgets/index.dart';
@@ -12,12 +13,17 @@ class AuthWrapper extends StatelessWidget {
   final Widget child;
   final String buttonText;
   final VoidCallback onSubmit;
+  final VoidCallback? backButtonPress;
   final VoidCallback? bottomButtonPress;
   final String bottomButtonText;
   final String bottomText;
   final GlobalKey<FormState> formKey;
   final bool showWatermark;
   final bool height;
+  final bool isButtonEnabled;
+  final bool showBackButton;
+  final String? heading;
+  final bool isLoading;
 
   const AuthWrapper({
     super.key,
@@ -31,12 +37,19 @@ class AuthWrapper extends StatelessWidget {
     this.showWatermark = true,
     this.bottomButtonText = "",
     this.bottomText = "",
+    this.isButtonEnabled = true,
     this.bottomButtonPress,
+    this.backButtonPress,
+    this.heading,
+    this.showBackButton = false,
+    this.isLoading = false,
   });
 
   @override
   Widget build(BuildContext context) {
     return AppWrapper(
+      heading: heading,
+      showBackButton: false,
       scrollable: true,
       child: SizedBox(
         height: height ? context.h(0.88) : null,
@@ -65,10 +78,31 @@ class AuthWrapper extends StatelessWidget {
               child: Column(
                 spacing: Dimens.spacingM,
                 children: [
-                  AppImage(
-                    path: AppAssets.logo,
-                    width: context.screenWidth,
-                    height: context.h(0.31),
+                  Stack(
+                    children: [
+                      AppImage(
+                        path: AppAssets.logo,
+                        width: context.screenWidth,
+                        height: context.h(0.31),
+                      ),
+                      if (showBackButton)
+                        Positioned(
+                          top: 10,
+                          child: SizedBox(
+                            width: 35,
+                            height: 35,
+                            child: AppIcon(
+                              icon: Icons.arrow_back_ios_new,
+                              borderColor: AppColors.primary,
+                              borderWidth: 1,
+                              size: Dimens.iconS,
+                              backgroundColor: AppColors.lightWhite,
+                              onTap:
+                                  backButtonPress ?? () => context.pop(context),
+                            ),
+                          ),
+                        ),
+                    ],
                   ),
                   AppText(
                     title,
@@ -82,7 +116,15 @@ class AuthWrapper extends StatelessWidget {
                     textAlign: TextAlign.center,
                   ),
                   child,
-                  AppButton(title: buttonText, onPressed: onSubmit),
+                  AppButton(
+                    title: buttonText,
+                    onPressed: () {
+                      if (!(formKey.isValid)) return;
+                      onSubmit();
+                    },
+                    isLoading: isLoading,
+                    isEnabled: isButtonEnabled,
+                  ),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     crossAxisAlignment: CrossAxisAlignment.center,
@@ -97,13 +139,11 @@ class AuthWrapper extends StatelessWidget {
                         type: AppButtonType.text,
                         width: context.w(0.1),
                         title: bottomButtonText,
-                        style: ButtonStyle(
-                          padding: const WidgetStatePropertyAll(
+                        style: const ButtonStyle(
+                          padding: WidgetStatePropertyAll(
                             EdgeInsets.symmetric(horizontal: Dimens.spacingXS),
-                          ), // ✅ no vertical space
-                          minimumSize: const WidgetStatePropertyAll(
-                            Size(0, 0),
-                          ), // ✅ remove height
+                          ),
+                          minimumSize: WidgetStatePropertyAll(Size(0, 0)),
                         ),
                         textStyle: context.textTheme.titleSmall?.copyWith(
                           color: AppColors.secondary,

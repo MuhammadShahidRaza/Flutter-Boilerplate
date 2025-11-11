@@ -10,6 +10,6 @@ class Environment {
   }
 
   static String get baseUrl => dotenv.env['API_BASE_URL'] ?? '';
-  static bool get enableLogs => dotenv.env['ENABLE_LOGS'] == 'true';
+  static bool get enableLogs => kDebugMode ? true : false;
   static String get mapKey => dotenv.env['MAP_API_KEY'] ?? '';
 }

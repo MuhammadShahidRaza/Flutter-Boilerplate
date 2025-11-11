@@ -11,13 +11,39 @@ class Login extends StatefulWidget {
 }
 
 class _LoginState extends State<Login> {
+  final AuthRepository _authRepository = AuthRepository();
   final _formKey = GlobalKey<FormState>();
   final phoneController = TextEditingController();
+  bool loading = false;
 
-  void _submit() {
-    if (_formKey.currentState?.validate() ?? false) {
-      AuthService.saveToken("token");
-      context.replacePage(AppRoutes.home);
+  Future<void> _submit() async {
+    setState(() => loading = true);
+
+    final message = await _authRepository.login(
+      phone: phoneController.text.trim(),
+    );
+    if (!mounted) return;
+    setState(() => loading = false);
+
+    if (message != null) {
+      if (message == "loginSuccessful") {
+        context.navigate(
+          AppRoutes.verification,
+          params: {'phone': phoneController.text.trim(), 'isFromLogin': true},
+        );
+      } else if (message == "userNotFound") {
+        context.navigate(
+          AppRoutes.signUp,
+          params: {'phone': phoneController.text.trim()},
+        );
+      } else if (message == "userNotVerified") {
+        context.navigate(
+          AppRoutes.verification,
+          params: {'phone': phoneController.text.trim(), 'isFromLogin': true},
+        );
+      } else {
+        AppToast.showToast(message, isError: true);
+      }
     }
   }
 
@@ -27,6 +53,7 @@ class _LoginState extends State<Login> {
       formKey: _formKey,
       height: true,
       title: Auth.welcomeBackLogin,
+      isLoading: loading,
       subtitle: Auth.helloAgainLogin,
       buttonText: Common.signIn,
       onSubmit: _submit,
@@ -34,7 +61,7 @@ class _LoginState extends State<Login> {
         children: [
           AppPhoneInput(
             title: Common.phoneNumber,
-            hint: Common.enterYourPhoneNumber,
+            hint: Common.enterPhoneNumber,
             controller: phoneController,
             marginBottom: Dimens.spacingM,
           ),
