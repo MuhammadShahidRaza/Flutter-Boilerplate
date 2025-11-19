@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "960940225198",
+    "project_id": "sanamlaundry-5e889",
+    "storage_bucket": "sanamlaundry-5e889.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:960940225198:android:dc9126397c78e43c40333f",
+        "android_client_info": {
+          "package_name": "com.cmolds.sanamLaundry"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAdtHDON920Q2C8qytn7MTW6HBFQPVfmxA"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:960940225198:android:f3eb21f4f9bb91c240333f",
+        "android_client_info": {
+          "package_name": "com.example.sanam_laundry"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAdtHDON920Q2C8qytn7MTW6HBFQPVfmxA"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
