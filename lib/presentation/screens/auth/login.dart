@@ -14,17 +14,12 @@ class _LoginState extends State<Login> {
   final AuthRepository _authRepository = AuthRepository();
   final _formKey = GlobalKey<FormState>();
   final phoneController = TextEditingController();
-  bool loading = false;
 
   Future<void> _submit() async {
-    setState(() => loading = true);
-
     final message = await _authRepository.login(
       phone: phoneController.text.trim(),
     );
     if (!mounted) return;
-    setState(() => loading = false);
-
     if (message != null) {
       if (message == "loginSuccessful") {
         context.navigate(
@@ -53,7 +48,6 @@ class _LoginState extends State<Login> {
       formKey: _formKey,
       height: true,
       title: Auth.welcomeBackLogin,
-      isLoading: loading,
       subtitle: Auth.helloAgainLogin,
       buttonText: Common.signIn,
       onSubmit: _submit,

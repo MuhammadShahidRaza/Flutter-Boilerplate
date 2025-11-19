@@ -25,6 +25,7 @@ class _SliderListState extends State<SliderList> {
 
   void _startAutoSlide() {
     _autoSlideTimer = Timer.periodic(const Duration(seconds: 5), (timer) {
+      if (widget.list.isEmpty) return;
       if (_currentIndex < widget.list.length - 1) {
         _pageController.nextPage(
           duration: const Duration(milliseconds: 400),
