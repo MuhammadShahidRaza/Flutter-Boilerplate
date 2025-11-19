@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:sanam_laundry/providers/auth.dart';
-import 'package:sanam_laundry/providers/app.dart';
 import 'package:sanam_laundry/core/index.dart';
+import 'package:sanam_laundry/providers/index.dart';
 import 'package:video_player/video_player.dart';
 
 class Splash extends StatefulWidget {
@@ -33,7 +32,13 @@ class _SplashState extends State<Splash> {
 
     final authProvider = context.read<AuthProvider>();
     final appProvider = context.read<AppProvider>();
-    await authProvider.loadLoginStatus();
+    final userProvider = context.read<UserProvider>();
+
+    // Load login and user data in parallel
+    await Future.wait([
+      userProvider.loadUserData(),
+      authProvider.loadLoginStatus(),
+    ]);
 
     final hasLanguage = await appProvider.hasSelectedLanguage();
     final route = authProvider.isLoggedIn

@@ -65,7 +65,7 @@ class _VerificationState extends State<Verification> {
     setState(() => loading = false);
     final isFromLogin = context.getParam<bool>('isFromLogin') ?? false;
     if (user != null) {
-      context.read<AuthProvider>().login(user);
+      context.read<AuthProvider>().login(context, user);
       if (!isFromLogin) {
         AppDialog.show(
           context,
