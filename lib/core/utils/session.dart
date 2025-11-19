@@ -6,7 +6,7 @@ import 'package:sanam_laundry/providers/user.dart';
 
 /// Centralized logout that clears auth storage and resets app/user providers.
 /// Usage: await performLogout(context);
-Future<void> performLogout(BuildContext context) async {
+Future<void> clearSession(BuildContext context) async {
   // Capture provider refs BEFORE awaiting to avoid context-after-await lint
   final auth = context.read<AuthProvider>();
   final user = context.read<UserProvider>();

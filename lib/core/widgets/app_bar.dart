@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:sanam_laundry/core/index.dart';
 import 'package:sanam_laundry/presentation/index.dart';
 
@@ -41,7 +42,14 @@ class AppBarComponent extends StatelessWidget implements PreferredSizeWidget {
                   borderWidth: 1,
                   size: Dimens.iconS,
                   backgroundColor: AppColors.lightWhite,
-                  onTap: onBackPressed ?? () => Navigator.pop(context),
+                  onTap:
+                      onBackPressed ??
+                      () => {
+                        if (context.canPop())
+                          context.back()
+                        else
+                          context.replace(AppRoutes.home),
+                      },
                 ),
               ),
             )
