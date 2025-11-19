@@ -6,6 +6,10 @@ class Endpoints {
   static const String profile = 'profile';
   static const String verifyOtp = 'verify-otp';
 
+  // Home
+  static const String banners = 'banner';
+  static const String categories = 'category';
+
   // User
   static const String getUserProfile = "user/user";
   static const String updateUserProfile = "user/update";

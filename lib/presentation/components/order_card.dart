@@ -65,14 +65,18 @@ class OrderCard extends StatelessWidget {
                           onPressed: () {},
                           backgroundColor: isCompleted
                               ? AppColors.secondary
-                              : AppColors.primary.withValues(alpha: 0.5),
+                              : AppColors.primary.withValues(alpha: 0.3),
                           padding: EdgeInsets.symmetric(
                             vertical: Dimens.spacingXS,
                             horizontal: Dimens.spacingS,
                           ),
+                          textStyle: context.textTheme.bodySmall!.copyWith(
+                            fontWeight: FontWeight.bold,
+                            color: AppColors.white,
+                          ),
                           style: ButtonStyle(
                             minimumSize: WidgetStatePropertyAll(
-                              Size(context.w(0.3), 32),
+                              Size(context.w(0.22), 30),
                             ),
                             shape: WidgetStatePropertyAll(
                               RoundedRectangleBorder(

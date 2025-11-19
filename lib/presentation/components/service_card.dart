@@ -6,11 +6,11 @@ class ServiceCard extends StatelessWidget {
   const ServiceCard({
     super.key,
     required this.service,
-    required this.isFromHome,
+    required this.showAddRemove,
   });
 
   final Map<String, dynamic> service;
-  final bool isFromHome;
+  final bool showAddRemove;
 
   @override
   Widget build(BuildContext context) {
@@ -66,7 +66,7 @@ class ServiceCard extends StatelessWidget {
                 ),
               ),
 
-              if (isFromHome)
+              if (showAddRemove)
                 Column(
                   spacing: Dimens.spacingS,
                   children: [
