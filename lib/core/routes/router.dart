@@ -2,11 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:sanam_laundry/core/index.dart';
 import 'package:sanam_laundry/presentation/index.dart';
-import 'package:sanam_laundry/presentation/screens/user/booking_details.dart';
-import 'package:sanam_laundry/presentation/screens/user/contact_us.dart';
-import 'package:sanam_laundry/presentation/screens/user/edit_profile.dart';
-import 'package:sanam_laundry/presentation/screens/user/language.dart';
-import 'package:sanam_laundry/presentation/screens/user/static_page.dart';
 
 class GoRouterSetup {
   static final GlobalKey<NavigatorState> navigatorKey =
@@ -100,8 +95,32 @@ class GoRouterSetup {
         builder: (context, state) => const BookingDetails(),
       ),
       GoRoute(
+        path: AppRoutes.notifications,
+        builder: (context, state) => const NotificationScreen(),
+      ),
+      GoRoute(
+        path: AppRoutes.myAddress,
+        builder: (context, state) => const MyAddress(),
+      ),
+      GoRoute(
+        path: AppRoutes.orderDetails,
+        builder: (context, state) => const OrderDetails(),
+      ),
+      GoRoute(
+        path: AppRoutes.serviceItem,
+        builder: (context, state) => const ServiceItem(),
+      ),
+      GoRoute(
+        path: AppRoutes.additionalInformation,
+        builder: (context, state) => const AdditionalInformation(),
+      ),
+      GoRoute(
         path: AppRoutes.language,
         builder: (context, state) => const ChangeLanguage(),
+      ),
+      GoRoute(
+        path: AppRoutes.confirmation,
+        builder: (context, state) => const Confirmation(),
       ),
     ],
 

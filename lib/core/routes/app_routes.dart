@@ -24,8 +24,12 @@ class AppRoutes {
   static const String privacyPolicy = '/privacy_policy';
   static const String staticPage = '/static_page';
 
+  static const String orderDetails = '/order_details';
   static const String orders = '/orders';
+  static const String confirmation = '/confirmation';
+  static const String additionalInformation = '/additional_information';
   static const String bookingDetails = '/booking_details';
+  static const String serviceItem = '/service_item';
   static const String services = '/services';
 
   // App Navigation route names
