@@ -10,7 +10,9 @@ class AppAssets {
   static const logo = "${_imagePath}common/logo.png";
   static const user = "${_imagePath}common/user.png";
   static const rightTick = "${_imagePath}common/right.png";
+  static const order = "${_imagePath}common/order.png";
   static const temp = "${_imagePath}common/temp.png";
+  static const pickerPlaceholder = "${_imagePath}common/picker.png";
 
   // AUTH
   static const onboardingOne = "${_imagePath}auth/onboarding_one.png";
