@@ -38,7 +38,7 @@ class _MyAccountState extends State<MyAccount> {
         icon: Icons.location_on_outlined,
         title: Common.myAddress,
         onTap: () {
-          // context.navigate(AppRoutes.myAddress);
+          context.navigate(AppRoutes.myAddress);
         },
       ),
       _AccountOption(
@@ -116,7 +116,7 @@ class _MyAccountState extends State<MyAccount> {
                 setState(() {
                   isLoading = false;
                 });
-                AuthProvider().logout();
+                clearSession(context);
                 AppDialog.show(
                   context,
                   borderColor: AppColors.primary,

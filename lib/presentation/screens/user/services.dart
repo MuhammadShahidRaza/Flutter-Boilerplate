@@ -79,26 +79,14 @@ class _ServicesState extends State<Services> {
 
   @override
   Widget build(BuildContext context) {
-    final bool isFromHome = context.getParam<bool>('isFromHome') ?? false;
-
     return AppWrapper(
       heading: "Services",
       safeArea: false,
-      showBackButton: isFromHome,
       padding: EdgeInsets.zero,
       child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        spacing: Dimens.spacingMSmall,
+        crossAxisAlignment: CrossAxisAlignment.center,
+        spacing: Dimens.spacingM,
         children: [
-          // 🔹 Category Horizontal List
-          // if (loadingCategories)
-          //   const Center(
-          //     child: Padding(
-          //       padding: EdgeInsets.all(20),
-          //       child: CircularProgressIndicator(),
-          //     ),
-          //   )
-          // else
           TabList(
             list: categories,
             selectedId: selectedCategoryId,
@@ -123,7 +111,7 @@ class _ServicesState extends State<Services> {
                       final service = services[index];
                       return ServiceCard(
                         service: service,
-                        isFromHome: isFromHome,
+                        showAddRemove: false,
                       );
                     },
                   ),
