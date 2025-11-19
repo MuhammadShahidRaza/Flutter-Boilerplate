@@ -15,10 +15,7 @@ class AuthRepository {
       () => _apiService.post(
         Endpoints.login,
         data: {'phone': phone},
-        config: const ApiRequestConfig(
-          requiresAuth: false,
-          showErrorToast: false,
-        ),
+        config: ApiRequestConfig(requiresAuth: false, showErrorToast: false),
       ),
       onSuccess: (data, statusCode) {
         if (statusCode == 200) {
@@ -85,7 +82,7 @@ class AuthRepository {
     return await ApiResponseHandler.handleRequest<UserModel>(
       () => _apiService.get(
         Endpoints.profile,
-        config: const ApiRequestConfig(requiresAuth: true, showLoader: true),
+        config: const ApiRequestConfig(requiresAuth: true),
       ),
       onSuccess: (data, _) => UserModel.fromJson(data),
     );
