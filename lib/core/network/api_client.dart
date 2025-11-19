@@ -1,17 +1,16 @@
 import 'package:dio/dio.dart';
-import 'package:flutter/foundation.dart';
 import 'package:sanam_laundry/core/index.dart';
 // import 'package:sanam_laundry/core/network/retry_interceptor.dart';
 import 'package:sanam_laundry/data/services/auth.dart';
-import 'package:sanam_laundry/providers/auth.dart';
+import 'package:sanam_laundry/providers/index.dart';
 
 class ApiClient {
   ApiClient._({String? customBaseUrl}) {
     _dio = Dio(
       BaseOptions(
         baseUrl: customBaseUrl ?? Environment.baseUrl,
-        connectTimeout: const Duration(seconds: 15),
-        receiveTimeout: const Duration(seconds: 15),
+        connectTimeout: const Duration(seconds: 60),
+        receiveTimeout: const Duration(seconds: 60),
         headers: const {'Accept': 'application/json'},
       ),
     );
@@ -38,9 +37,6 @@ class ApiClient {
   static final ApiClient _instance = ApiClient._();
   static Dio get instance => _instance._dio;
 
-  static final ValueNotifier<bool> loaderNotifier = ValueNotifier<bool>(false);
-  static int _activeLoaderCount = 0;
-
   static ApiRequestConfig resolveConfig(RequestOptions options) {
     final config = options.extra[ApiRequestConfig.extraKey];
     if (config is ApiRequestConfig) return config;
@@ -55,21 +51,6 @@ class ApiClient {
     opts.extra ??= <String, dynamic>{};
     opts.extra![ApiRequestConfig.extraKey] = config;
     return opts;
-  }
-
-  static void _incrementLoader() {
-    _activeLoaderCount++;
-    if (!loaderNotifier.value) {
-      loaderNotifier.value = true;
-    }
-  }
-
-  static void _decrementLoader() {
-    if (_activeLoaderCount == 0) return;
-    _activeLoaderCount--;
-    if (_activeLoaderCount == 0) {
-      loaderNotifier.value = false;
-    }
   }
 }
 
@@ -106,14 +87,33 @@ class _AuthInterceptor extends Interceptor {
 
 class _LoaderInterceptor extends Interceptor {
   static const _loaderKey = '_sanam_loader_enabled';
+  static const _scopedLoaderKey = '_sanam_scoped_loader_key';
 
   @override
   void onRequest(RequestOptions options, RequestInterceptorHandler handler) {
     final config = ApiClient.resolveConfig(options);
+
+    // 🔹 Global loader (full-screen overlay)
     if (config.showLoader) {
-      ApiClient._incrementLoader();
+      LoaderService.instance.start('loader.global'); // ✅ use start()
       options.extra[_loaderKey] = true;
     }
+
+    // 🔹 Scoped button loader (per-button)
+    if (config.showButtonLoader) {
+      final loaderKey = config.loaderKey;
+
+      if (loaderKey != null && loaderKey.isNotEmpty) {
+        LoaderService.instance.start(loaderKey); // ✅ use start()
+        options.extra[_scopedLoaderKey] = loaderKey;
+      }
+      // ✅ Fallback — if no key & not using global loader, use global as fallback
+      // else if (!config.showLoader && options.extra[_loaderKey] != true) {
+      //   LoaderService.instance.start('loader.global');
+      //   options.extra[_loaderKey] = true;
+      // }
+    }
+
     handler.next(options);
   }
 
@@ -130,10 +130,15 @@ class _LoaderInterceptor extends Interceptor {
   }
 
   void _complete(RequestOptions options) {
-    final enabled = options.extra[_loaderKey] == true;
-    if (enabled) {
-      ApiClient._decrementLoader();
+    if (options.extra[_loaderKey] == true) {
+      LoaderService.instance.stop('loader.global'); // ✅ stop global
       options.extra.remove(_loaderKey);
+    }
+
+    final scopedKey = options.extra[_scopedLoaderKey];
+    if (scopedKey is String && scopedKey.isNotEmpty) {
+      LoaderService.instance.stop(scopedKey); // ✅ stop scoped
+      options.extra.remove(_scopedLoaderKey);
     }
   }
 }
