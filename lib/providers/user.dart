@@ -20,9 +20,10 @@ class UserProvider extends ChangeNotifier {
   }
 
   /// Clear user-related state (use on logout)
-  void clear() {
+  void clear() async {
     _user = null;
     notifyListeners();
+    await UserService.removeUserData();
   }
 
   /// ✅ Automatically capitalized full name
