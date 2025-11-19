@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:sanam_laundry/data/index.dart';
+import 'package:sanam_laundry/providers/index.dart';
 
 class AuthProvider extends ChangeNotifier {
   bool _isLoggedIn = false;
@@ -18,17 +20,16 @@ class AuthProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  Future<void> login(UserModel user) async {
+  Future<void> login(BuildContext context, UserModel user) async {
     await AuthService.saveToken(user.token!);
-    await UserService.saveUser(user);
-
+    if (!context.mounted) return;
+    context.read<UserProvider>().updateUser(user);
     _isLoggedIn = true;
     notifyListeners();
   }
 
   Future<void> logout() async {
     await AuthService.removeToken();
-    await UserService.removeUserData();
     _isLoggedIn = false;
     notifyListeners();
   }
