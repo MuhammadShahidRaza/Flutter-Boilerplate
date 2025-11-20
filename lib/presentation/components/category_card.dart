@@ -108,10 +108,7 @@ class CategoryCard extends StatelessWidget {
                   color: isSelected ? AppColors.white : AppColors.text,
                 ),
                 onPressed: () {
-                  context.navigate(
-                    AppRoutes.serviceItem,
-                    extra: {'item': data},
-                  );
+                  context.navigate(AppRoutes.serviceItem, extra: data);
                 },
               ),
             ],
