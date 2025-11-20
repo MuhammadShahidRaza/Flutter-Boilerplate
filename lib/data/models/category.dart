@@ -1,4 +1,5 @@
 import 'package:sanam_laundry/core/index.dart';
+import 'package:sanam_laundry/core/utils/helper.dart';
 
 class CategoryModel {
   final String id;
@@ -19,12 +20,12 @@ class CategoryModel {
 
   factory CategoryModel.fromJson(Map<String, dynamic> json) {
     return CategoryModel(
-      id: (json['id'] ?? json['uuid'] ?? '').toString(),
+      id: (json['id'] ?? '').toString(),
       title: (json['title'] ?? json['name'] ?? '').toString(),
       subtitle: (json['description'] ?? "").toString(),
       image: json['image']?.toString() ?? AppAssets.user,
-      createdAt: _parseDate(json['created_at']),
-      updatedAt: _parseDate(json['updated_at']),
+      createdAt: Utils.parseDate(json['created_at']),
+      updatedAt: Utils.parseDate(json['updated_at']),
     );
   }
 
@@ -36,13 +37,4 @@ class CategoryModel {
     'created_at': createdAt?.toIso8601String(),
     'updated_at': updatedAt?.toIso8601String(),
   };
-
-  static DateTime? _parseDate(dynamic value) {
-    if (value == null) return null;
-    try {
-      return DateTime.parse(value.toString());
-    } catch (_) {
-      return null;
-    }
-  }
 }
