@@ -210,7 +210,7 @@ class _MyAddressState extends State<MyAddress> {
 
 class _ImagePreview extends StatelessWidget {
   final String title;
-  const _ImagePreview({super.key, required this.title});
+  const _ImagePreview({required this.title});
 
   @override
   Widget build(BuildContext context) {
