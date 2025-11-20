@@ -114,7 +114,6 @@ class _NotificationScreenState extends State<NotificationScreen> {
         createdAt: DateTime.now().subtract(Duration(days: 3, hours: 4)),
       ),
     ];
-    ; // your list
     final grouped = groupByDate(notifications);
     final dateKeys = grouped.keys.toList();
 
