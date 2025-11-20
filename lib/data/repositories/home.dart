@@ -1,19 +1,23 @@
 import 'package:sanam_laundry/core/index.dart';
 import 'package:sanam_laundry/core/network/api_response.dart';
+import 'package:sanam_laundry/core/utils/helper.dart';
 import 'package:sanam_laundry/data/index.dart';
+import 'package:sanam_laundry/data/models/service.dart';
 import 'package:sanam_laundry/data/services/endpoints.dart';
 
 class HomeRepository {
   final ApiService _apiService = ApiService();
 
-  /// 🔹 PROFILE
+  /// 🔹 BANNERS
   Future getBannners() async {
     return await ApiResponseHandler.handleRequest(
       () => _apiService.get(Endpoints.banners),
       onSuccess: (data, _) {
-        final banners = data["banners"] as List;
-
-        final list = banners.map((e) => (e["media"] ?? "").toString()).toList();
+        final banners = Utils.safeList(data?["banners"]);
+        final list = banners
+            .map((e) => BannerModel.fromJson(e).media)
+            .where((x) => x.isNotEmpty)
+            .toList();
 
         return list;
       },
@@ -24,11 +28,27 @@ class HomeRepository {
     return await ApiResponseHandler.handleRequest<List<CategoryModel>>(
       () => _apiService.get(Endpoints.categories),
       onSuccess: (data, _) {
-        // `data` is list<dynamic> coming from API
-        final list = (data as List)
-            .map((e) => CategoryModel.fromJson(e))
-            .toList();
+        final list = Utils.safeList(
+          data,
+        ).map((e) => CategoryModel.fromJson(e)).toList();
+        return list;
+      },
+    );
+  }
 
+  Future<List<ServiceItemModel>?> getServicesByCategoryId(
+    String categoryId, {
+    String type = "services",
+  }) async {
+    return await ApiResponseHandler.handleRequest<List<ServiceItemModel>>(
+      () => _apiService.get(
+        Endpoints.services,
+        query: {'category_id': categoryId, 'type': type},
+      ),
+      onSuccess: (data, _) {
+        final list = Utils.safeList(
+          data["services"],
+        ).map((e) => ServiceItemModel.fromJson(e)).toList();
         return list;
       },
     );
