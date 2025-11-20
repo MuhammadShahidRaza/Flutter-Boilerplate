@@ -1,6 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:sanam_laundry/core/index.dart';
+import 'package:sanam_laundry/data/index.dart';
+import 'package:sanam_laundry/data/models/list_view.dart';
+import 'package:sanam_laundry/data/models/service.dart';
 import 'package:sanam_laundry/presentation/index.dart';
+import 'package:sanam_laundry/providers/index.dart';
 
 class ServiceItem extends StatefulWidget {
   const ServiceItem({super.key});
@@ -10,50 +15,12 @@ class ServiceItem extends StatefulWidget {
 }
 
 class _ServiceItemState extends State<ServiceItem> {
-  List<Map<String, dynamic>> serviceItems = [];
-
-  // String? selectedCategoryId;
-  bool loadingServiceItems = false;
-
-  // @override
-  // void initState() {
-  //   super.initState();
-  //   _loadServices(selectedCategoryId!);
-  // }
-
-  @override
-  void initState() {
-    super.initState();
-    _loadServices(""); // pass an empty string to avoid null
-  }
-
-  Future<void> _loadServices(String categoryId) async {
-    setState(() {
-      loadingServiceItems = true;
-    });
-
-    // 🔹 Simulating service Iteem API per service
-    await Future.delayed(const Duration(milliseconds: 800));
-    final data = [
-      {"id": "11", "name": "Washing", "image": AppAssets.getStarted},
-      {"id": "12", "name": "Ironing", "image": AppAssets.onboardingOne},
-      {"id": "13", "name": "Dry Cleaning", "image": AppAssets.onboardingThree},
-      {"id": "14", "name": "Stitching", "image": AppAssets.user},
-    ];
-
-    setState(() {
-      serviceItems = data;
-      loadingServiceItems = false;
-    });
-  }
-
   @override
   Widget build(BuildContext context) {
-    final Map<String, dynamic> service = context
-        .getExtra<Map<String, dynamic>>()?["item"];
+    final CategoryModel category = context.getExtra<CategoryModel>()!;
 
     return AppWrapper(
-      heading: service['title'],
+      heading: category.title,
       safeArea: false,
       showBackButton: true,
       padding: EdgeInsets.only(bottom: 20),
@@ -62,55 +29,95 @@ class _ServiceItemState extends State<ServiceItem> {
         spacing: Dimens.spacingM,
         children: [
           Expanded(
-            child: loadingServiceItems
-                ? const Center(child: CircularProgressIndicator())
-                : serviceItems.isEmpty
-                ? const Center(child: AppText("No services available"))
-                : ListView.builder(
-                    padding: const EdgeInsets.symmetric(horizontal: 16),
-                    itemCount: serviceItems.length,
-                    itemBuilder: (context, index) {
-                      final service = serviceItems[index];
-                      return ServiceCard(service: service, showAddRemove: true);
-                    },
+            child: Consumer<ServicesProvider>(
+              builder: (context, serviceProvider, _) {
+                final services = serviceProvider.servicesForCategory(
+                  category.id,
+                );
+                return AppListView<ServiceItemModel>(
+                  state: AppListState<ServiceItemModel>(
+                    items: services,
+                    loadingInitial: serviceProvider.loading,
+                    loadingMore: false,
+                    hasMore: false,
                   ),
-          ),
-          SliderTheme(
-            data: SliderTheme.of(context).copyWith(
-              thumbShape: SliderComponentShape.noThumb, // ✅ Hides the thumb
-              overlayShape:
-                  SliderComponentShape.noOverlay, // optional: removes ripple
-            ),
-            child: Slider(
-              value: 2,
-              max: 10,
-              min: 0,
-              onChanged: (value) {},
-              activeColor: AppColors.secondary,
-              inactiveColor: AppColors.border,
+                  onRefresh: () => serviceProvider.fetchServicesByCategoryId(
+                    category.id,
+                    force: true,
+                  ),
+
+                  padding: const EdgeInsets.symmetric(horizontal: 16),
+                  itemBuilder: (context, item, index) {
+                    final service = services[index];
+                    return ServiceCard(service: service, showAddRemove: true);
+                  },
+                );
+              },
             ),
           ),
-          Padding(
-            padding: const EdgeInsets.symmetric(
-              horizontal: Dimens.screenMarginHorizontal,
+
+          if (context.watch<CartProvider>().items.isNotEmpty)
+            Consumer<CartProvider>(
+              builder: (context, cart, _) {
+                final totalAmount = cart.totalAmount;
+                const freeDeliveryThreshold = 1000.0;
+                final remaining = (freeDeliveryThreshold - totalAmount).clamp(
+                  0,
+                  freeDeliveryThreshold,
+                );
+                final isFreeDelivery = totalAmount >= freeDeliveryThreshold;
+
+                return Column(
+                  spacing: Dimens.spacingM,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    SliderTheme(
+                      data: SliderTheme.of(context).copyWith(
+                        thumbShape: SliderComponentShape.noThumb,
+                        overlayShape: SliderComponentShape.noOverlay,
+                      ),
+                      child: Slider(
+                        value: totalAmount.clamp(0, freeDeliveryThreshold),
+                        max: freeDeliveryThreshold,
+                        min: 0,
+                        onChanged: (_) {},
+                        activeColor: AppColors.secondary,
+                        inactiveColor: AppColors.border,
+                      ),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: Dimens.screenMarginHorizontal,
+                      ),
+                      child: Row(
+                        spacing: Dimens.spacingM,
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Expanded(
+                            child: AppText(
+                              isFreeDelivery
+                                  ? "You qualify for free delivery 🎉"
+                                  : "${remaining.toStringAsFixed(2)} SAR remaining to qualify for free delivery",
+                              maxLines: 2,
+                            ),
+                          ),
+                          AppIcon(
+                            icon: Icons.local_shipping_outlined,
+                            color: AppColors.primary,
+                          ),
+                        ],
+                      ),
+                    ),
+                    AppButton(
+                      title: "Place Order",
+                      onPressed: () {
+                        context.navigate(AppRoutes.orderDetails);
+                      },
+                    ),
+                  ],
+                );
+              },
             ),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                AppText("15 SAR remaining to qualify for free delivery"),
-                AppIcon(
-                  icon: Icons.local_shipping_outlined,
-                  color: AppColors.primary,
-                ),
-              ],
-            ),
-          ),
-          AppButton(
-            title: "Place Order",
-            onPressed: () {
-              context.navigate(AppRoutes.orderDetails);
-            },
-          ),
         ],
       ),
     );
