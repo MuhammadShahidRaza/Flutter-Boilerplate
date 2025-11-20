@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:sanam_laundry/core/index.dart';
+import 'package:sanam_laundry/data/index.dart';
 import 'package:sanam_laundry/presentation/index.dart';
 
 class TabList extends StatelessWidget {
@@ -11,7 +12,7 @@ class TabList extends StatelessWidget {
     this.tabWidth,
   });
 
-  final List<Map<String, dynamic>> list;
+  final List<CategoryModel> list;
   final String? selectedId;
   final void Function(String id)? onTap;
   final double? tabWidth;
@@ -30,10 +31,10 @@ class TabList extends StatelessWidget {
         separatorBuilder: (_, __) => SizedBox(width: Dimens.spacingS),
         itemBuilder: (context, index) {
           final item = list[index];
-          final isSelected = item["id"] == selectedId;
+          final isSelected = item.id == selectedId;
 
           return GestureDetector(
-            onTap: () => onTap?.call(item["id"]),
+            onTap: () => onTap?.call(item.id),
             child: Container(
               width: context.w(tabWidth ?? 0.28),
               padding: EdgeInsets.symmetric(horizontal: Dimens.spacingS),
@@ -47,7 +48,7 @@ class TabList extends StatelessWidget {
               ),
               child: Center(
                 child: AppText(
-                  item["name"],
+                  item.title,
                   style: TextStyle(
                     fontWeight: isSelected
                         ? FontWeight.bold
