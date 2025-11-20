@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:sanam_laundry/core/index.dart';
+import 'package:sanam_laundry/data/models/category.dart';
 import 'package:sanam_laundry/presentation/index.dart';
 
 class Orders extends StatefulWidget {
@@ -10,7 +11,7 @@ class Orders extends StatefulWidget {
 }
 
 class _OrdersState extends State<Orders> {
-  List<Map<String, dynamic>> categories = [];
+  List<CategoryModel> categories = [];
   List<dynamic> orders = [];
 
   String? selectedCategoryId;
@@ -27,14 +28,14 @@ class _OrdersState extends State<Orders> {
     // 🔹 Simulating API call
     await Future.delayed(const Duration(milliseconds: 800));
     final data = [
-      {"id": "1", "name": "In-Progress Order"},
-      {"id": "2", "name": "Completed"},
+      {"id": "1", "title": "In-Progress Order"},
+      {"id": "2", "title": "Completed"},
     ];
 
     setState(() {
-      categories = data;
+      categories = data.map((e) => CategoryModel.fromJson(e)).toList();
       loadingCategories = false;
-      selectedCategoryId = data.first["id"];
+      selectedCategoryId = categories.first.id;
     });
 
     _loadOrders(selectedCategoryId!);
