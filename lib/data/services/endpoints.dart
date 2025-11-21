@@ -10,6 +10,8 @@ class Endpoints {
   static const String banners = 'banner';
   static const String categories = 'category';
   static const String services = 'service';
+  static const String addAddress = 'address/create';
+  static const String addresses = 'address';
 
   // User
   static const String getUserProfile = "user/user";
