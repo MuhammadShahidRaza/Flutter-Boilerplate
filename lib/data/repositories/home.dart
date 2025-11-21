@@ -2,6 +2,7 @@ import 'package:sanam_laundry/core/index.dart';
 import 'package:sanam_laundry/core/network/api_response.dart';
 import 'package:sanam_laundry/core/utils/helper.dart';
 import 'package:sanam_laundry/data/index.dart';
+import 'package:sanam_laundry/data/models/address.dart';
 import 'package:sanam_laundry/data/models/service.dart';
 import 'package:sanam_laundry/data/services/endpoints.dart';
 
@@ -36,6 +37,18 @@ class HomeRepository {
     );
   }
 
+  Future<List<AddressModel>?> getAddresses() async {
+    return await ApiResponseHandler.handleRequest<List<AddressModel>>(
+      () => _apiService.get(Endpoints.addresses),
+      onSuccess: (data, _) {
+        final list = Utils.safeList(
+          data["addresses"],
+        ).map((e) => AddressModel.fromJson(e)).toList();
+        return list;
+      },
+    );
+  }
+
   Future<List<ServiceItemModel>?> getServicesByCategoryId(
     String categoryId, {
     String type = "services",
@@ -50,6 +63,20 @@ class HomeRepository {
           data["services"],
         ).map((e) => ServiceItemModel.fromJson(e)).toList();
         return list;
+      },
+    );
+  }
+
+  Future<AddressModel?> addNewAddress(address) async {
+    return await ApiResponseHandler.handleRequest<AddressModel>(
+      () => _apiService.post(
+        Endpoints.addAddress,
+        data: address,
+        config: const ApiRequestConfig(showSuccessToast: true),
+      ),
+      onSuccess: (data, _) {
+        final address = data['addresses'];
+        return AddressModel.fromJson(address);
       },
     );
   }
