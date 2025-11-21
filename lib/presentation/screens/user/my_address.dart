@@ -100,7 +100,6 @@ class _MyAddressState extends State<MyAddress> {
     return AppWrapper(
       heading: "My Addresses",
       scrollable: true,
-
       showBackButton: true,
       child: Stack(
         children: [
@@ -162,9 +161,10 @@ class _MyAddressState extends State<MyAddress> {
                 //       ),
 
                 // Add New Address
-                _buildAddressTile(id: -1, title: "Add New Address"),
+                if (addresseses.length < 3)
+                  _buildAddressTile(id: -1, title: "Add New Address"),
 
-                if (isNewAddress) ...[
+                if (isNewAddress && addresseses.length < 3) ...[
                   ImagePickerBox(
                     imageBoxWidth: context.w(0.6),
                     imageBoxHeight: context.h(0.18),
