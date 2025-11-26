@@ -45,7 +45,7 @@ class _StaticPageState extends State<StaticPage> {
       heading: heading,
       showBackButton: true,
       child: loading
-          ? const Center(child: CircularProgressIndicator())
+          ? const Center(child: CircularProgressIndicator.adaptive())
           : AppText(
               pageData?.description ?? Common.noDataAvailable,
               overflow: TextOverflow.visible,

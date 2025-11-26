@@ -17,7 +17,12 @@ class ServiceItem extends StatefulWidget {
 class _ServiceItemState extends State<ServiceItem> {
   @override
   Widget build(BuildContext context) {
-    final CategoryModel category = context.getExtra<CategoryModel>()!;
+    final dynamic extra = context.getExtra();
+    final CategoryModel category = (extra is CategoryModel
+        ? extra
+        : (extra is Map<String, dynamic>
+              ? CategoryModel.fromJson(extra)
+              : null))!;
 
     return AppWrapper(
       heading: category.title,
@@ -60,12 +65,14 @@ class _ServiceItemState extends State<ServiceItem> {
             Consumer<CartProvider>(
               builder: (context, cart, _) {
                 final totalAmount = cart.totalAmount;
-                const freeDeliveryThreshold = 1000.0;
-                final remaining = (freeDeliveryThreshold - totalAmount).clamp(
+                final settings = context.watch<ServicesProvider>().settings;
+
+                final freeDelivery = settings.freeDeliveryThreshold;
+                final remaining = (freeDelivery - totalAmount).clamp(
                   0,
-                  freeDeliveryThreshold,
+                  freeDelivery,
                 );
-                final isFreeDelivery = totalAmount >= freeDeliveryThreshold;
+                final isFreeDelivery = totalAmount >= freeDelivery;
 
                 return Column(
                   spacing: Dimens.spacingM,
@@ -77,8 +84,8 @@ class _ServiceItemState extends State<ServiceItem> {
                         overlayShape: SliderComponentShape.noOverlay,
                       ),
                       child: Slider(
-                        value: totalAmount.clamp(0, freeDeliveryThreshold),
-                        max: freeDeliveryThreshold,
+                        value: totalAmount.clamp(0, freeDelivery).toDouble(),
+                        max: freeDelivery.toDouble(),
                         min: 0,
                         onChanged: (_) {},
                         activeColor: AppColors.secondary,
