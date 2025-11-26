@@ -18,12 +18,14 @@ class Endpoints {
   static const String updateUserProfile = "user/update";
 
   // Orders
-  // static const String getOrders = "/orders";
-  // static const String createOrder = "/orders/create";
-  // static const String updateOrder = "/orders/update";
+  static const String getOrders = "booking";
+  static const String createOrder = "booking/create";
+  static const String updateOrder = "/orders/update";
 
   //SETTINGS
-  // static const String getSettings = "settings";
+  static const String settings = "setting";
+  static const String slots = "slot";
+  static const String additionalInfo = "additional-info";
   static const String contactUs = "contact/create";
   static const String privacyPolicy = "content/privacy-policy";
   static const String termsAndConditions = "content/terms-conditions";
