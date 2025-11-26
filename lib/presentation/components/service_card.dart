@@ -73,6 +73,7 @@ class ServiceCard extends StatelessWidget {
                     (e) => e.serviceId == int.parse(service.id),
                     orElse: () => CartItem(
                       serviceId: int.parse(service.id),
+                      serviceName: service.title,
                       quantity: 0,
                       amount: double.parse(service.amount),
                     ),
