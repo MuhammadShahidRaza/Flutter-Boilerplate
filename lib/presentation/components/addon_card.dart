@@ -1,11 +1,15 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:sanam_laundry/core/index.dart';
+import 'package:sanam_laundry/data/models/cart.dart';
+import 'package:sanam_laundry/data/models/service.dart';
 import 'package:sanam_laundry/presentation/index.dart';
+import 'package:sanam_laundry/providers/index.dart';
 
 class AddonCard extends StatelessWidget {
   const AddonCard({super.key, required this.service});
 
-  final Map<String, dynamic> service;
+  final ServiceItemModel service;
 
   @override
   Widget build(BuildContext context) {
@@ -15,57 +19,96 @@ class AddonCard extends StatelessWidget {
         vertical: Dimens.spacingS,
         horizontal: Dimens.spacingS,
       ),
-      child: InkWell(
-        onTap: () {
-          // Navigate to service detail or add to cart
-        },
-        child: Padding(
-          padding: EdgeInsets.all(Dimens.spacingS),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            spacing: Dimens.spacingMSmall,
-            children: [
-              Column(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  AppImage(
-                    path: service["image"],
-                    width: context.w(0.2),
-                    height: context.h(0.07),
-                    borderRadius: Dimens.radiusS,
-                  ),
-                  AppText(
-                    service["name"],
-                    style: context.textTheme.titleMedium!.copyWith(),
-                  ),
-                ],
-              ),
+      child: Padding(
+        padding: EdgeInsets.all(Dimens.spacingS),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          spacing: Dimens.spacingMSmall,
+          children: [
+            Column(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                AppImage(
+                  path: service.image,
+                  width: context.w(0.2),
+                  fit: BoxFit.contain,
+                  height: context.h(0.07),
+                  borderRadius: Dimens.radiusS,
+                ),
+                AppText(
+                  service.title,
+                  style: context.textTheme.titleMedium!.copyWith(),
+                ),
+              ],
+            ),
 
-              Column(
-                spacing: Dimens.spacingS,
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            // Column(
+            //   spacing: Dimens.spacingS,
+            //   mainAxisAlignment: MainAxisAlignment.spaceBetween,
 
-                children: [
-                  AppIcon(
-                    onTap: () => {},
-                    icon: Icons.add_circle,
-                    color: AppColors.primary,
+            //   children: [
+            //     AppIcon(
+            //       onTap: () => {},
+            //       icon: Icons.add_circle,
+            //       color: AppColors.primary,
+            //     ),
+            //     AppText(
+            //       "01",
+            //       style: context.textTheme.bodyLarge!.copyWith(
+            //         fontWeight: FontWeight.bold,
+            //       ),
+            //     ),
+            //     AppIcon(
+            //       onTap: () => {},
+            //       icon: Icons.remove_circle,
+            //       color: AppColors.primary,
+            //     ),
+            //   ],
+            // ),
+            Consumer<CartProvider>(
+              builder: (context, cart, _) {
+                // Get the quantity of this service in cart
+                final cartItem = cart.items.firstWhere(
+                  (e) => e.serviceId == int.parse(service.id),
+                  orElse: () => CartItem(
+                    serviceId: int.parse(service.id),
+                    serviceName: service.title,
+                    quantity: 0,
+                    amount: double.parse(service.amount),
                   ),
-                  AppText(
-                    "01",
-                    style: context.textTheme.bodyLarge!.copyWith(
-                      fontWeight: FontWeight.bold,
+                );
+
+                return Column(
+                  spacing: Dimens.spacingS,
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    AppIcon(
+                      onTap: () => {
+                        cart.addService(service),
+                        cart.addAddOn(service),
+                      },
+                      icon: Icons.add_circle,
+                      color: AppColors.primary,
                     ),
-                  ),
-                  AppIcon(
-                    onTap: () => {},
-                    icon: Icons.remove_circle,
-                    color: AppColors.primary,
-                  ),
-                ],
-              ),
-            ],
-          ),
+                    AppText(
+                      "${cartItem.quantity}",
+                      style: context.textTheme.bodyLarge!.copyWith(
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    AppIcon(
+                      onTap: () => {
+                        cart.removeService(service),
+                        cart.removeAddOn(service),
+                      },
+                      icon: Icons.remove_circle,
+                      color: AppColors.primary,
+                    ),
+                  ],
+                );
+              },
+            ),
+          ],
         ),
       ),
     );

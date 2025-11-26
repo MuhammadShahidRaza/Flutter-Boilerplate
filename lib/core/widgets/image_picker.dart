@@ -14,11 +14,13 @@ class ImagePickerBox extends StatefulWidget {
   final double? imageBoxWidth;
   final double? imageBoxHeight;
   final Color? borderColor;
+  final bool wantBottomSpace;
 
   const ImagePickerBox({
     super.key,
     this.onImagePicked,
     this.initialImagePath,
+    this.wantBottomSpace = true,
     this.title,
     this.imageBoxWidth,
     this.imageBoxHeight,
@@ -102,7 +104,7 @@ class _ImagePickerBoxState extends State<ImagePickerBox> {
             maxLines: 3,
             textAlign: TextAlign.center,
           ),
-          SizedBox(height: Dimens.spacingMSmall),
+          if (widget.wantBottomSpace) SizedBox(height: Dimens.spacingMSmall),
         ],
       ),
     );
