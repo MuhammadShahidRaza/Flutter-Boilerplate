@@ -1,0 +1,74 @@
+import 'package:flutter/material.dart';
+import 'package:sanam_laundry/core/index.dart';
+import 'package:sanam_laundry/core/utils/helper.dart';
+import 'package:sanam_laundry/core/widgets/message_box.dart';
+import 'package:sanam_laundry/presentation/components/service_table.dart';
+import 'package:sanam_laundry/presentation/index.dart';
+
+class BookingDetailsComp extends StatelessWidget {
+  final dynamic details;
+  const BookingDetailsComp({super.key, required this.details});
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      spacing: Dimens.spacingM,
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        // Services Section
+        ServicesTable(services: details?["services"]),
+
+        // Additional Notes
+        AppText("Additional Notes:", style: context.textTheme.titleMedium),
+
+        AppText(
+          Utils.capitalize(details?["additionalNotes"]),
+          style: context.textTheme.bodySmall!.copyWith(
+            color: AppColors.textSecondary,
+          ),
+          maxLines: 10,
+        ),
+
+        // Details Section
+        if (details?["location"] != null)
+          MessageBox(
+            icon: Icons.location_on_outlined,
+            title: "Location:",
+            value: Utils.capitalize(details?["location"]),
+          ),
+
+        if (details?["deliveryType"] != null)
+          MessageBox(
+            icon: Icons.local_shipping_outlined,
+            title: "Delivery Type:",
+            value: Utils.capitalize(details?["deliveryType"]),
+          ),
+
+        // MessageBox(
+        //   icon: Icons.calendar_today_outlined,
+        //   title: "Pick-up Date:",
+        //   value: details?["pickUpDate"],
+        // ),
+        // details?["pickUpTimeSlot"] != null
+        //     ? MessageBox(
+        //         icon: Icons.access_time_outlined,
+        //         title: "Pick-up Time Slot:",
+        //         value: details?["pickUpTimeSlot"],
+        //       )
+        //     : SizedBox.shrink(),
+        // MessageBox(
+        //   icon: Icons.event_outlined,
+        //   title: "Delivery Date:",
+        //   value: details?["deliveryDate"],
+        // ),
+        // MessageBox(
+        //   icon: Icons.event_outlined,
+        //   title: "Delivery Time Slot:",
+        //   value: details?["deliveryTimeSlot"],
+        // ),
+        SizedBox(height: Dimens.spacingM),
+        Divider(color: AppColors.lightGrey),
+      ],
+    );
+  }
+}
