@@ -76,7 +76,7 @@ class _SplashState extends State<Splash> {
                 ),
               ),
             )
-          : const Center(child: CircularProgressIndicator()),
+          : const Center(child: CircularProgressIndicator.adaptive()),
     );
   }
 }

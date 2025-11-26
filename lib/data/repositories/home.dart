@@ -1,9 +1,13 @@
+import 'package:flutter/material.dart';
 import 'package:sanam_laundry/core/index.dart';
 import 'package:sanam_laundry/core/network/api_response.dart';
 import 'package:sanam_laundry/core/utils/helper.dart';
 import 'package:sanam_laundry/data/index.dart';
 import 'package:sanam_laundry/data/models/address.dart';
+import 'package:sanam_laundry/data/models/order.dart';
 import 'package:sanam_laundry/data/models/service.dart';
+import 'package:sanam_laundry/data/models/settings.dart';
+import 'package:sanam_laundry/data/models/slot.dart';
 import 'package:sanam_laundry/data/services/endpoints.dart';
 
 class HomeRepository {
@@ -39,25 +43,65 @@ class HomeRepository {
 
   Future<List<AddressModel>?> getAddresses() async {
     return await ApiResponseHandler.handleRequest<List<AddressModel>>(
-      () => _apiService.get(Endpoints.addresses),
+      () => _apiService.get(
+        Endpoints.addresses,
+        config: ApiRequestConfig(showLoader: true),
+      ),
       onSuccess: (data, _) {
+        final addresses = data?["addresses"];
         final list = Utils.safeList(
-          data["addresses"],
+          addresses,
         ).map((e) => AddressModel.fromJson(e)).toList();
         return list;
       },
     );
   }
 
+  Future getSettings() async {
+    return await ApiResponseHandler.handleRequest<SettingsModel>(
+      () => _apiService.get(Endpoints.settings),
+      onSuccess: (data, statusCode) => SettingsModel.fromJson(data),
+    );
+  }
+
+  Future getSlots() async {
+    return await ApiResponseHandler.handleRequest(
+      () => _apiService.get(Endpoints.slots),
+      onSuccess: (data, _) {
+        final list = Utils.safeList(
+          data["slots"],
+        ).map((e) => SlotModel.fromJson(e)).toList();
+        return list;
+      },
+    );
+  }
+
+  Future additionalInfo() async {
+    return await ApiResponseHandler.handleRequest(
+      () => _apiService.get(Endpoints.additionalInfo),
+      onSuccess: (data, _) {
+        return data ?? [];
+        // final list = Utils.safeList(
+        //   data["slots"],
+        // ).map((e) => SlotModel.fromJson(e)).toList();
+        // return list;
+      },
+    );
+  }
+
   Future<List<ServiceItemModel>?> getServicesByCategoryId(
-    String categoryId, {
+    String? categoryId, {
     String type = "services",
   }) async {
+    final Map<String, String> query = {"type": type};
+
+    // Add only if categoryId is valid
+    if (categoryId != null && categoryId.isNotEmpty) {
+      query["category_id"] = categoryId;
+    }
+
     return await ApiResponseHandler.handleRequest<List<ServiceItemModel>>(
-      () => _apiService.get(
-        Endpoints.services,
-        query: {'category_id': categoryId, 'type': type},
-      ),
+      () => _apiService.get(Endpoints.services, query: query),
       onSuccess: (data, _) {
         final list = Utils.safeList(
           data["services"],
@@ -69,15 +113,24 @@ class HomeRepository {
 
   Future<AddressModel?> addNewAddress(address) async {
     return await ApiResponseHandler.handleRequest<AddressModel>(
-      () => _apiService.post(
+      () => _apiService.multipartPost(
         Endpoints.addAddress,
         data: address,
         config: const ApiRequestConfig(showSuccessToast: true),
       ),
       onSuccess: (data, _) {
-        final address = data['addresses'];
+        final address = data['address'];
         return AddressModel.fromJson(address);
       },
+    );
+  }
+
+  Future deleteAddress(int id) async {
+    return await ApiResponseHandler.handleRequest(
+      () => _apiService.delete(
+        '${Endpoints.addresses}/$id',
+        config: const ApiRequestConfig(showSuccessToast: true),
+      ),
     );
   }
 
@@ -108,24 +161,32 @@ class HomeRepository {
   //   );
   // }
 
-  /// 🔹 CONTACT US
-  // Future contactUs({
-  //   required String fullName,
-  //   required String email,
-  //   required String description,
-  //   required String phone,
-  // }) async {
-  //   return await ApiResponseHandler.handleRequest(
-  //     () => _apiService.post(
-  //       Endpoints.contactUs,
-  //       data: {
-  //         'name': fullName,
-  //         'email': email,
-  //         'phone': phone,
-  //         'description': description,
-  //       },
-  //       // config: const ApiRequestConfig(showSuccessToast: true),
-  //     ),
-  //   );
-  // }
+  Future placeOrder({required Map<String, dynamic> payload}) async {
+    debugPrint(payload.toString());
+    return await ApiResponseHandler.handleRequest(
+      () => _apiService.multipartPost(
+        Endpoints.createOrder,
+        data: payload,
+        config: const ApiRequestConfig(showLoader: true),
+      ),
+    );
+  }
+
+  Future getOrders() async {
+    return await ApiResponseHandler.handleRequest(
+      () => _apiService.get(Endpoints.getOrders),
+      onSuccess: (data, _) {
+        final orders = Utils.safeList(data?["Booking"]);
+        final list = orders.map((e) => OrderModel.fromJson(e)).toList();
+        return list;
+      },
+    );
+  }
+
+  Future getOrderDetailsById(String id) async {
+    return await ApiResponseHandler.handleRequest(
+      () => _apiService.get('${Endpoints.getOrders}/$id'),
+      onSuccess: (data, _) => OrderModel.fromJson(data),
+    );
+  }
 }
