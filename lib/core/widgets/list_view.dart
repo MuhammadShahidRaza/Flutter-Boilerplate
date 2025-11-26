@@ -38,7 +38,7 @@ class AppListView<T> extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     if (state.loadingInitial) {
-      return const Center(child: CircularProgressIndicator());
+      return const Center(child: CircularProgressIndicator.adaptive());
     }
     if (state.error != null && state.items.isEmpty) {
       return Column(
