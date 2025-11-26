@@ -15,4 +15,10 @@ class Utils {
   static Map safeMap(dynamic value) {
     return value is Map ? value : {};
   }
+
+  static String capitalize(String? value) {
+    if (value == null || value.trim().isEmpty) return '';
+    final v = value.trim();
+    return v[0].toUpperCase() + v.substring(1).toLowerCase();
+  }
 }
