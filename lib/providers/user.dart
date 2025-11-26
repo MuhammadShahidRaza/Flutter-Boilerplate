@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:sanam_laundry/core/utils/helper.dart';
 import 'package:sanam_laundry/data/index.dart';
 
 class UserProvider extends ChangeNotifier {
@@ -28,15 +29,8 @@ class UserProvider extends ChangeNotifier {
 
   /// ✅ Automatically capitalized full name
   String get fullName {
-    final f = _capitalize(_user?.firstName);
-    final l = _capitalize(_user?.lastName);
+    final f = Utils.capitalize(_user?.firstName);
+    final l = Utils.capitalize(_user?.lastName);
     return [f, l].where((e) => e.isNotEmpty).join(' ');
-  }
-
-  /// Helper method to capitalize first letter safely
-  String _capitalize(String? value) {
-    if (value == null || value.trim().isEmpty) return '';
-    final v = value.trim();
-    return v[0].toUpperCase() + v.substring(1).toLowerCase();
   }
 }
