@@ -30,11 +30,16 @@ class _HomeState extends State<Home> {
     context.read<ServicesProvider>().fetchCategories();
   }
 
+  Future<void> fetchSettings() async {
+    context.read<ServicesProvider>().fetchSettings();
+  }
+
   @override
   void initState() {
     super.initState();
     fetchBanners();
     fetchCategories();
+    fetchSettings();
   }
 
   @override

@@ -14,8 +14,9 @@ class _LoginState extends State<Login> {
   final AuthRepository _authRepository = AuthRepository();
   final _formKey = GlobalKey<FormState>();
   final phoneController = TextEditingController();
-
+  bool loading = false;
   Future<void> _submit() async {
+    setState(() => loading = true);
     final message = await _authRepository.login(
       phone: phoneController.text.trim(),
     );
@@ -40,6 +41,7 @@ class _LoginState extends State<Login> {
         AppToast.showToast(message, isError: true);
       }
     }
+    setState(() => loading = false);
   }
 
   @override
@@ -49,6 +51,7 @@ class _LoginState extends State<Login> {
       height: true,
       title: Auth.welcomeBackLogin,
       subtitle: Auth.helloAgainLogin,
+      isLoading: loading,
       buttonText: Common.signIn,
       onSubmit: _submit,
       child: Column(
