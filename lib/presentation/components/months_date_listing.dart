@@ -1,13 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:sanam_laundry/core/index.dart';
+import 'package:sanam_laundry/core/utils/helper.dart';
+import 'package:sanam_laundry/data/models/slot.dart';
 import 'package:sanam_laundry/presentation/index.dart';
 
 class MonthsDateListing extends StatefulWidget {
-  final List<Map<String, String>> slots;
+  final List<SlotModel?> slots;
   final Function(DateTime) onDateSelected;
   final Function(String) onSlotSelected;
   final String heading;
+  final int disabledExtraDays;
+  final DateTime?
+  baseDate; // if provided, disabledExtraDays counted after this date
 
   const MonthsDateListing({
     super.key,
@@ -15,6 +20,8 @@ class MonthsDateListing extends StatefulWidget {
     this.heading = "Select Pick-up Date & Time",
     required this.onDateSelected,
     required this.onSlotSelected,
+    this.disabledExtraDays = 0,
+    this.baseDate,
   });
 
   @override
@@ -33,6 +40,10 @@ class _MonthsDateListingState extends State<MonthsDateListing> {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       _scrollToCurrentDate();
     });
+  }
+
+  bool _isSameDay(DateTime a, DateTime b) {
+    return a.year == b.year && a.month == b.month && a.day == b.day;
   }
 
   @override
@@ -96,10 +107,15 @@ class _MonthsDateListingState extends State<MonthsDateListing> {
   }
 
   bool _isPastDate(DateTime date) {
-    final now = DateTime.now();
-    final today = DateTime(now.year, now.month, now.day);
+    // Use baseDate (e.g., pickup date) if provided; otherwise use today.
+    final base = widget.baseDate ?? DateTime.now();
+    final baseline = DateTime(
+      base.year,
+      base.month,
+      base.day,
+    ).add(Duration(days: widget.disabledExtraDays));
     final checkDate = DateTime(date.year, date.month, date.day);
-    return checkDate.isBefore(today);
+    return checkDate.isBefore(baseline);
   }
 
   void _goToNextMonth() {
@@ -291,9 +307,43 @@ class _MonthsDateListingState extends State<MonthsDateListing> {
             itemCount: widget.slots.length,
             itemBuilder: (context, index) {
               final slot = widget.slots[index];
-              final id = slot["id"]!;
+              final id = slot?.id ?? "";
+
+              if (slot == null) {
+                return const SizedBox.shrink();
+              }
+              // Hide elapsed slots only when selected date is today: compare slot end time mapped onto selected day.
+              if (_selectedDate != null) {
+                final selected = DateTime(
+                  _selectedDate!.year,
+                  _selectedDate!.month,
+                  _selectedDate!.day,
+                );
+                final isTodaySelected = _isSameDay(selected, DateTime.now());
+                if (isTodaySelected) {
+                  final endIso = slot.endTime;
+                  if (endIso != null) {
+                    final parsed = DateTime.tryParse(endIso)?.toLocal();
+                    if (parsed != null) {
+                      final endOnSelected = DateTime(
+                        selected.year,
+                        selected.month,
+                        selected.day,
+                        parsed.hour,
+                        parsed.minute,
+                        parsed.second,
+                      );
+                      if (endOnSelected.isBefore(DateTime.now())) {
+                        return const SizedBox.shrink();
+                      }
+                    }
+                  }
+                }
+              }
               return AppButton(
-                title: 'Slot ${index + 1} ( ${slot["details"]} )',
+                title: Utils.capitalize(
+                  '${slot.title} ( ${slot.startTime} - ${slot.endTime} )',
+                ),
                 type: selectedSlotId == id
                     ? AppButtonType.elevated
                     : AppButtonType.outlined,

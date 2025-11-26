@@ -1,15 +1,51 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:sanam_laundry/core/index.dart';
-import 'package:sanam_laundry/core/widgets/order_details.dart';
+import 'package:sanam_laundry/core/widgets/booking_details_comp.dart';
 import 'package:sanam_laundry/core/widgets/stepper.dart';
+import 'package:sanam_laundry/data/models/cart.dart';
+import 'package:sanam_laundry/data/models/order.dart';
+import 'package:sanam_laundry/data/repositories/home.dart';
 import 'package:sanam_laundry/presentation/index.dart';
 
-class BookingDetails extends StatelessWidget {
+class BookingDetails extends StatefulWidget {
   const BookingDetails({super.key});
+
+  @override
+  State<BookingDetails> createState() => _BookingDetailsState();
+}
+
+class _BookingDetailsState extends State<BookingDetails> {
+  final HomeRepository _homeRepository = HomeRepository();
+
+  OrderModel? orderDetails;
+
+  Future<void> _loadOrderDetailsById(String id) async {
+    final response = await _homeRepository.getOrderDetailsById(id);
+    if (response != null) {
+      setState(() {
+        orderDetails = response;
+      });
+    }
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    _loadOrderDetailsById("1");
+  }
+
+  String _formatDate(dynamic val) {
+    if (val is DateTime) return DateFormat('EEE, d MMM').format(val);
+    return val?.toString() ?? '';
+  }
 
   @override
   Widget build(BuildContext context) {
     final bool isCompleted = true;
+    final firstService = orderDetails?.bookingDetail.isNotEmpty == true
+        ? orderDetails!.bookingDetail.first.service
+        : null;
     return AppWrapper(
       showBackButton: true,
       scrollable: true,
@@ -20,7 +56,7 @@ class BookingDetails extends StatelessWidget {
         children: [
           // Order ID
           AppImage(
-            path: AppAssets.temp,
+            path: firstService?.image ?? AppAssets.user,
             width: context.screenWidth,
             height: context.h(0.3),
             borderRadius: Dimens.radiusM,
@@ -30,13 +66,13 @@ class BookingDetails extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               AppText(
-                "Washing",
+                firstService?.title ?? '',
                 style: context.textTheme.titleLarge!.copyWith(
                   fontWeight: FontWeight.bold,
                 ),
               ),
               AppText(
-                "Order ID: 2458",
+                "Order ID: ${orderDetails?.id ?? ''}",
                 style: context.textTheme.titleSmall!.copyWith(
                   fontWeight: FontWeight.bold,
                   color: AppColors.primary,
@@ -49,7 +85,10 @@ class BookingDetails extends StatelessWidget {
           Row(
             spacing: Dimens.spacingM,
             children: [
-              AppText("Status", style: context.textTheme.titleMedium),
+              AppText(
+                orderDetails?.status ?? '',
+                style: context.textTheme.titleMedium,
+              ),
               if (isCompleted)
                 AppButton(
                   title: "Completed",
@@ -89,31 +128,40 @@ class BookingDetails extends StatelessWidget {
 
           BookingDetailsComp(
             details: {
-              "services": [
-                {"name": "Shirt Washing", "qty": "02", "price": "250 SAR"},
-                {"name": "Shoe Washing", "qty": "02", "price": "250 SAR"},
-                {"name": "Large Towel", "qty": "01", "price": "100 SAR"},
-              ],
-              "additionalNotes": TemporaryText.lorumIpsumTooLong,
-              "location": "Lorem Ipsum Dr. 33, KSA",
-              "pickUpDate": "30 July 2025",
-              "pickUpTimeSlot": "Slot 1 (7:00 Am to 1:00 Pm)",
-              "deliveryDate": "10:00 PM",
+              "services":
+                  (orderDetails?.bookingDetail.map((e) => e.service).toList() ??
+                          [])
+                      .map(
+                        (e) => CartItem(
+                          serviceId: e?.id ?? 0,
+                          serviceName: e?.title ?? '',
+                          quantity: 1, // or e.quantity if available
+                          amount: double.tryParse(e?.amount ?? "0") ?? 0,
+                        ),
+                      )
+                      .toList(),
+              "additionalNotes": orderDetails?.specialInstructions ?? "",
+              "location": orderDetails?.address ?? "",
+              "deliveryType": orderDetails?.deliveryType ?? "",
+              "pickUpDate": _formatDate(orderDetails?.pickupDatetime ?? ""),
+              "pickUpTimeSlot": orderDetails?.pickupSlotId ?? "",
+              "deliveryDate": _formatDate(orderDetails?.deliveryDatetime),
+              "deliveryTimeSlot": orderDetails?.deliverySlotId ?? "",
             },
           ),
           // Pricing Summary
           _PricingRow(
             label: "Subtotal",
-            value: "600 SAR",
+            value: "${orderDetails?.subTotal ?? ''} SAR",
             isBold: true,
             valueColor: AppColors.primary,
           ),
-          _PricingRow(label: "Hanger (Add-ons)", value: "20 SAR"),
-          _PricingRow(label: "Tax", value: "15 SAR"),
+          // _PricingRow(label: "Hanger (Add-ons)", value: "20 SAR"),
+          _PricingRow(label: "Tax", value: "${orderDetails?.tax ?? ''} SAR"),
           Divider(color: AppColors.lightGrey),
           _PricingRow(
             label: "Total",
-            value: "635 SAR",
+            value: "${orderDetails?.totalAmount ?? ''} SAR",
             isBold: true,
             valueColor: AppColors.primary,
           ),
