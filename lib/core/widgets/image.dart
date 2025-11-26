@@ -76,16 +76,21 @@ class AppImage extends StatelessWidget {
         loadingBuilder: (context, child, progress) {
           if (progress == null) return child;
           return placeholder ??
-              Center(
-                child: SizedBox(
-                  width: 24,
-                  height: 24,
-                  child: CircularProgressIndicator(
-                    strokeWidth: 2,
-                    value: progress.expectedTotalBytes != null
-                        ? progress.cumulativeBytesLoaded /
-                              (progress.expectedTotalBytes ?? 1)
-                        : null,
+              Container(
+                width: width,
+                height: height,
+                alignment: Alignment.center,
+                child: UnconstrainedBox(
+                  child: SizedBox(
+                    width: 24,
+                    height: 24,
+                    child: CircularProgressIndicator.adaptive(
+                      strokeWidth: 2,
+                      value: progress.expectedTotalBytes != null
+                          ? progress.cumulativeBytesLoaded /
+                                (progress.expectedTotalBytes ?? 1)
+                          : null,
+                    ),
                   ),
                 ),
               );

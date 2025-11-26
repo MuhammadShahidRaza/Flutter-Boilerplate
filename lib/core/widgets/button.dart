@@ -159,7 +159,7 @@ class _ButtonBody extends StatelessWidget {
         ? SizedBox(
             height: 20,
             width: 20,
-            child: CircularProgressIndicator(
+            child: CircularProgressIndicator.adaptive(
               strokeWidth: 2,
               valueColor: AlwaysStoppedAnimation<Color>(textColor),
             ),
