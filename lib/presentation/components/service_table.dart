@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:sanam_laundry/core/index.dart';
+import 'package:sanam_laundry/data/models/cart.dart';
 import 'package:sanam_laundry/presentation/index.dart';
 
 class ServicesTable extends StatelessWidget {
-  final List<Map<String, String>> services;
+  final List<CartItem> services;
   const ServicesTable({super.key, required this.services});
 
   @override
@@ -48,9 +49,14 @@ class ServicesTable extends StatelessWidget {
           ),
         ),
         // Rows
-        _ServiceRow(name: "Shirt Washing", qty: "02", price: "250 SAR"),
-        _ServiceRow(name: "Shoe Washing", qty: "02", price: "250 SAR"),
-        _ServiceRow(name: "Large Towel", qty: "01", price: "100 SAR"),
+        ...services.map((service) {
+          return _ServiceRow(
+            name: service.serviceName,
+            qty: service.quantity.toString().padLeft(2, '0'),
+            price:
+                "${(service.amount * service.quantity).toStringAsFixed(2)} SAR",
+          );
+        }),
       ],
     );
   }
