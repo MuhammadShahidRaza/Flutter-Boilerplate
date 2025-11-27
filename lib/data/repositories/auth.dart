@@ -105,7 +105,7 @@ class AuthRepository {
     return ApiResponseHandler.handleRequest(
       () => _apiService.delete(
         Endpoints.deleteAccount,
-        config: const ApiRequestConfig(showErrorToast: false),
+        config: const ApiRequestConfig(showErrorToast: false, showLoader: true),
       ),
     );
   }
