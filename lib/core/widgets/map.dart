@@ -3,8 +3,12 @@ import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:geocoding/geocoding.dart';
+import 'package:sanam_laundry/core/widgets/icon.dart';
 
 class AddressPickerMap extends StatefulWidget {
+  /// When an address is selected externally (e.g., via Autocomplete),
+  /// provide the coordinates here to move the camera and update the marker.
+  final LatLng? selectedLatLng;
   final Function({
     required String fullAddress,
     required String city,
@@ -14,7 +18,11 @@ class AddressPickerMap extends StatefulWidget {
   })
   onAddressSelected;
 
-  const AddressPickerMap({super.key, required this.onAddressSelected});
+  const AddressPickerMap({
+    super.key,
+    required this.onAddressSelected,
+    this.selectedLatLng,
+  });
 
   @override
   State<AddressPickerMap> createState() => _AddressPickerMapState();
@@ -25,6 +33,7 @@ class _AddressPickerMapState extends State<AddressPickerMap> {
   Marker? marker;
 
   LatLng _initialLatLng = const LatLng(23.8859, 45.0792);
+  LatLng? _lastAppliedExternalSelection;
 
   @override
   void initState() {
@@ -32,14 +41,30 @@ class _AddressPickerMapState extends State<AddressPickerMap> {
     _setCurrentLocation();
   }
 
+  @override
+  void didUpdateWidget(covariant AddressPickerMap oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    // If an external selectedLatLng is provided and changed, update the map.
+    final ext = widget.selectedLatLng;
+    if (ext != null && ext != _lastAppliedExternalSelection) {
+      _applyExternalSelection(ext);
+    }
+  }
+
+  Future<void> _applyExternalSelection(LatLng pos) async {
+    _lastAppliedExternalSelection = pos;
+    setState(() {
+      marker = Marker(markerId: const MarkerId("selected"), position: pos);
+    });
+    await _moveCamera(pos);
+  }
+
   /// Step 1: Get user current location
   Future<void> _setCurrentLocation() async {
     bool permission = await _checkPermission();
     if (!permission) return;
 
-    Position pos = await Geolocator.getCurrentPosition(
-      desiredAccuracy: LocationAccuracy.high,
-    );
+    Position pos = await Geolocator.getCurrentPosition();
 
     _initialLatLng = LatLng(pos.latitude, pos.longitude);
 
@@ -52,7 +77,7 @@ class _AddressPickerMapState extends State<AddressPickerMap> {
       );
     });
 
-    _reverseGeocode(_initialLatLng);
+    // _reverseGeocode(_initialLatLng);
   }
 
   /// Step 2: Animate camera
@@ -64,33 +89,33 @@ class _AddressPickerMapState extends State<AddressPickerMap> {
   }
 
   /// Step 3: Reverse geocode → convert lat/lng → address
-  Future<void> _reverseGeocode(LatLng pos) async {
-    try {
-      List<Placemark> placemarks = await placemarkFromCoordinates(
-        pos.latitude,
-        pos.longitude,
-      );
+  // Future<void> _reverseGeocode(LatLng pos) async {
+  //   try {
+  //     List<Placemark> placemarks = await placemarkFromCoordinates(
+  //       pos.latitude,
+  //       pos.longitude,
+  //     );
 
-      if (placemarks.isEmpty) return;
+  //     if (placemarks.isEmpty) return;
 
-      final p = placemarks.first;
+  //     final p = placemarks.first;
 
-      widget.onAddressSelected(
-        fullAddress: formatAddress(p),
-        city: p.locality ?? "",
-        state: p.administrativeArea ?? "",
-        lat: pos.latitude,
-        lng: pos.longitude,
-      );
-    } catch (_) {}
-  }
+  //     widget.onAddressSelected(
+  //       fullAddress: formatAddress(p),
+  //       city: p.locality ?? "",
+  //       state: p.administrativeArea ?? "",
+  //       lat: pos.latitude,
+  //       lng: pos.longitude,
+  //     );
+  //   } catch (_) {}
+  // }
 
   /// Step 4: When user taps map
   Future<void> _handleTap(LatLng pos) async {
     setState(() {
       marker = Marker(markerId: const MarkerId("selected"), position: pos);
     });
-    _reverseGeocode(pos);
+    // _reverseGeocode(pos);
   }
 
   /// Permission check
@@ -107,15 +132,31 @@ class _AddressPickerMapState extends State<AddressPickerMap> {
 
   @override
   Widget build(BuildContext context) {
-    return GoogleMap(
-      initialCameraPosition: CameraPosition(target: _initialLatLng, zoom: 12),
-      onMapCreated: (controller) => _controller.complete(controller),
-      markers: marker != null ? {marker!} : {},
-      onTap: _handleTap,
-      myLocationEnabled: true,
-      myLocationButtonEnabled: true,
-      zoomControlsEnabled: true,
-      zoomGesturesEnabled: true,
+    return Stack(
+      children: [
+        GoogleMap(
+          initialCameraPosition: CameraPosition(
+            target: _initialLatLng,
+            zoom: 12,
+          ),
+          onMapCreated: (controller) => _controller.complete(controller),
+          markers: marker != null ? {marker!} : {},
+          onTap: _handleTap,
+          myLocationEnabled: false,
+          myLocationButtonEnabled: false,
+        ),
+
+        Positioned(
+          bottom: 20,
+          right: 10,
+          child: FloatingActionButton(
+            mini: true,
+            backgroundColor: Colors.white,
+            child: AppIcon(icon: Icons.my_location, color: Colors.blue),
+            onPressed: _setCurrentLocation,
+          ),
+        ),
+      ],
     );
   }
 }
