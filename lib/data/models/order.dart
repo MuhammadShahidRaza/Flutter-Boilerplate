@@ -1,3 +1,5 @@
+import 'package:sanam_laundry/core/utils/helper.dart';
+
 class OrderModel {
   OrderModel({
     required this.id,
@@ -43,9 +45,9 @@ class OrderModel {
   final int? zoneId;
   final String? deliveryType;
   final DateTime? pickupDatetime;
-  final int? pickupSlotId;
+  final String? pickupSlotId;
   final DateTime? deliveryDatetime;
-  final int? deliverySlotId;
+  final String? deliverySlotId;
   final String? address;
   final String? city;
   final String? state;
@@ -81,9 +83,9 @@ class OrderModel {
       zoneId: json["zone_id"],
       deliveryType: json["delivery_type"],
       pickupDatetime: DateTime.tryParse(json["pickup_datetime"] ?? ""),
-      pickupSlotId: json["pickup_slot_id"],
+      pickupSlotId: json["pickup_slot_id"]?.toString() ?? "",
       deliveryDatetime: DateTime.tryParse(json["delivery_datetime"] ?? ""),
-      deliverySlotId: json["delivery_slot_id"],
+      deliverySlotId: json["delivery_slot_id"]?.toString() ?? "",
       address: json["address"],
       city: json["city"],
       state: json["state"],
@@ -91,10 +93,14 @@ class OrderModel {
       longitude: json["longitude"],
       status: json["status"],
       paymentStatus: json["payment_status"],
-      subTotal: json["sub_total"],
-      tax: json["tax"],
-      deliveryCharges: json["delivery_charges"],
-      totalAmount: json["total_amount"],
+      subTotal: json["sub_total"] == null ? "0" : json["sub_total"].toString(),
+      tax: json["tax"] == null ? "0" : json["tax"].toString(),
+      deliveryCharges: json["delivery_charges"] == null
+          ? "0"
+          : json["delivery_charges"].toString(),
+      totalAmount: json["total_amount"] == null
+          ? "0"
+          : json["total_amount"].toString(),
       paymentMethod: json["payment_method"],
       transactionId: json["transaction_id"],
       transactionReference: json["transaction_reference"],
@@ -196,7 +202,7 @@ class Service {
       id: json["id"],
       categoryId: json["category_id"],
       type: json["type"],
-      title: json["title"],
+      title: Utils.capitalize(json["title"]),
       description: json["description"],
       amount: json["amount"],
       code: json["code"],
