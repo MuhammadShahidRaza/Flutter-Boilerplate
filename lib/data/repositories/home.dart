@@ -78,7 +78,10 @@ class HomeRepository {
 
   Future additionalInfo() async {
     return await ApiResponseHandler.handleRequest(
-      () => _apiService.get(Endpoints.additionalInfo),
+      () => _apiService.get(
+        Endpoints.additionalInfo,
+        config: ApiRequestConfig(showLoader: true),
+      ),
       onSuccess: (data, _) {
         return data ?? [];
         // final list = Utils.safeList(
@@ -172,9 +175,9 @@ class HomeRepository {
     );
   }
 
-  Future getOrders() async {
+  Future getOrders(String status) async {
     return await ApiResponseHandler.handleRequest(
-      () => _apiService.get(Endpoints.getOrders),
+      () => _apiService.get(Endpoints.getOrders, query: {"status": status}),
       onSuccess: (data, _) {
         final orders = Utils.safeList(data?["Booking"]);
         final list = orders.map((e) => OrderModel.fromJson(e)).toList();
