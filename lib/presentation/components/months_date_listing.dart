@@ -13,6 +13,7 @@ class MonthsDateListing extends StatefulWidget {
   final int disabledExtraDays;
   final DateTime?
   baseDate; // if provided, disabledExtraDays counted after this date
+  final bool showSlots;
 
   const MonthsDateListing({
     super.key,
@@ -22,6 +23,7 @@ class MonthsDateListing extends StatefulWidget {
     required this.onSlotSelected,
     this.disabledExtraDays = 0,
     this.baseDate,
+    this.showSlots = false,
   });
 
   @override
@@ -297,67 +299,68 @@ class _MonthsDateListingState extends State<MonthsDateListing> {
           ),
         ),
 
-        SizedBox(
-          height: 50,
-          child: ListView.separated(
-            separatorBuilder: (context, index) =>
-                SizedBox(width: Dimens.spacingS),
-            scrollDirection: Axis.horizontal,
-            shrinkWrap: true,
-            itemCount: widget.slots.length,
-            itemBuilder: (context, index) {
-              final slot = widget.slots[index];
-              final id = slot?.id ?? "";
+        if (widget.showSlots)
+          SizedBox(
+            height: 50,
+            child: ListView.separated(
+              separatorBuilder: (context, index) =>
+                  SizedBox(width: Dimens.spacingS),
+              scrollDirection: Axis.horizontal,
+              shrinkWrap: true,
+              itemCount: widget.slots.length,
+              itemBuilder: (context, index) {
+                final slot = widget.slots[index];
+                final id = slot?.id ?? "";
 
-              if (slot == null) {
-                return const SizedBox.shrink();
-              }
-              // Hide elapsed slots only when selected date is today: compare slot end time mapped onto selected day.
-              if (_selectedDate != null) {
-                final selected = DateTime(
-                  _selectedDate!.year,
-                  _selectedDate!.month,
-                  _selectedDate!.day,
-                );
-                final isTodaySelected = _isSameDay(selected, DateTime.now());
-                if (isTodaySelected) {
-                  final endIso = slot.endTime;
-                  if (endIso != null) {
-                    final parsed = DateTime.tryParse(endIso)?.toLocal();
-                    if (parsed != null) {
-                      final endOnSelected = DateTime(
-                        selected.year,
-                        selected.month,
-                        selected.day,
-                        parsed.hour,
-                        parsed.minute,
-                        parsed.second,
-                      );
-                      if (endOnSelected.isBefore(DateTime.now())) {
-                        return const SizedBox.shrink();
+                if (slot == null) {
+                  return const SizedBox.shrink();
+                }
+                // Hide elapsed slots only when selected date is today: compare slot end time mapped onto selected day.
+                if (_selectedDate != null) {
+                  final selected = DateTime(
+                    _selectedDate!.year,
+                    _selectedDate!.month,
+                    _selectedDate!.day,
+                  );
+                  final isTodaySelected = _isSameDay(selected, DateTime.now());
+                  if (isTodaySelected) {
+                    final endIso = slot.endTime;
+                    if (endIso != null) {
+                      final parsed = DateTime.tryParse(endIso)?.toLocal();
+                      if (parsed != null) {
+                        final endOnSelected = DateTime(
+                          selected.year,
+                          selected.month,
+                          selected.day,
+                          parsed.hour,
+                          parsed.minute,
+                          parsed.second,
+                        );
+                        if (endOnSelected.isBefore(DateTime.now())) {
+                          return const SizedBox.shrink();
+                        }
                       }
                     }
                   }
                 }
-              }
-              return AppButton(
-                title: Utils.capitalize(
-                  '${slot.title} ( ${slot.startTime} - ${slot.endTime} )',
-                ),
-                type: selectedSlotId == id
-                    ? AppButtonType.elevated
-                    : AppButtonType.outlined,
-                width: 0.5,
-                onPressed: () {
-                  setState(() {
-                    selectedSlotId = id;
-                  });
-                  widget.onSlotSelected(id);
-                },
-              );
-            },
+                return AppButton(
+                  title: Utils.capitalize(
+                    '${slot.title} ( ${slot.startTime} - ${slot.endTime} )',
+                  ),
+                  type: selectedSlotId == id
+                      ? AppButtonType.elevated
+                      : AppButtonType.outlined,
+                  width: 0.5,
+                  onPressed: () {
+                    setState(() {
+                      selectedSlotId = id;
+                    });
+                    widget.onSlotSelected(id);
+                  },
+                );
+              },
+            ),
           ),
-        ),
       ],
     );
   }
