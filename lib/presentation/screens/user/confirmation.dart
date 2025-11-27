@@ -224,6 +224,7 @@ class _ConfirmationState extends State<Confirmation> {
                       final response = await _homeRepository.placeOrder(
                         payload: payload,
                       );
+
                       if (response != null) {
                         AppDialog.show(
                           context,
@@ -241,6 +242,7 @@ class _ConfirmationState extends State<Confirmation> {
                                 title: "View My Orders",
                                 onPressed: () => context.replacePage(
                                   AppRoutes.bookingDetails,
+                                  extra: response?.id?.toString(),
                                 ),
                               ),
                               AppButton(
