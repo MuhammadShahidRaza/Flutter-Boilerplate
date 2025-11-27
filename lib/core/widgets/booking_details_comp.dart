@@ -19,16 +19,17 @@ class BookingDetailsComp extends StatelessWidget {
         ServicesTable(services: details?["services"]),
 
         // Additional Notes
-        AppText("Additional Notes:", style: context.textTheme.titleMedium),
-
-        AppText(
-          Utils.capitalize(details?["additionalNotes"]),
-          style: context.textTheme.bodySmall!.copyWith(
-            color: AppColors.textSecondary,
+        if (details?["additionalNotes"] != null &&
+            details?["additionalNotes"].isNotEmpty) ...[
+          AppText("Additional Notes:", style: context.textTheme.titleMedium),
+          AppText(
+            Utils.capitalize(details?["additionalNotes"]),
+            style: context.textTheme.bodySmall!.copyWith(
+              color: AppColors.textSecondary,
+            ),
+            maxLines: 10,
           ),
-          maxLines: 10,
-        ),
-
+        ],
         // Details Section
         if (details?["location"] != null)
           MessageBox(
@@ -44,28 +45,28 @@ class BookingDetailsComp extends StatelessWidget {
             value: Utils.capitalize(details?["deliveryType"]),
           ),
 
-        // MessageBox(
-        //   icon: Icons.calendar_today_outlined,
-        //   title: "Pick-up Date:",
-        //   value: details?["pickUpDate"],
-        // ),
-        // details?["pickUpTimeSlot"] != null
-        //     ? MessageBox(
-        //         icon: Icons.access_time_outlined,
-        //         title: "Pick-up Time Slot:",
-        //         value: details?["pickUpTimeSlot"],
-        //       )
-        //     : SizedBox.shrink(),
-        // MessageBox(
-        //   icon: Icons.event_outlined,
-        //   title: "Delivery Date:",
-        //   value: details?["deliveryDate"],
-        // ),
-        // MessageBox(
-        //   icon: Icons.event_outlined,
-        //   title: "Delivery Time Slot:",
-        //   value: details?["deliveryTimeSlot"],
-        // ),
+        MessageBox(
+          icon: Icons.calendar_today_outlined,
+          title: "Pick-up Date:",
+          value: details?["pickUpDate"],
+        ),
+        details?["pickUpTimeSlot"] != null
+            ? MessageBox(
+                icon: Icons.access_time_outlined,
+                title: "Pick-up Time Slot:",
+                value: details?["pickUpTimeSlot"],
+              )
+            : SizedBox.shrink(),
+        MessageBox(
+          icon: Icons.event_outlined,
+          title: "Delivery Date:",
+          value: details?["deliveryDate"],
+        ),
+        MessageBox(
+          icon: Icons.event_outlined,
+          title: "Delivery Time Slot:",
+          value: details?["deliveryTimeSlot"],
+        ),
         SizedBox(height: Dimens.spacingM),
         Divider(color: AppColors.lightGrey),
       ],
