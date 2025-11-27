@@ -76,6 +76,21 @@ class ServicesProvider extends ChangeNotifier {
     notifyListeners();
   }
 
+  Future<AddressModel?> addNewAddress(Map<String, dynamic> data) async {
+    final created = await _repo.addNewAddress(data);
+    if (created != null) {
+      _addresses.add(created);
+      notifyListeners();
+    }
+    return created;
+  }
+
+  Future<void> deleteAddress(int id) async {
+    _addresses.removeWhere((a) => a.id == id);
+    await _repo.deleteAddress(id);
+    notifyListeners();
+  }
+
   // Slots
   Future<void> ensureSlots({bool force = false}) async {
     if (_slots.isNotEmpty && !force) return;
