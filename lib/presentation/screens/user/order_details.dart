@@ -60,52 +60,61 @@ class _OrderDetailsState extends State<OrderDetails> {
               onTap: () => context.navigate(AppRoutes.myAddress),
             ),
           ),
-          if (context.watch<ServicesProvider>().addresses.isNotEmpty)
-            SizedBox(
-              height: 40,
-              child: ListView.separated(
-                shrinkWrap: true,
-                scrollDirection: Axis.horizontal,
-                separatorBuilder: (context, index) =>
-                    SizedBox(width: Dimens.spacingS),
-                itemCount: context.watch<ServicesProvider>().addresses.length,
-                itemBuilder: (context, index) {
-                  final addressItem = context
-                      .watch<ServicesProvider>()
-                      .addresses[index];
-                  final isSelected = selectedAddress?.id == addressItem.id;
-                  return AppButton(
-                    title: addressItem.label ?? 'Address ${addressItem.id}',
-                    type: AppButtonType.outlined,
-                    backgroundColor: isSelected
-                        ? AppColors.primary
-                        : AppColors.primary.withValues(alpha: 0.2),
-                    textStyle: context.textTheme.bodyLarge!.copyWith(
-                      fontWeight: FontWeight.bold,
-                      color: isSelected ? AppColors.white : AppColors.primary,
-                    ),
-                    onPressed: () {
-                      setState(() {
-                        controller.text = Utils.capitalize(
-                          addressItem.address ?? '',
-                        );
-                        selectedAddress = addressItem;
-                      });
-                    },
-                    style: ButtonStyle(
-                      minimumSize: WidgetStatePropertyAll(
-                        Size(context.w(0.25), 25),
+
+          Consumer<ServicesProvider>(
+            builder: (context, provider, child) {
+              final addresses = provider.addresses;
+
+              if (addresses.isEmpty) return SizedBox.shrink();
+
+              return SizedBox(
+                height: 40,
+                child: ListView.separated(
+                  shrinkWrap: true,
+                  scrollDirection: Axis.horizontal,
+                  separatorBuilder: (context, index) =>
+                      SizedBox(width: Dimens.spacingS),
+                  itemCount: addresses.length,
+                  itemBuilder: (context, index) {
+                    final addressItem = addresses[index];
+                    final isSelected = selectedAddress?.id == addressItem.id;
+
+                    return AppButton(
+                      title: addressItem.label ?? 'Address ${addressItem.id}',
+                      type: AppButtonType.outlined,
+                      backgroundColor: isSelected
+                          ? AppColors.primary
+                          : AppColors.primary.withValues(alpha: 0.2),
+                      textStyle: context.textTheme.bodyLarge!.copyWith(
+                        fontWeight: FontWeight.bold,
+                        color: isSelected ? AppColors.white : AppColors.primary,
                       ),
-                      shape: WidgetStatePropertyAll(
-                        RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(Dimens.radiusXL),
+                      onPressed: () {
+                        setState(() {
+                          controller.text = Utils.capitalize(
+                            addressItem.address ?? '',
+                          );
+                          selectedAddress = addressItem;
+                        });
+                      },
+                      style: ButtonStyle(
+                        minimumSize: WidgetStatePropertyAll(
+                          Size(context.w(0.25), 25),
+                        ),
+                        shape: WidgetStatePropertyAll(
+                          RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(
+                              Dimens.radiusXL,
+                            ),
+                          ),
                         ),
                       ),
-                    ),
-                  );
-                },
-              ),
-            ),
+                    );
+                  },
+                ),
+              );
+            },
+          ),
 
           AppDropdown(
             title: "Select Delivery Type",
@@ -167,6 +176,7 @@ class _OrderDetailsState extends State<OrderDetails> {
                 selectedPickUpDate = date;
               });
             },
+            showSlots: selectedPickUpDate != null,
             onSlotSelected: (slotId) {
               setState(() {
                 selectedPickUpSlotId = slotId;
@@ -183,6 +193,7 @@ class _OrderDetailsState extends State<OrderDetails> {
                   selectedDeliveryDate = date;
                 });
               },
+              showSlots: selectedDeliveryDate != null,
               disabledExtraDays: deliveryType == DeliveryType.express ? 1 : 2,
               baseDate:
                   selectedPickUpDate, // delivery can only start after pickup + extra days
@@ -222,13 +233,11 @@ class _OrderDetailsState extends State<OrderDetails> {
               cart.addOrderDetail("address", selectedAddress?.address ?? "");
               cart.addOrderDetail("city", selectedAddress?.city ?? "");
               cart.addOrderDetail("state", selectedAddress?.state ?? "");
-              // cart.addOrderDetail("latitude", selectedAddress?.latitude ?? "");
-              // cart.addOrderDetail(
-              //   "longitude",
-              //   selectedAddress?.longitude ?? "",
-              // );
-              cart.addOrderDetail("latitude", "24.829346" ?? "");
-              cart.addOrderDetail("longitude", "67.073753" ?? "");
+              cart.addOrderDetail("latitude", selectedAddress?.latitude ?? "");
+              cart.addOrderDetail(
+                "longitude",
+                selectedAddress?.longitude ?? "",
+              );
               cart.addOrderDetail("service_type", selectedServiceType);
               context.navigate(AppRoutes.additionalInformation);
             },
