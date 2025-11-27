@@ -1,12 +1,14 @@
 import 'package:flutter/material.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:provider/provider.dart';
 import 'package:sanam_laundry/core/index.dart';
 import 'package:sanam_laundry/core/widgets/autocomplete.dart';
 import 'package:sanam_laundry/core/widgets/map.dart';
 import 'package:sanam_laundry/core/widgets/radio_button.dart';
 import 'package:sanam_laundry/data/models/address.dart';
-import 'package:sanam_laundry/data/repositories/home.dart';
 import 'package:sanam_laundry/presentation/index.dart';
+import 'package:sanam_laundry/providers/index.dart';
 
 class MyAddress extends StatefulWidget {
   const MyAddress({super.key});
@@ -16,8 +18,6 @@ class MyAddress extends StatefulWidget {
 }
 
 class _MyAddressState extends State<MyAddress> {
-  final HomeRepository _homeRepository = HomeRepository();
-  List<AddressModel?> addresseses = [];
   int selectedAddress = -1;
 
   final _formKey = GlobalKey<FormState>();
@@ -27,7 +27,7 @@ class _MyAddressState extends State<MyAddress> {
 
   XFile? _buildingImage;
   XFile? _apartmentImage;
-
+  bool loading = false;
   final TextEditingController addressTitleController = TextEditingController();
   final TextEditingController cityController = TextEditingController();
   final TextEditingController stateController = TextEditingController();
@@ -36,19 +36,12 @@ class _MyAddressState extends State<MyAddress> {
   final TextEditingController landFullAddressController =
       TextEditingController();
 
-  void loadAddresses() async {
-    final data = await _homeRepository.getAddresses();
-    if (data != null) {
-      setState(() {
-        addresseses = data;
-      });
-    }
-  }
-
   @override
   void initState() {
     super.initState();
-    loadAddresses();
+    // Prime provider caches once per session
+    final prov = context.read<ServicesProvider>();
+    prov.ensureAddresses();
   }
 
   @override
@@ -68,7 +61,11 @@ class _MyAddressState extends State<MyAddress> {
         selectedLongitude == null) {
       return;
     }
-    final response = await _homeRepository.addNewAddress({
+    setState(() {
+      loading = true;
+    });
+    final provider = context.read<ServicesProvider>();
+    final response = await provider.addNewAddress({
       "label": addressTitleController.text,
       "address": landFullAddressController.text,
       "city": cityController.text,
@@ -82,11 +79,9 @@ class _MyAddressState extends State<MyAddress> {
       "is_active": "1",
       "is_default": "1",
     });
-
     if (response != null) {
       setState(() {
-        addresseses.add(response);
-        selectedAddress = addresseses.length - 1;
+        selectedAddress = response.id;
         addressTitleController.clear();
         cityController.clear();
         stateController.clear();
@@ -95,6 +90,10 @@ class _MyAddressState extends State<MyAddress> {
         landFullAddressController.clear();
       });
     }
+
+    setState(() {
+      loading = false;
+    });
   }
 
   @override
@@ -124,215 +123,226 @@ class _MyAddressState extends State<MyAddress> {
 
           SizedBox(
             height: isNewAddress ? null : context.h(0.8),
-            child: Column(
-              spacing: Dimens.spacingMLarge,
-              children: [
-                // ---- Dynamic Address List ----
-                ...addresseses.asMap().entries.map((entry) {
-                  AddressModel item = entry.value!;
-                  return _buildAddressTile(
-                    item: item,
-                    canEdit: true,
-                    canDelete: true,
-                  );
-                }),
-
-                // Add New Address
-                if (addresseses.length < 3)
-                  _buildAddressTile(
-                    item: AddressModel(
-                      id: -1,
-                      userId: null,
-                      label: "Add New Address",
-                      address: "",
-                      city: "",
-                      state: "",
-                      latitude: "",
-                      longitude: "",
-                      isActive: 0,
-                      buildingName: "",
-                      floor: "",
-                      buildingImage: null,
-                      apartmentImage: null,
-                      isDefault: null,
-                      createdAt: null,
-                      updatedAt: null,
+            child: Consumer<ServicesProvider>(
+              builder: (context, services, _) {
+                final list = services.addresses;
+                return Column(
+                  spacing: Dimens.spacingMLarge,
+                  children: [
+                    // ---- Dynamic Address List ----
+                    ...list.map(
+                      (item) => _buildAddressTile(
+                        item: item,
+                        canEdit: true,
+                        canDelete: true,
+                      ),
                     ),
-                  ),
 
-                if (isNewAddress && addresseses.length < 3) ...[
-                  Row(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Expanded(
-                        child: ImagePickerBox(
-                          initialImagePath: AppAssets.pickerPlaceholder,
-                          borderColor: AppColors.border,
-                          wantBottomSpace: false,
-                          onImagePicked: (file) {
-                            setState(() => _buildingImage = file);
-                          },
-                          title: "Building Picture",
+                    // Add New Address
+                    if (list.length < 3)
+                      _buildAddressTile(
+                        item: AddressModel(
+                          id: -1,
+                          userId: null,
+                          label: "Add New Address",
+                          address: "",
+                          city: "",
+                          state: "",
+                          latitude: "",
+                          longitude: "",
+                          isActive: 0,
+                          buildingName: "",
+                          floor: "",
+                          buildingImage: null,
+                          apartmentImage: null,
+                          isDefault: null,
+                          createdAt: null,
+                          updatedAt: null,
                         ),
                       ),
-                      Expanded(
-                        child: ImagePickerBox(
-                          initialImagePath: AppAssets.pickerPlaceholder,
-                          borderColor: AppColors.border,
-                          wantBottomSpace: false,
-                          onImagePicked: (file) {
-                            setState(() => _apartmentImage = file);
-                          },
-                          title: "Apartment Picture",
+
+                    if (isNewAddress && list.length < 3) ...[
+                      Row(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Expanded(
+                            child: ImagePickerBox(
+                              initialImagePath: AppAssets.pickerPlaceholder,
+                              borderColor: AppColors.border,
+                              wantBottomSpace: false,
+                              onImagePicked: (file) {
+                                setState(() => _buildingImage = file);
+                              },
+                              title: "Building Picture",
+                            ),
+                          ),
+                          Expanded(
+                            child: ImagePickerBox(
+                              initialImagePath: AppAssets.pickerPlaceholder,
+                              borderColor: AppColors.border,
+                              wantBottomSpace: false,
+                              onImagePicked: (file) {
+                                setState(() => _apartmentImage = file);
+                              },
+                              title: "Apartment Picture",
+                            ),
+                          ),
+                        ],
+                      ),
+                      AppText(
+                        "Upload building image and image of the apartment or door",
+                        maxLines: 3,
+                        color: AppColors.border,
+                        textAlign: TextAlign.center,
+                      ),
+                      SizedBox(
+                        height: context.h(0.3),
+                        child: Container(
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(Dimens.radiusM),
+                          ),
+                          clipBehavior: Clip.hardEdge,
+                          child: AddressPickerMap(
+                            selectedLatLng:
+                                (selectedLatitude != null &&
+                                    selectedLongitude != null)
+                                ? LatLng(selectedLatitude!, selectedLongitude!)
+                                : null,
+                            onAddressSelected:
+                                ({
+                                  required String fullAddress,
+                                  required String city,
+                                  required String state,
+                                  required double lat,
+                                  required double lng,
+                                }) {
+                                  // If you want map taps to populate fields, uncomment:
+                                  // setState(() {
+                                  //   landFullAddressController.text = fullAddress;
+                                  //   cityController.text = city;
+                                  //   stateController.text = state;
+                                  //   selectedLatitude = lat;
+                                  //   selectedLongitude = lng;
+                                  // });
+                                },
+                          ),
+                        ),
+                      ),
+
+                      Form(
+                        key: _formKey,
+                        child: Column(
+                          spacing: Dimens.spacingMSmall,
+                          children: [
+                            AppAutocomplete(
+                              title: "Add Full Address",
+                              textEditingController: landFullAddressController,
+                              hint: "Street, Area, Landmark",
+                              getPlaceDetailWithLatLng: (prediction) {
+                                setState(() {
+                                  landFullAddressController.text =
+                                      prediction.description ?? "";
+                                  selectedLatitude = double.tryParse(
+                                    prediction.lat ?? "",
+                                  );
+                                  selectedLongitude = double.tryParse(
+                                    prediction.lng ?? "",
+                                  );
+                                  cityController.text = _extractCity(
+                                    prediction.description ?? "",
+                                  );
+                                  stateController.text = _extractState(
+                                    prediction.description ?? "",
+                                  );
+                                });
+                              },
+                              itemClick: (prediction) {
+                                landFullAddressController.text =
+                                    prediction.description!;
+                                landFullAddressController.selection =
+                                    TextSelection.fromPosition(
+                                      TextPosition(
+                                        offset: prediction.description!.length,
+                                      ),
+                                    );
+                              },
+                            ),
+
+                            Row(
+                              spacing: Dimens.spacingM,
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Expanded(
+                                  child: AppInput(
+                                    fieldKey: FieldType.required,
+                                    title: "City",
+                                    enabled: false,
+                                    controller: cityController,
+                                    hint: "Jeddah, Riyadh",
+                                  ),
+                                ),
+                                Expanded(
+                                  child: AppInput(
+                                    fieldKey: FieldType.required,
+                                    title: "State",
+                                    hint: "Makkah, Riyadh",
+                                    enabled: false,
+                                    controller: stateController,
+                                  ),
+                                ),
+                              ],
+                            ),
+                            AppInput(
+                              fieldKey: FieldType.required,
+                              title: "Address Title",
+                              minLength: 3,
+                              maxLength: 25,
+                              hint: "E.g. Home, Office",
+                              controller: addressTitleController,
+                            ),
+                            Row(
+                              spacing: Dimens.spacingM,
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Expanded(
+                                  child: AppInput(
+                                    fieldKey: FieldType.required,
+                                    title: "Building Name",
+                                    hint: "Tower A, Building 5",
+                                    minLength: 3,
+                                    maxLength: 25,
+                                    controller: buildingNameController,
+                                  ),
+                                ),
+                                Expanded(
+                                  child: AppInput(
+                                    fieldKey: FieldType.required,
+                                    title: "Apt / Floor",
+                                    hint: "3rd Floor, Apt 12",
+                                    minLength: 3,
+                                    maxLength: 25,
+                                    controller: aptFloorController,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ],
                         ),
                       ),
                     ],
-                  ),
-                  AppText(
-                    "Upload building image and image of the apartment or door",
-                    maxLines: 3,
-                    color: AppColors.border,
-                    textAlign: TextAlign.center,
-                  ),
-                  SizedBox(
-                    height: context.h(0.3),
-                    child: Container(
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(Dimens.radiusM),
-                      ),
-                      clipBehavior: Clip.hardEdge,
-                      child: AddressPickerMap(
-                        onAddressSelected:
-                            ({
-                              required String fullAddress,
-                              required String city,
-                              required String state,
-                              required double lat,
-                              required double lng,
-                            }) {
-                              setState(() {
-                                landFullAddressController.text = fullAddress;
-                                cityController.text = city;
-                                stateController.text = state;
-                                selectedLatitude = lat;
-                                selectedLongitude = lng;
-                              });
-                            },
+                    Padding(
+                      padding: EdgeInsets.only(top: isNewAddress ? 0 : 100),
+                      child: AppButton(
+                        isLoading: loading,
+                        title: Common.save,
+                        onPressed: () {
+                          addNewAddress();
+                        },
                       ),
                     ),
-                  ),
-
-                  Form(
-                    key: _formKey,
-                    child: Column(
-                      spacing: Dimens.spacingMSmall,
-                      children: [
-                        AppAutocomplete(
-                          title: "Add Full Address",
-                          textEditingController: landFullAddressController,
-                          hint: "Street, Area, Landmark",
-                          getPlaceDetailWithLatLng: (prediction) {
-                            setState(() {
-                              landFullAddressController.text =
-                                  prediction.description ?? "";
-                              selectedLatitude = double.tryParse(
-                                prediction.lat ?? "",
-                              );
-                              selectedLongitude = double.tryParse(
-                                prediction.lng ?? "",
-                              );
-                              cityController.text = _extractCity(
-                                prediction.description ?? "",
-                              );
-                              stateController.text = _extractState(
-                                prediction.description ?? "",
-                              );
-                            });
-                          },
-                          itemClick: (prediction) {
-                            landFullAddressController.text =
-                                prediction.description!;
-                            landFullAddressController.selection =
-                                TextSelection.fromPosition(
-                                  TextPosition(
-                                    offset: prediction.description!.length,
-                                  ),
-                                );
-                          },
-                        ),
-
-                        Row(
-                          spacing: Dimens.spacingM,
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Expanded(
-                              child: AppInput(
-                                fieldKey: FieldType.required,
-                                title: "City",
-                                enabled: false,
-                                controller: cityController,
-                                hint: "Jeddah, Riyadh",
-                              ),
-                            ),
-                            Expanded(
-                              child: AppInput(
-                                fieldKey: FieldType.required,
-                                title: "State",
-                                hint: "Makkah, Riyadh",
-                                enabled: false,
-                                controller: stateController,
-                              ),
-                            ),
-                          ],
-                        ),
-                        AppInput(
-                          fieldKey: FieldType.required,
-                          title: "Address Title",
-                          minLength: 3,
-                          maxLength: 25,
-                          hint: "E.g. Home, Office",
-                          controller: addressTitleController,
-                        ),
-                        Row(
-                          spacing: Dimens.spacingM,
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Expanded(
-                              child: AppInput(
-                                fieldKey: FieldType.required,
-                                title: "Building Name",
-                                hint: "Tower A, Building 5",
-                                minLength: 3,
-                                maxLength: 25,
-                                controller: buildingNameController,
-                              ),
-                            ),
-                            Expanded(
-                              child: AppInput(
-                                fieldKey: FieldType.required,
-                                title: "Apt / Floor",
-                                hint: "3rd Floor, Apt 12",
-                                minLength: 3,
-                                maxLength: 25,
-                                controller: aptFloorController,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ],
-                    ),
-                  ),
-                ],
-                Padding(
-                  padding: EdgeInsets.only(top: isNewAddress ? 0 : 100),
-                  child: AppButton(
-                    title: Common.save,
-                    onPressed: () {
-                      addNewAddress();
-                    },
-                  ),
-                ),
-              ],
+                  ],
+                );
+              },
             ),
           ),
         ],
@@ -381,15 +391,16 @@ class _MyAddressState extends State<MyAddress> {
             AppIcon(
               icon: Icons.delete_outline,
               onTap: () async {
+                final provider = context.read<ServicesProvider>();
+                await provider.deleteAddress(item.id);
                 setState(() {
-                  addresseses.removeWhere((address) => address?.id == item.id);
                   if (selectedAddress == item.id) {
-                    selectedAddress = addresseses.isNotEmpty
-                        ? addresseses.first!.id
+                    final remaining = provider.addresses;
+                    selectedAddress = remaining.isNotEmpty
+                        ? remaining.first.id
                         : -1;
                   }
                 });
-                await _homeRepository.deleteAddress(item.id);
               },
               color: AppColors.secondary,
             ),
