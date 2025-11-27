@@ -10,16 +10,20 @@ class OrderCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final bool isCompleted = order.status == "completed";
+    final bool isCompleted = order.status == "Order Delivered";
     final firstService = order.bookingDetail.isNotEmpty
         ? order.bookingDetail.first.service
         : null;
+
     return Card(
       clipBehavior: Clip.antiAlias,
       margin: const EdgeInsets.symmetric(vertical: Dimens.spacingS),
       child: InkWell(
         onTap: () {
-          context.navigate(AppRoutes.bookingDetails);
+          context.navigate(
+            AppRoutes.bookingDetails,
+            extra: order.id.toString(),
+          );
         },
         child: Padding(
           padding: EdgeInsets.all(Dimens.spacingS),
