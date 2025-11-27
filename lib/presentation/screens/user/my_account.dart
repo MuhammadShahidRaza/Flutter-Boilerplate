@@ -31,7 +31,7 @@ class _MyAccountState extends State<MyAccount> {
         icon: Icons.list,
         title: Common.myOrders,
         onTap: () {
-          // context.navigate(AppRoutes.myOrders);
+          context.replacePage(AppRoutes.orders);
         },
       ),
       _AccountOption(
@@ -41,13 +41,13 @@ class _MyAccountState extends State<MyAccount> {
           context.navigate(AppRoutes.myAddress);
         },
       ),
-      _AccountOption(
-        icon: Icons.credit_card,
-        title: Common.payment,
-        onTap: () {
-          // context.navigate(AppRoutes.payment);
-        },
-      ),
+      // _AccountOption(
+      //   icon: Icons.credit_card,
+      //   title: Common.payment,
+      //   onTap: () {
+      //     // context.navigate(AppRoutes.payment);
+      //   },
+      // ),
       _AccountOption(
         icon: Icons.translate,
         title: Common.language,
