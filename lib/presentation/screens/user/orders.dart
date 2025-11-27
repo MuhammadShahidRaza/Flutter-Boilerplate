@@ -22,7 +22,7 @@ class _OrdersState extends State<Orders> {
       orders = [];
     });
 
-    final data = await _homeRepository.getOrders();
+    final data = await _homeRepository.getOrders(status);
     if (!mounted) return;
     setState(() {
       orders = data ?? [];
@@ -44,8 +44,8 @@ class _OrdersState extends State<Orders> {
 
   Future<void> _loadCategories() async {
     final data = [
-      {"id": "1", "title": "In-Progress Order"},
-      {"id": "2", "title": "Completed"},
+      {"id": "pending", "title": "In-Progress Order"},
+      {"id": "completed", "title": "Completed"},
     ];
 
     setState(() {
