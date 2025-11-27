@@ -16,12 +16,15 @@ class BookingDetails extends StatefulWidget {
 }
 
 class _BookingDetailsState extends State<BookingDetails> {
+  bool _initialized = false;
+  late String bookingId;
   final HomeRepository _homeRepository = HomeRepository();
 
   OrderModel? orderDetails;
 
-  Future<void> _loadOrderDetailsById(String id) async {
-    final response = await _homeRepository.getOrderDetailsById(id);
+  Future<void> _loadOrderDetailsById() async {
+    if (bookingId.isEmpty) return;
+    final response = await _homeRepository.getOrderDetailsById(bookingId);
     if (response != null) {
       setState(() {
         orderDetails = response;
@@ -30,9 +33,14 @@ class _BookingDetailsState extends State<BookingDetails> {
   }
 
   @override
-  void initState() {
-    super.initState();
-    _loadOrderDetailsById("1");
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+
+    if (!_initialized) {
+      bookingId = context.getExtra<String>() ?? '';
+      _initialized = true;
+      _loadOrderDetailsById();
+    }
   }
 
   String _formatDate(dynamic val) {
@@ -42,131 +50,143 @@ class _BookingDetailsState extends State<BookingDetails> {
 
   @override
   Widget build(BuildContext context) {
-    final bool isCompleted = true;
+    final bool isCompleted = orderDetails?.status == 'Order Delivered';
     final firstService = orderDetails?.bookingDetail.isNotEmpty == true
         ? orderDetails!.bookingDetail.first.service
         : null;
+
     return AppWrapper(
       showBackButton: true,
       scrollable: true,
       heading: "Booking Details",
-      child: Column(
-        spacing: Dimens.spacingM,
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          // Order ID
-          AppImage(
-            path: firstService?.image ?? AppAssets.user,
-            width: context.screenWidth,
-            height: context.h(0.3),
-            borderRadius: Dimens.radiusM,
-          ),
-          Row(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              AppText(
-                firstService?.title ?? '',
-                style: context.textTheme.titleLarge!.copyWith(
-                  fontWeight: FontWeight.bold,
+      child: orderDetails == null
+          ? const Center(child: CircularProgressIndicator.adaptive())
+          : Column(
+              spacing: Dimens.spacingM,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                // Order ID
+                AppImage(
+                  path: firstService?.image ?? AppAssets.user,
+                  width: context.screenWidth,
+                  height: context.h(0.3),
+                  borderRadius: Dimens.radiusM,
                 ),
-              ),
-              AppText(
-                "Order ID: ${orderDetails?.id ?? ''}",
-                style: context.textTheme.titleSmall!.copyWith(
-                  fontWeight: FontWeight.bold,
-                  color: AppColors.primary,
-                ),
-              ),
-            ],
-          ),
-
-          // Status Stepper
-          Row(
-            spacing: Dimens.spacingM,
-            children: [
-              AppText(
-                orderDetails?.status ?? '',
-                style: context.textTheme.titleMedium,
-              ),
-              if (isCompleted)
-                AppButton(
-                  title: "Completed",
-                  onPressed: () {},
-                  backgroundColor: AppColors.secondary,
-                  padding: EdgeInsets.symmetric(
-                    vertical: Dimens.spacingXS,
-                    horizontal: Dimens.spacingS,
-                  ),
-                  textStyle: context.textTheme.bodySmall!.copyWith(
-                    fontWeight: FontWeight.bold,
-                    color: AppColors.white,
-                  ),
-                  style: ButtonStyle(
-                    minimumSize: WidgetStatePropertyAll(
-                      Size(context.w(0.22), 25),
-                    ),
-                    shape: WidgetStatePropertyAll(
-                      RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(Dimens.radiusXxs),
+                Row(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    AppText(
+                      firstService?.title ?? '',
+                      style: context.textTheme.titleLarge!.copyWith(
+                        fontWeight: FontWeight.bold,
                       ),
                     ),
-                  ),
+                    AppText(
+                      "Order ID: ${orderDetails?.id ?? ''}",
+                      style: context.textTheme.titleSmall!.copyWith(
+                        fontWeight: FontWeight.bold,
+                        color: AppColors.primary,
+                      ),
+                    ),
+                  ],
                 ),
-            ],
-          ),
-          HorizontalStepper(
-            currentStep: 2,
-            steps: const [
-              "Order Received",
-              "Processing",
-              "Order ready - awaiting Payment",
-              "Out for Delivery",
-              "Delivered",
-            ],
-          ),
 
-          BookingDetailsComp(
-            details: {
-              "services":
-                  (orderDetails?.bookingDetail.map((e) => e.service).toList() ??
-                          [])
-                      .map(
-                        (e) => CartItem(
-                          serviceId: e?.id ?? 0,
-                          serviceName: e?.title ?? '',
-                          quantity: 1, // or e.quantity if available
-                          amount: double.tryParse(e?.amount ?? "0") ?? 0,
+                // Status Stepper
+                Row(
+                  spacing: Dimens.spacingM,
+                  children: [
+                    AppText(
+                      orderDetails?.status ?? '',
+                      style: context.textTheme.titleMedium,
+                    ),
+                    if (isCompleted)
+                      AppButton(
+                        title: "Completed",
+                        onPressed: () {},
+                        backgroundColor: AppColors.secondary,
+                        padding: EdgeInsets.symmetric(
+                          vertical: Dimens.spacingXS,
+                          horizontal: Dimens.spacingS,
                         ),
-                      )
-                      .toList(),
-              "additionalNotes": orderDetails?.specialInstructions ?? "",
-              "location": orderDetails?.address ?? "",
-              "deliveryType": orderDetails?.deliveryType ?? "",
-              "pickUpDate": _formatDate(orderDetails?.pickupDatetime ?? ""),
-              "pickUpTimeSlot": orderDetails?.pickupSlotId ?? "",
-              "deliveryDate": _formatDate(orderDetails?.deliveryDatetime),
-              "deliveryTimeSlot": orderDetails?.deliverySlotId ?? "",
-            },
-          ),
-          // Pricing Summary
-          _PricingRow(
-            label: "Subtotal",
-            value: "${orderDetails?.subTotal ?? ''} SAR",
-            isBold: true,
-            valueColor: AppColors.primary,
-          ),
-          // _PricingRow(label: "Hanger (Add-ons)", value: "20 SAR"),
-          _PricingRow(label: "Tax", value: "${orderDetails?.tax ?? ''} SAR"),
-          Divider(color: AppColors.lightGrey),
-          _PricingRow(
-            label: "Total",
-            value: "${orderDetails?.totalAmount ?? ''} SAR",
-            isBold: true,
-            valueColor: AppColors.primary,
-          ),
-        ],
-      ),
+                        textStyle: context.textTheme.bodySmall!.copyWith(
+                          fontWeight: FontWeight.bold,
+                          color: AppColors.white,
+                        ),
+                        style: ButtonStyle(
+                          minimumSize: WidgetStatePropertyAll(
+                            Size(context.w(0.22), 25),
+                          ),
+                          shape: WidgetStatePropertyAll(
+                            RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(
+                                Dimens.radiusXxs,
+                              ),
+                            ),
+                          ),
+                        ),
+                      ),
+                  ],
+                ),
+                HorizontalStepper(
+                  currentStep: 0,
+                  steps: const [
+                    "Order Received",
+                    "Processing",
+                    "Order ready - awaiting Payment",
+                    "Out for Delivery",
+                    "Delivered",
+                  ],
+                ),
+
+                BookingDetailsComp(
+                  details: {
+                    "services":
+                        (orderDetails?.bookingDetail
+                                    .map((e) => e.service)
+                                    .toList() ??
+                                [])
+                            .map(
+                              (e) => CartItem(
+                                serviceId: e?.id ?? 0,
+                                serviceName: e?.title ?? '',
+                                quantity: 1, // or e.quantity if available
+                                amount: double.tryParse(e?.amount ?? "0") ?? 0,
+                              ),
+                            )
+                            .toList(),
+                    "additionalNotes": orderDetails?.specialInstructions ?? "",
+                    "location": orderDetails?.address ?? "",
+                    "deliveryType": orderDetails?.deliveryType ?? "",
+                    "pickUpDate": _formatDate(
+                      orderDetails?.pickupDatetime ?? "",
+                    ),
+                    "pickUpTimeSlot": orderDetails?.pickupSlotId ?? "",
+                    "deliveryDate": _formatDate(orderDetails?.deliveryDatetime),
+                    "deliveryTimeSlot": orderDetails?.deliverySlotId ?? "",
+                  },
+                ),
+                // Pricing Summary
+                _PricingRow(
+                  label: "Subtotal",
+                  value: "${orderDetails?.subTotal ?? ''} SAR",
+                  isBold: true,
+                  valueColor: AppColors.primary,
+                ),
+                // _PricingRow(label: "Hanger (Add-ons)", value: "20 SAR"),
+                _PricingRow(
+                  label: "Tax",
+                  value: "${orderDetails?.tax ?? ''} SAR",
+                ),
+                Divider(color: AppColors.lightGrey),
+                _PricingRow(
+                  label: "Total",
+                  value: "${orderDetails?.totalAmount ?? ''} SAR",
+                  isBold: true,
+                  valueColor: AppColors.primary,
+                ),
+              ],
+            ),
     );
   }
 }
