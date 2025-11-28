@@ -107,6 +107,8 @@ class CartProvider extends ChangeNotifier {
   /// Reset everything
   void clearOrder() {
     _orderItemsPayload = {};
+    _addOns.clear();
+    _items.clear();
     notifyListeners();
   }
 }

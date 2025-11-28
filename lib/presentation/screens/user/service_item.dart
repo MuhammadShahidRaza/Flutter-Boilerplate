@@ -104,7 +104,7 @@ class _ServiceItemState extends State<ServiceItem> {
                             child: AppText(
                               isFreeDelivery
                                   ? "You qualify for free delivery 🎉"
-                                  : "${remaining.toStringAsFixed(2)} SAR remaining to qualify for free delivery",
+                                  : "${remaining.toStringAsFixed(2)} ${settings.currency} remaining to qualify for free delivery",
                               maxLines: 2,
                             ),
                           ),

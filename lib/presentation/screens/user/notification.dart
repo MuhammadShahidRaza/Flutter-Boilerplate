@@ -1,27 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:sanam_laundry/core/index.dart';
+import 'package:sanam_laundry/data/models/notification.dart';
+import 'package:sanam_laundry/data/repositories/home.dart';
 import 'package:sanam_laundry/presentation/index.dart';
 
-class AppNotification {
-  final String title;
-  final String message;
-  final DateTime createdAt;
-
-  AppNotification({
-    required this.title,
-    required this.message,
-    required this.createdAt,
-  });
-}
-
-Map<String, List<AppNotification>> groupByDate(
-  List<AppNotification> notifications,
+Map<String, List<NotificationModel>> groupByDate(
+  List<NotificationModel> notifications,
 ) {
-  final Map<String, List<AppNotification>> grouped = {};
+  final Map<String, List<NotificationModel>> grouped = {};
 
   for (var n in notifications) {
     final dateKey = formatDate(
-      n.createdAt,
+      n.createdAt ?? DateTime.now(),
     ); // e.g. "Today", "Yesterday", "22 Jan 2025"
 
     if (!grouped.containsKey(dateKey)) {
@@ -79,49 +69,34 @@ class NotificationScreen extends StatefulWidget {
 }
 
 class _NotificationScreenState extends State<NotificationScreen> {
+  final HomeRepository _homeRepository = HomeRepository();
+  final List<NotificationModel> notifications = [];
+
+  Future<void> fetchNotifications() async {
+    final response = await _homeRepository.getNotifications();
+    if (response != null) {
+      setState(() {
+        notifications.clear();
+        notifications.addAll(response);
+      });
+    }
+  }
+
   @override
+  void initState() {
+    super.initState();
+    fetchNotifications();
+  }
+
   @override
   Widget build(BuildContext context) {
-    // final List<AppNotification> notifications = [
-    //   AppNotification(
-    //     title: "Order Confirmed",
-    //     message: "Your laundry order #1245 has been confirmed.",
-    //     createdAt: DateTime.now().subtract(Duration(minutes: 10)),
-    //   ),
-    //   AppNotification(
-    //     title: "Rider Assigned",
-    //     message: "A rider has been assigned for pickup.",
-    //     createdAt: DateTime.now().subtract(Duration(hours: 1)),
-    //   ),
-    //   AppNotification(
-    //     title: "Order Ready",
-    //     message: "Your clothes are washed and ready for delivery.",
-    //     createdAt: DateTime.now().subtract(Duration(days: 1, hours: 2)),
-    //   ),
-    //   AppNotification(
-    //     title: "Payment Successful",
-    //     message: "Your payment of 45 SAR was successful.",
-    //     createdAt: DateTime.now().subtract(Duration(days: 1, hours: 5)),
-    //   ),
-    //   AppNotification(
-    //     title: "Welcome!",
-    //     message: "Thank you for joining Sanam Laundry.",
-    //     createdAt: DateTime.now().subtract(Duration(days: 3)),
-    //   ),
-    //   AppNotification(
-    //     title: "Promotion",
-    //     message: "Get 20% off on your next wash!",
-    //     createdAt: DateTime.now().subtract(Duration(days: 3, hours: 4)),
-    //   ),
-    // ];
-    final List<AppNotification> notifications = [];
     final grouped = groupByDate(notifications);
     final dateKeys = grouped.keys.toList();
 
     return AppWrapper(
       heading: Common.notifications,
       showBackButton: true,
-      child: dateKeys.length == 0
+      child: dateKeys.isEmpty
           ? Center(
               child: AppText(
                 "No notifications available",
@@ -162,7 +137,7 @@ class _NotificationScreenState extends State<NotificationScreen> {
 }
 
 class _NotificationTile extends StatelessWidget {
-  final AppNotification notification;
+  final NotificationModel notification;
 
   const _NotificationTile({required this.notification});
 
@@ -178,11 +153,11 @@ class _NotificationTile extends StatelessWidget {
           height: 50,
           borderRadius: 50,
         ),
-
-        title: AppText(notification.title),
-        subtitle: AppText(notification.message),
+        contentPadding: EdgeInsets.zero,
+        title: AppText(notification.title ?? ""),
+        subtitle: AppText(notification.body ?? ""),
         trailing: AppText(
-          "${notification.createdAt.hour}:${notification.createdAt.minute.toString().padLeft(2, '0')}",
+          "${notification.createdAt?.hour}:${notification.createdAt?.minute.toString().padLeft(2, '0')}",
           style: TextStyle(color: Colors.grey),
         ),
       ),

@@ -85,6 +85,29 @@ class ServicesProvider extends ChangeNotifier {
     return created;
   }
 
+  Future<AddressModel?> updateAddress(Map<String, dynamic> data) async {
+    final updated = await _repo.updateAddress(address: data, id: data['id']);
+
+    if (updated != null) {
+      final index = _addresses.indexWhere((a) => a.id == updated.id);
+      if (index != -1) {
+        _addresses[index] = updated; // ✅ Replace existing
+      } else {
+        _addresses.add(updated); // optional: only if not found
+      }
+      notifyListeners();
+    }
+    return updated;
+  }
+
+  // Future<AddressModel?> updateAddress(Map<String, dynamic> data) async {
+  //   final updated = await _repo.updateAddress(address: data, id: data['id']);
+  //   if (updated != null) {
+  //     await ensureAddresses(force: true);
+  //   }
+  //   return updated;
+  // }
+
   Future<void> deleteAddress(int id) async {
     _addresses.removeWhere((a) => a.id == id);
     await _repo.deleteAddress(id);
@@ -118,6 +141,11 @@ class ServicesProvider extends ChangeNotifier {
 
     _categoryServices[categoryId] = list ?? [];
     _loading = false;
+    notifyListeners();
+  }
+
+  void clear() {
+    _addresses = [];
     notifyListeners();
   }
 }

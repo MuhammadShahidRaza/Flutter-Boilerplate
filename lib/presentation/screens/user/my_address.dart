@@ -18,13 +18,15 @@ class MyAddress extends StatefulWidget {
 }
 
 class _MyAddressState extends State<MyAddress> {
+  bool isEditing = false;
   int selectedAddress = -1;
-
   final _formKey = GlobalKey<FormState>();
   bool get isNewAddress => selectedAddress == -1;
   double? selectedLatitude;
   double? selectedLongitude;
 
+  String? selectedBuildingImage;
+  String? selectedApartmentImage;
   XFile? _buildingImage;
   XFile? _apartmentImage;
   bool loading = false;
@@ -91,6 +93,53 @@ class _MyAddressState extends State<MyAddress> {
       });
     }
 
+    if (!mounted) return;
+    context.back();
+    setState(() {
+      loading = false;
+    });
+  }
+
+  Future<void> updateAddress() async {
+    if (!(_formKey.isValid) ||
+        selectedLatitude == null ||
+        selectedLongitude == null) {
+      return;
+    }
+    setState(() {
+      loading = true;
+    });
+    final provider = context.read<ServicesProvider>();
+    final response = await provider.updateAddress({
+      "id": selectedAddress.toString(),
+      "_method": "PATCH",
+      "label": addressTitleController.text,
+      "address": landFullAddressController.text,
+      "city": cityController.text,
+      "state": stateController.text,
+      "latitude": selectedLatitude,
+      "longitude": selectedLongitude,
+      "building_image_url": _buildingImage,
+      "apartment_image_url": _apartmentImage,
+      "building_name": buildingNameController.text,
+      "floor": aptFloorController.text,
+      "is_active": "1",
+      "is_default": "1",
+    });
+    if (response != null) {
+      setState(() {
+        selectedAddress = response.id;
+        addressTitleController.clear();
+        cityController.clear();
+        stateController.clear();
+        buildingNameController.clear();
+        aptFloorController.clear();
+        landFullAddressController.clear();
+      });
+    }
+
+    if (!mounted) return;
+    context.back();
     setState(() {
       loading = false;
     });
@@ -122,7 +171,7 @@ class _MyAddressState extends State<MyAddress> {
           ),
 
           SizedBox(
-            height: isNewAddress ? null : context.h(0.8),
+            height: isNewAddress || isEditing ? null : context.h(0.8),
             child: Consumer<ServicesProvider>(
               builder: (context, services, _) {
                 final list = services.addresses;
@@ -161,13 +210,15 @@ class _MyAddressState extends State<MyAddress> {
                         ),
                       ),
 
-                    if (isNewAddress && list.length < 3) ...[
+                    if ((isNewAddress && list.length < 3) || isEditing) ...[
                       Row(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Expanded(
                             child: ImagePickerBox(
-                              initialImagePath: AppAssets.pickerPlaceholder,
+                              initialImagePath:
+                                  selectedBuildingImage ??
+                                  AppAssets.pickerPlaceholder,
                               borderColor: AppColors.border,
                               wantBottomSpace: false,
                               onImagePicked: (file) {
@@ -178,7 +229,9 @@ class _MyAddressState extends State<MyAddress> {
                           ),
                           Expanded(
                             child: ImagePickerBox(
-                              initialImagePath: AppAssets.pickerPlaceholder,
+                              initialImagePath:
+                                  selectedApartmentImage ??
+                                  AppAssets.pickerPlaceholder,
                               borderColor: AppColors.border,
                               wantBottomSpace: false,
                               onImagePicked: (file) {
@@ -238,6 +291,7 @@ class _MyAddressState extends State<MyAddress> {
                               title: "Add Full Address",
                               textEditingController: landFullAddressController,
                               hint: "Street, Area, Landmark",
+
                               getPlaceDetailWithLatLng: (prediction) {
                                 setState(() {
                                   landFullAddressController.text =
@@ -268,30 +322,38 @@ class _MyAddressState extends State<MyAddress> {
                               },
                             ),
 
-                            Row(
-                              spacing: Dimens.spacingM,
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Expanded(
-                                  child: AppInput(
-                                    fieldKey: FieldType.required,
-                                    title: "City",
-                                    enabled: false,
-                                    controller: cityController,
-                                    hint: "Jeddah, Riyadh",
-                                  ),
-                                ),
-                                Expanded(
-                                  child: AppInput(
-                                    fieldKey: FieldType.required,
-                                    title: "State",
-                                    hint: "Makkah, Riyadh",
-                                    enabled: false,
-                                    controller: stateController,
-                                  ),
-                                ),
-                              ],
+                            AppInput(
+                              fieldKey: FieldType.required,
+                              title: "City",
+                              enabled: false,
+                              controller: cityController,
+                              hint: "Jeddah, Riyadh",
                             ),
+
+                            // Row(
+                            //   spacing: Dimens.spacingM,
+                            //   crossAxisAlignment: CrossAxisAlignment.start,
+                            //   children: [
+                            //     Expanded(
+                            //       child: AppInput(
+                            //         // fieldKey: FieldType.required,
+                            //         title: "City",
+                            //         enabled: false,
+                            //         controller: cityController,
+                            //         hint: "Jeddah, Riyadh",
+                            //       ),
+                            //     ),
+                            //     Expanded(
+                            //       child: AppInput(
+                            //         // fieldKey: FieldType.required,
+                            //         title: "State",
+                            //         hint: "Makkah, Riyadh",
+                            //         enabled: false,
+                            //         controller: stateController,
+                            //       ),
+                            //     ),
+                            //   ],
+                            // ),
                             AppInput(
                               fieldKey: FieldType.required,
                               title: "Address Title",
@@ -326,20 +388,30 @@ class _MyAddressState extends State<MyAddress> {
                                 ),
                               ],
                             ),
+
+                            AppButton(
+                              isLoading: loading,
+                              title: Common.save,
+                              onPressed: () {
+                                if (isEditing) {
+                                  updateAddress();
+                                  setState(() {
+                                    isEditing = false;
+                                  });
+
+                                  return;
+                                }
+                                if (isNewAddress) {
+                                  addNewAddress();
+                                } else {
+                                  context.back();
+                                }
+                              },
+                            ),
                           ],
                         ),
                       ),
                     ],
-                    Padding(
-                      padding: EdgeInsets.only(top: isNewAddress ? 0 : 100),
-                      child: AppButton(
-                        isLoading: loading,
-                        title: Common.save,
-                        onPressed: () {
-                          addNewAddress();
-                        },
-                      ),
-                    ),
                   ],
                 );
               },
@@ -374,7 +446,8 @@ class _MyAddressState extends State<MyAddress> {
               icon: Icons.edit_outlined,
               onTap: () async {
                 setState(() {
-                  selectedAddress = -1;
+                  isEditing = true;
+                  selectedAddress = item.id;
                   landFullAddressController.text = item.address ?? "";
                   cityController.text = item.city ?? "";
                   stateController.text = item.state ?? "";
@@ -383,6 +456,8 @@ class _MyAddressState extends State<MyAddress> {
                   aptFloorController.text = item.floor ?? "";
                   selectedLatitude = double.tryParse(item.latitude ?? "");
                   selectedLongitude = double.tryParse(item.longitude ?? "");
+                  selectedApartmentImage = item.apartmentImage;
+                  selectedBuildingImage = item.buildingImage;
                 });
               },
               color: AppColors.secondary,
@@ -391,6 +466,9 @@ class _MyAddressState extends State<MyAddress> {
             AppIcon(
               icon: Icons.delete_outline,
               onTap: () async {
+                setState(() {
+                  isEditing = false;
+                });
                 final provider = context.read<ServicesProvider>();
                 await provider.deleteAddress(item.id);
                 setState(() {
@@ -410,12 +488,63 @@ class _MyAddressState extends State<MyAddress> {
   }
 }
 
+// String _extractCity(String address) {
+//   final parts = address.split(",");
+//   return parts.length >= 2 ? parts[parts.length - 2].trim() : "";
+// }
+
+// String _extractState(String address) {
+//   final parts = address.split(",");
+//   return parts.isNotEmpty ? parts.last.trim() : "";
+// }
+
 String _extractCity(String address) {
-  final parts = address.split(",");
-  return parts.length >= 2 ? parts[parts.length - 2].trim() : "";
+  if (address.trim().isEmpty) return "";
+
+  final parts = address
+      .split(',')
+      .map((p) => p.trim())
+      .where((p) => p.isNotEmpty)
+      .toList();
+
+  if (parts.isEmpty) return "";
+
+  final last = parts.last;
+  final tokens = last.split(RegExp(r'\s+')).where((t) => t.isNotEmpty).toList();
+
+  if (tokens.length >= 2) {
+    // e.g. "Makkah Saudi Arabia" -> city = "Makkah"
+    return tokens.first;
+  }
+
+  // last part single word -> try second last as city
+  if (parts.length >= 2) {
+    return parts[parts.length - 2];
+  }
+
+  // fallback: use last
+  return last;
 }
 
 String _extractState(String address) {
-  final parts = address.split(",");
-  return parts.isNotEmpty ? parts.last.trim() : "";
+  if (address.trim().isEmpty) return "";
+
+  final parts = address
+      .split(',')
+      .map((p) => p.trim())
+      .where((p) => p.isNotEmpty)
+      .toList();
+
+  if (parts.isEmpty) return "";
+
+  final last = parts.last;
+  final tokens = last.split(RegExp(r'\s+')).where((t) => t.isNotEmpty).toList();
+
+  if (tokens.length >= 2) {
+    // e.g. ["Makkah","Saudi","Arabia"] -> state = "Saudi Arabia"
+    return tokens.sublist(1).join(' ');
+  }
+
+  // if last is single word, maybe state is last
+  return last;
 }

@@ -41,13 +41,13 @@ class _MyAccountState extends State<MyAccount> {
           context.navigate(AppRoutes.myAddress);
         },
       ),
-      // _AccountOption(
-      //   icon: Icons.credit_card,
-      //   title: Common.payment,
-      //   onTap: () {
-      //     // context.navigate(AppRoutes.payment);
-      //   },
-      // ),
+      _AccountOption(
+        icon: Icons.credit_card,
+        title: Common.payment,
+        onTap: () {
+          // context.navigate(AppRoutes.payment);
+        },
+      ),
       _AccountOption(
         icon: Icons.translate,
         title: Common.language,

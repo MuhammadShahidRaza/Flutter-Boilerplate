@@ -174,6 +174,8 @@ class _OrderDetailsState extends State<OrderDetails> {
             onDateSelected: (date) {
               setState(() {
                 selectedPickUpDate = date;
+                selectedDeliveryDate = null;
+                selectedDeliverySlotId = '';
               });
             },
             showSlots: selectedPickUpDate != null,

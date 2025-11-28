@@ -61,13 +61,12 @@ class _ConfirmationState extends State<Confirmation> {
   void initState() {
     super.initState();
     fetchAdditionalInfo();
-    // Warm slots cache; no-op if already loaded
     context.read<ServicesProvider>().ensureSlots();
   }
 
   @override
   Widget build(BuildContext context) {
-    final cartDetails = context.read<CartProvider>();
+    final cartDetails = context.watch<CartProvider>();
     return AppWrapper(
       showBackButton: true,
       scrollable: true,
@@ -177,7 +176,7 @@ class _ConfirmationState extends State<Confirmation> {
                         child: AppText(
                           isFreeDelivery
                               ? "You qualify for free delivery 🎉"
-                              : "${remaining.toStringAsFixed(2)} SAR remaining to qualify for free delivery",
+                              : "${remaining.toStringAsFixed(2)} ${settings.currency} remaining to qualify for free delivery",
                           maxLines: 2,
                         ),
                       ),
@@ -191,28 +190,31 @@ class _ConfirmationState extends State<Confirmation> {
                   // Pricing Summary
                   _PricingRow(
                     label: "Subtotal",
-                    value: "${totalAmount.toStringAsFixed(2)} SAR",
+                    value:
+                        "${totalAmount.toStringAsFixed(2)} ${settings.currency}",
                     isBold: true,
                     valueColor: AppColors.primary,
                   ),
                   if (addons.isNotEmpty)
                     _PricingRow(
                       label: "Add-ons",
-                      value: "${cart.totalAddonsAmount.toStringAsFixed(2)} SAR",
+                      value:
+                          "${cart.totalAddonsAmount.toStringAsFixed(2)} ${settings.currency}",
                     ),
                   _PricingRow(
                     label: "Delivery Charges",
-                    value: "$deliveryCharges SAR",
+                    value: "$deliveryCharges ${settings.currency}",
                   ),
                   _PricingRow(
                     label: "Tax",
-                    value: "${tax.toStringAsFixed(2)} SAR",
+                    value: "${tax.toStringAsFixed(2)} ${settings.currency}",
                   ),
 
                   Divider(color: AppColors.lightGrey),
                   _PricingRow(
                     label: "Total",
-                    value: "${newTotalAmount.toStringAsFixed(2)} SAR",
+                    value:
+                        "${newTotalAmount.toStringAsFixed(2)} ${settings.currency}",
                     isBold: true,
                     valueColor: AppColors.primary,
                   ),
@@ -226,6 +228,7 @@ class _ConfirmationState extends State<Confirmation> {
                       );
 
                       if (response != null) {
+                        cart.clearOrder();
                         AppDialog.show(
                           context,
                           title: "Order Placed",
@@ -240,10 +243,12 @@ class _ConfirmationState extends State<Confirmation> {
                             children: [
                               AppButton(
                                 title: "View My Orders",
-                                onPressed: () => context.replacePage(
-                                  AppRoutes.bookingDetails,
-                                  extra: response?.id?.toString(),
-                                ),
+                                onPressed: () => {
+                                  context.replacePage(
+                                    AppRoutes.bookingDetails,
+                                    extra: response?["id"]?.toString(),
+                                  ),
+                                },
                               ),
                               AppButton(
                                 title: "Back to Home",

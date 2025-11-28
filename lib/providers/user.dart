@@ -3,15 +3,20 @@ import 'package:sanam_laundry/core/utils/helper.dart';
 import 'package:sanam_laundry/data/index.dart';
 
 class UserProvider extends ChangeNotifier {
+  final AuthRepository _repo = AuthRepository();
+
   UserModel? _user;
 
   UserModel? get user => _user;
   bool get hasUser => _user != null;
 
+  /// Load user data only once
   Future<void> loadUserData() async {
-    final storedUser = await UserService.loadUser();
-    _user = storedUser;
-    notifyListeners();
+    if (_user == null) {
+      final storedUser = await _repo.getProfile();
+      _user = storedUser;
+      notifyListeners();
+    }
   }
 
   Future<void> updateUser(UserModel user) async {
