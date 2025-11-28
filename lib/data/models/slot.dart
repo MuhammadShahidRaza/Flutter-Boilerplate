@@ -1,4 +1,5 @@
 import 'package:intl/intl.dart';
+import 'package:sanam_laundry/core/utils/helper.dart';
 
 class SlotModel {
   SlotModel({
@@ -29,7 +30,7 @@ class SlotModel {
 
     return SlotModel(
       id: json["id"]?.toString() ?? "",
-      title: json["title"],
+      title: Utils.capitalize(json["title"]),
       startTime: formatLocal(json["start_time"]),
       endTime: formatLocal(json["end_time"]),
       isActive: json["is_active"],
