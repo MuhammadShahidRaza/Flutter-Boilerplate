@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:geocoding/geocoding.dart';
+import 'package:sanam_laundry/core/utils/index.dart';
 import 'package:sanam_laundry/core/widgets/icon.dart';
 
 class AddressPickerMap extends StatefulWidget {
@@ -60,9 +61,16 @@ class _AddressPickerMapState extends State<AddressPickerMap> {
   }
 
   /// Step 1: Get user current location
-  Future<void> _setCurrentLocation() async {
+  Future<void> _setCurrentLocation({bool showToast = false}) async {
     bool permission = await _checkPermission();
-    if (!permission) return;
+    if (!permission) {
+      if (showToast) {
+        AppToast.showToast(
+          "Location permission is required to pick an address.",
+        );
+      }
+      return;
+    }
 
     Position pos = await Geolocator.getCurrentPosition();
 
@@ -153,7 +161,7 @@ class _AddressPickerMapState extends State<AddressPickerMap> {
             mini: true,
             backgroundColor: Colors.white,
             child: AppIcon(icon: Icons.my_location, color: Colors.blue),
-            onPressed: _setCurrentLocation,
+            onPressed: () => _setCurrentLocation(showToast: true),
           ),
         ),
       ],
