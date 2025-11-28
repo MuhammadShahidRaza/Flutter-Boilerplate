@@ -1,4 +1,5 @@
 import 'package:sanam_laundry/core/index.dart';
+import 'package:sanam_laundry/core/utils/helper.dart';
 
 class ServiceItemModel {
   final String id;
@@ -22,12 +23,12 @@ class ServiceItemModel {
   factory ServiceItemModel.fromJson(Map<String, dynamic> json) {
     return ServiceItemModel(
       id: json['id'].toString(),
-      title: json['title'] ?? "",
+      title: Utils.capitalize(json['title'] ?? ""),
       amount: json['amount'] ?? "",
-      subtitle: json['description'] ?? "",
-      description: json['description'] ?? "",
+      subtitle: Utils.capitalize(json['description'] ?? ""),
+      description: Utils.capitalize(json['description'] ?? ""),
       image: json['image'] ?? AppAssets.user,
-      currency: json['currency'] ?? "SAR",
+      currency: "SAR",
     );
   }
 }

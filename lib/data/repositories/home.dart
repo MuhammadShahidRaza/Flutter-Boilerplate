@@ -4,6 +4,7 @@ import 'package:sanam_laundry/core/network/api_response.dart';
 import 'package:sanam_laundry/core/utils/helper.dart';
 import 'package:sanam_laundry/data/index.dart';
 import 'package:sanam_laundry/data/models/address.dart';
+import 'package:sanam_laundry/data/models/notification.dart';
 import 'package:sanam_laundry/data/models/order.dart';
 import 'package:sanam_laundry/data/models/service.dart';
 import 'package:sanam_laundry/data/models/settings.dart';
@@ -128,6 +129,20 @@ class HomeRepository {
     );
   }
 
+  Future<AddressModel?> updateAddress({address, id}) async {
+    return await ApiResponseHandler.handleRequest<AddressModel>(
+      () => _apiService.multipartPost(
+        "${Endpoints.updateAddress}/$id",
+        data: address,
+        config: const ApiRequestConfig(showSuccessToast: true),
+      ),
+      onSuccess: (data, _) {
+        final address = data['address'];
+        return AddressModel.fromJson(address);
+      },
+    );
+  }
+
   Future deleteAddress(int id) async {
     return await ApiResponseHandler.handleRequest(
       () => _apiService.delete(
@@ -172,6 +187,9 @@ class HomeRepository {
         data: payload,
         config: const ApiRequestConfig(showLoader: true),
       ),
+      // onSuccess: (data, _) {
+      //   return OrderModel.fromJson(data);
+      // },
     );
   }
 
@@ -181,6 +199,22 @@ class HomeRepository {
       onSuccess: (data, _) {
         final orders = Utils.safeList(data?["Booking"]);
         final list = orders.map((e) => OrderModel.fromJson(e)).toList();
+        return list;
+      },
+    );
+  }
+
+  Future getNotifications() async {
+    return await ApiResponseHandler.handleRequest(
+      () => _apiService.get(
+        Endpoints.notifications,
+        config: ApiRequestConfig(showLoader: true),
+      ),
+      onSuccess: (data, _) {
+        final notifications = Utils.safeList(data?["notify"]);
+        final list = notifications
+            .map((e) => NotificationModel.fromJson(e))
+            .toList();
         return list;
       },
     );
