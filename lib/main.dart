@@ -5,6 +5,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 import 'package:sanam_laundry/app.dart';
 import 'package:sanam_laundry/core/index.dart';
+import 'package:sanam_laundry/core/notifications/notification_service.dart';
 import 'package:sanam_laundry/providers/all_providers.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'firebase_options.dart';
@@ -33,6 +34,15 @@ void main() async {
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
 
   FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
+
+  // Initialize unified notification handling (foreground/background/terminated)
+  try {
+    await NotificationService.instance.initialize();
+  } catch (e, st) {
+    debugPrint('Notification initialization failed: $e');
+    debugPrint('$st');
+    // Continue starting the app even if notifications fail
+  }
 
   runApp(
     MultiProvider(providers: AppProviders.allProviders, child: const MyApp()),
