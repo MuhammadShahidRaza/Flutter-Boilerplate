@@ -80,11 +80,11 @@ class AuthRepository {
   /// 🔹 PROFILE
   Future<UserModel?> getProfile() async {
     return await ApiResponseHandler.handleRequest<UserModel>(
-      () => _apiService.get(
-        Endpoints.profile,
-        config: const ApiRequestConfig(requiresAuth: true),
-      ),
-      onSuccess: (data, _) => UserModel.fromJson(data),
+      () => _apiService.get(Endpoints.profile),
+      onSuccess: (data, _) {
+        final userData = data['user'];
+        return UserModel.fromJson(userData);
+      },
     );
   }
 
