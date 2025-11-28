@@ -55,7 +55,7 @@ class _SignUpState extends State<SignUp> {
     if (phone.toString().isEmpty) return;
 
     if (!_agreedTerms) {
-      AppToast.showToast("Please agree to the terms and conditions.");
+      AppToast.showToast("Please agree to the terms and condition.");
       return;
     }
 

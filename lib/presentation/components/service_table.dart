@@ -92,7 +92,13 @@ class _ServiceRow extends StatelessWidget {
                     borderRadius: BorderRadius.all(Radius.circular(10)),
                   ),
                 ),
-                AppText(name, style: context.textTheme.bodyMedium),
+                Expanded(
+                  child: AppText(
+                    name,
+                    style: context.textTheme.bodyMedium,
+                    // maxLines: 2,
+                  ),
+                ),
               ],
             ),
           ),

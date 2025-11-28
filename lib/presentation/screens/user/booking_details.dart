@@ -96,10 +96,7 @@ class _BookingDetailsState extends State<BookingDetails> {
                 Row(
                   spacing: Dimens.spacingM,
                   children: [
-                    AppText(
-                      orderDetails?.status ?? '',
-                      style: context.textTheme.titleMedium,
-                    ),
+                    AppText("Status", style: context.textTheme.titleMedium),
                     if (isCompleted)
                       AppButton(
                         title: "Completed",
@@ -161,9 +158,11 @@ class _BookingDetailsState extends State<BookingDetails> {
                     "pickUpDate": _formatDate(
                       orderDetails?.pickupDatetime ?? "",
                     ),
-                    "pickUpTimeSlot": orderDetails?.pickupSlotId ?? "",
+                    "pickUpTimeSlot":
+                        '${orderDetails?.pickupSlot?.title} ( ${orderDetails?.pickupSlot?.startTime} - ${orderDetails?.pickupSlot?.endTime} )',
                     "deliveryDate": _formatDate(orderDetails?.deliveryDatetime),
-                    "deliveryTimeSlot": orderDetails?.deliverySlotId ?? "",
+                    "deliveryTimeSlot":
+                        '${orderDetails?.deliverySlot?.title} ( ${orderDetails?.deliverySlot?.startTime} - ${orderDetails?.deliverySlot?.endTime} )',
                   },
                 ),
                 // Pricing Summary
@@ -177,6 +176,10 @@ class _BookingDetailsState extends State<BookingDetails> {
                 _PricingRow(
                   label: "Tax",
                   value: "${orderDetails?.tax ?? ''} SAR",
+                ),
+                _PricingRow(
+                  label: "Delivery Charges",
+                  value: "${orderDetails?.deliveryCharges ?? ''} SAR",
                 ),
                 Divider(color: AppColors.lightGrey),
                 _PricingRow(
