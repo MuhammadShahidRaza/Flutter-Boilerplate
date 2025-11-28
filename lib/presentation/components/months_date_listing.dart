@@ -99,12 +99,31 @@ class _MonthsDateListingState extends State<MonthsDateListing> {
     return monthString;
   }
 
+  // List<DateTime> _getDatesInMonth(DateTime month) {
+  //   final lastDay = DateTime(month.year, month.month + 1, 0);
+
+  //   return List.generate(
+  //     lastDay.day,
+  //     (index) => DateTime(month.year, month.month, index + 1),
+  //   );
+  // }
+
   List<DateTime> _getDatesInMonth(DateTime month) {
+    final now = DateTime.now();
     final lastDay = DateTime(month.year, month.month + 1, 0);
 
     return List.generate(
       lastDay.day,
-      (index) => DateTime(month.year, month.month, index + 1),
+      (index) => DateTime(
+        month.year,
+        month.month,
+        index + 1,
+        now.hour,
+        now.minute,
+        now.second,
+        now.millisecond,
+        now.microsecond,
+      ),
     );
   }
 
@@ -311,6 +330,7 @@ class _MonthsDateListingState extends State<MonthsDateListing> {
               itemBuilder: (context, index) {
                 final slot = widget.slots[index];
                 final id = slot?.id ?? "";
+                bool isDisabled = false;
 
                 if (slot == null) {
                   return const SizedBox.shrink();
@@ -325,8 +345,18 @@ class _MonthsDateListingState extends State<MonthsDateListing> {
                   final isTodaySelected = _isSameDay(selected, DateTime.now());
                   if (isTodaySelected) {
                     final endIso = slot.endTime;
+
+                    DateTime? parseTime12(String timeString) {
+                      try {
+                        final formatter = DateFormat("h:mm a");
+                        return formatter.parse(timeString);
+                      } catch (e) {
+                        return null;
+                      }
+                    }
+
                     if (endIso != null) {
-                      final parsed = DateTime.tryParse(endIso)?.toLocal();
+                      final parsed = parseTime12(endIso)?.toLocal();
                       if (parsed != null) {
                         final endOnSelected = DateTime(
                           selected.year,
@@ -337,7 +367,7 @@ class _MonthsDateListingState extends State<MonthsDateListing> {
                           parsed.second,
                         );
                         if (endOnSelected.isBefore(DateTime.now())) {
-                          return const SizedBox.shrink();
+                          isDisabled = true;
                         }
                       }
                     }
@@ -347,16 +377,17 @@ class _MonthsDateListingState extends State<MonthsDateListing> {
                   title: Utils.capitalize(
                     '${slot.title} ( ${slot.startTime} - ${slot.endTime} )',
                   ),
-                  type: selectedSlotId == id
+                  type: selectedSlotId == id || isDisabled
                       ? AppButtonType.elevated
                       : AppButtonType.outlined,
                   width: 0.5,
-                  onPressed: () {
-                    setState(() {
-                      selectedSlotId = id;
-                    });
-                    widget.onSlotSelected(id);
-                  },
+                  isEnabled: !isDisabled,
+                  onPressed: isDisabled
+                      ? null
+                      : () {
+                          setState(() => selectedSlotId = id);
+                          widget.onSlotSelected(id);
+                        },
                 );
               },
             ),

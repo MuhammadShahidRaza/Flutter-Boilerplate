@@ -36,7 +36,9 @@ class TabList extends StatelessWidget {
           return GestureDetector(
             onTap: () => onTap?.call(item.id),
             child: Container(
-              width: context.w(tabWidth ?? 0.28),
+              constraints: BoxConstraints(
+                minWidth: context.w(tabWidth ?? 0.28),
+              ),
               padding: EdgeInsets.symmetric(horizontal: Dimens.spacingS),
               decoration: BoxDecoration(
                 color: AppColors.tertiary,
@@ -55,7 +57,6 @@ class TabList extends StatelessWidget {
                         : FontWeight.normal,
                     fontSize: isSelected ? 14 : 12,
                   ),
-                  maxLines: 2,
                   textAlign: TextAlign.center,
                 ),
               ),
