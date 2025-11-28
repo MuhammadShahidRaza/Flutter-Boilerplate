@@ -3,7 +3,7 @@ class Endpoints {
   static const String login = 'login';
   static const String register = 'register';
   static const String refreshToken = 'refresh';
-  static const String profile = 'profile';
+  static const String profile = 'user/user';
   static const String verifyOtp = 'verify-otp';
 
   // Home
@@ -11,6 +11,7 @@ class Endpoints {
   static const String categories = 'category';
   static const String services = 'service';
   static const String addAddress = 'address/create';
+  static const String updateAddress = 'address';
   static const String addresses = 'address';
 
   // User
@@ -23,6 +24,7 @@ class Endpoints {
   static const String updateOrder = "/orders/update";
 
   //SETTINGS
+  static const String notifications = "notification";
   static const String settings = "setting";
   static const String slots = "slot";
   static const String additionalInfo = "additional-info";

@@ -1,4 +1,6 @@
 import 'package:sanam_laundry/core/utils/helper.dart';
+import 'package:sanam_laundry/data/index.dart';
+import 'package:sanam_laundry/data/models/slot.dart';
 
 class OrderModel {
   OrderModel({
@@ -31,12 +33,14 @@ class OrderModel {
     required this.ironingId,
     required this.starchId,
     required this.clothesReturnedId,
-    required this.ironingLevel,
-    required this.starchLevel,
-    required this.clothesReturned,
+    // required this.ironingLevel,
+    // required this.starchLevel,
+    // required this.clothesReturned,
     required this.user,
     required this.rider,
     required this.bookingDetail,
+    required this.pickupSlot,
+    required this.deliverySlot,
   });
 
   final int? id;
@@ -65,15 +69,17 @@ class OrderModel {
   final String specialInstructions;
   final DateTime? createdAt;
   final DateTime? updatedAt;
-  final int? ironingId;
-  final int? starchId;
-  final int? clothesReturnedId;
-  final ClothesReturned? ironingLevel;
-  final ClothesReturned? starchLevel;
-  final ClothesReturned? clothesReturned;
-  final User? user;
+  final dynamic ironingId;
+  final dynamic starchId;
+  final dynamic clothesReturnedId;
+  // final dynamic ironingLevel;
+  // final dynamic starchLevel;
+  // final dynamic clothesReturned;
+  final UserModel? user;
   final dynamic rider;
   final List<BookingDetail> bookingDetail;
+  final SlotModel? pickupSlot;
+  final SlotModel? deliverySlot;
 
   factory OrderModel.fromJson(Map<String, dynamic> json) {
     return OrderModel(
@@ -110,22 +116,29 @@ class OrderModel {
       ironingId: json["ironing_id"],
       starchId: json["starch_id"],
       clothesReturnedId: json["clothes_returned_id"],
-      ironingLevel: json["ironing_level"] == null
-          ? null
-          : ClothesReturned.fromJson(json["ironing_level"]),
-      starchLevel: json["starch_level"] == null
-          ? null
-          : ClothesReturned.fromJson(json["starch_level"]),
-      clothesReturned: json["clothes_returned"] == null
-          ? null
-          : ClothesReturned.fromJson(json["clothes_returned"]),
-      user: json["user"] == null ? null : User.fromJson(json["user"]),
+
+      // ironingLevel: json["ironing_level"] == null
+      //     ? null
+      //     : ClothesReturned.fromJson(json["ironing_level"]),
+      // starchLevel: json["starch_level"] == null
+      //     ? null
+      //     : ClothesReturned.fromJson(json["starch_level"]),
+      // clothesReturned: json["clothes_returned"] == null
+      //     ? null
+      //     : ClothesReturned.fromJson(json["clothes_returned"]),
+      user: json["user"] == null ? null : UserModel.fromJson(json["user"]),
       rider: json["rider"],
       bookingDetail: json["booking_detail"] == null
           ? []
           : List<BookingDetail>.from(
               json["booking_detail"]!.map((x) => BookingDetail.fromJson(x)),
             ),
+      pickupSlot: json["pickup_slot"] == null
+          ? null
+          : SlotModel.fromJson(json["pickup_slot"]),
+      deliverySlot: json["delivery_slot"] == null
+          ? null
+          : SlotModel.fromJson(json["delivery_slot"]),
     );
   }
 }
@@ -210,130 +223,6 @@ class Service {
       isActive: json["is_active"],
       createdAt: json["created_at"],
       updatedAt: json["updated_at"],
-    );
-  }
-}
-
-class ClothesReturned {
-  ClothesReturned({
-    required this.id,
-    required this.title,
-    required this.type,
-    required this.createdAt,
-    required this.updatedAt,
-    required this.deletedAt,
-  });
-
-  final int? id;
-  final String? title;
-  final String? type;
-  final dynamic createdAt;
-  final dynamic updatedAt;
-  final dynamic deletedAt;
-
-  factory ClothesReturned.fromJson(Map<String, dynamic> json) {
-    return ClothesReturned(
-      id: json["id"],
-      title: json["title"],
-      type: json["type"],
-      createdAt: json["created_at"],
-      updatedAt: json["updated_at"],
-      deletedAt: json["deleted_at"],
-    );
-  }
-}
-
-class User {
-  User({
-    required this.id,
-    required this.firstName,
-    required this.lastName,
-    required this.email,
-    required this.phone,
-    required this.providerId,
-    required this.provider,
-    required this.countryCode,
-    required this.bio,
-    required this.userType,
-    required this.userRole,
-    required this.customerId,
-    required this.zoneId,
-    required this.profileImage,
-    required this.gender,
-    required this.dob,
-    required this.address,
-    required this.city,
-    required this.zipcode,
-    required this.latitude,
-    required this.longitude,
-    required this.isRiderActive,
-    required this.riderLoginTime,
-    required this.status,
-    required this.note,
-    required this.language,
-    required this.createdAt,
-    required this.updatedAt,
-  });
-
-  final int? id;
-  final String? firstName;
-  final String? lastName;
-  final String? email;
-  final String? phone;
-  final dynamic providerId;
-  final dynamic provider;
-  final dynamic countryCode;
-  final dynamic bio;
-  final String? userType;
-  final String? userRole;
-  final String? customerId;
-  final dynamic zoneId;
-  final dynamic profileImage;
-  final String? gender;
-  final dynamic dob;
-  final dynamic address;
-  final dynamic city;
-  final dynamic zipcode;
-  final dynamic latitude;
-  final dynamic longitude;
-  final int? isRiderActive;
-  final dynamic riderLoginTime;
-  final int? status;
-  final dynamic note;
-  final String? language;
-  final DateTime? createdAt;
-  final DateTime? updatedAt;
-
-  factory User.fromJson(Map<String, dynamic> json) {
-    return User(
-      id: json["id"],
-      firstName: json["first_name"],
-      lastName: json["last_name"],
-      email: json["email"],
-      phone: json["phone"],
-      providerId: json["provider_id"],
-      provider: json["provider"],
-      countryCode: json["country_code"],
-      bio: json["bio"],
-      userType: json["user_type"],
-      userRole: json["user_role"],
-      customerId: json["customer_id"],
-      zoneId: json["zone_id"],
-      profileImage: json["profile_image"],
-      gender: json["gender"],
-      dob: json["dob"],
-      address: json["address"],
-      city: json["city"],
-      zipcode: json["zipcode"],
-      latitude: json["latitude"],
-      longitude: json["longitude"],
-      isRiderActive: json["is_rider_active"],
-      riderLoginTime: json["rider_login_time"],
-      status: json["status"],
-      note: json["note"],
-      language: json["language"],
-      createdAt: DateTime.tryParse(json["created_at"] ?? ""),
-      updatedAt: DateTime.tryParse(json["updated_at"] ?? ""),
     );
   }
 }
