@@ -6,6 +6,7 @@ class SettingsModel {
     required this.normalDeliveryDays,
     required this.expressDeliveryDays,
     required this.taxPercentage,
+    this.currency,
   });
 
   final num normalDelivery;
@@ -14,6 +15,7 @@ class SettingsModel {
   final num normalDeliveryDays;
   final num expressDeliveryDays;
   final num taxPercentage;
+  final String? currency;
 
   static num _toNum(dynamic v, num fb) {
     if (v == null) return fb;
@@ -30,6 +32,7 @@ class SettingsModel {
       normalDeliveryDays: _toNum(json["normal_delivery_days"], 2),
       expressDeliveryDays: _toNum(json["express_delivery_days"], 1),
       taxPercentage: _toNum(json["tax_percentage"], 5),
+      currency: "SAR",
     );
   }
 }
