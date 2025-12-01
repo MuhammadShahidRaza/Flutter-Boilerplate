@@ -10,13 +10,13 @@ List<BottomNavigationBarItem> getBottomNavItems(BuildContext context) {
       label: context.tr(Common.home),
     ),
     BottomNavigationBarItem(
-      icon: const Icon(Icons.assignment_outlined),
-      activeIcon: const Icon(Icons.assignment),
+      icon: const Icon(Icons.local_laundry_service_outlined),
+      activeIcon: const Icon(Icons.local_laundry_service),
       label: context.tr(Common.service),
     ),
     BottomNavigationBarItem(
-      icon: const Icon(Icons.local_laundry_service_outlined),
-      activeIcon: const Icon(Icons.local_laundry_service),
+      icon: const Icon(Icons.assignment_outlined),
+      activeIcon: const Icon(Icons.assignment),
       label: context.tr(Common.myOrders),
     ),
     BottomNavigationBarItem(
