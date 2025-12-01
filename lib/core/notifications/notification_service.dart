@@ -73,8 +73,8 @@ class NotificationService {
         ?.createNotificationChannel(_defaultAndroidChannel);
 
     // Token (optional: use for logging or backend registration)
-    final token = await _messaging.getToken();
-    debugPrint('FCM token: $token');
+    // final token = await _messaging.getToken();
+    // debugPrint('FCM token: $token');
 
     // Listen for foreground messages
     FirebaseMessaging.onMessage.listen(_onForegroundMessage);
