@@ -46,7 +46,7 @@ class CategoryCard extends StatelessWidget {
                 child: Container(
                   width: 55,
                   height: 55,
-                  padding: EdgeInsets.all(5),
+                  padding: EdgeInsets.all(12),
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(Dimens.radiusXL),
                     color: isSelected
@@ -57,8 +57,8 @@ class CategoryCard extends StatelessWidget {
                     path: data.image,
                     width: 30,
                     height: 30,
-                    fit: BoxFit.cover,
-                    borderRadius: Dimens.radiusXL,
+                    fit: BoxFit.contain,
+                    // borderRadius: Dimens.radiusXL,
                   ),
                 ),
               ),
@@ -86,7 +86,7 @@ class CategoryCard extends StatelessWidget {
 
               // 🔹 Right button
               AppButton(
-                title: "View Services",
+                title: Common.viewServices,
                 style: ButtonStyle(
                   minimumSize: WidgetStatePropertyAll(Size(20, 30)),
                   shape: WidgetStatePropertyAll(
