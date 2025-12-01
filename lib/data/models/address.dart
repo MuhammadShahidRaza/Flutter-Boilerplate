@@ -41,7 +41,7 @@ class AddressModel {
     return AddressModel(
       id: json["id"],
       userId: json["user_id"],
-      label: json["label"] ?? "",
+      label: Utils.capitalize(json["label"] ?? ""),
       address: json["address"] ?? "",
       buildingName: json["building_name"] ?? "",
       buildingImage: json["building_image_url"] ?? "",
