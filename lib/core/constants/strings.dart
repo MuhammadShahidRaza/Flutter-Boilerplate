@@ -5,9 +5,14 @@ class Common {
   static const forgotPassword = "COMMON.FORGOT_PASSWORD";
   static const resetPassword = "COMMON.RESET_PASSWORD";
   static const signUp = "COMMON.SIGN_UP";
+  static const noNotificationsAvailable = "COMMON.NO_NOTIFICATIONS_AVAILABLE";
   static const signIn = "COMMON.SIGN_IN";
   static const weAreHereToHelp = "COMMON.WE_ARE_HERE_TO_HELP";
   static const changeLanguage = "COMMON.CHANGE_LANGUAGE";
+  static const enterAnyAdditionalNotesHere =
+      "COMMON.ENTER_ANY_ADDITIONAL_NOTES_HERE";
+  static const qty = "COMMON.QTY";
+  static const charges = "COMMON.CHARGES";
   static const selectLanguageYouAreComfortableWith =
       "COMMON.SELECT_LANGUAGE_YOU_ARE_COMFORTABLE_WITH";
   static const areYouSureYouWantToLogout =
@@ -42,7 +47,6 @@ class Common {
   static const getStarted = "COMMON.GET_STARTED";
   static const login = "COMMON.LOGIN";
   static const newPassword = "COMMON.NEW_PASSWORD";
-  static const confirmation = "COMMON.CONFIRMATION";
   static const enter = "COMMON.ENTER";
   static const fullName = "COMMON.FULL_NAME";
   static const enterFullName = "COMMON.ENTER_FULL_NAME";
@@ -125,6 +129,59 @@ class Common {
   static const fee = "COMMON.FEE";
   static const seeMore = "COMMON.SEE_MORE";
   static const viewMap = "COMMON.VIEW_MAP";
+  static const viewServices = "COMMON.VIEW_SERVICES";
+  static const additionalNotes = "COMMON.ADDITIONAL_NOTES";
+  static const additionalNotesOptional = "COMMON.ADDITIONAL_NOTES_OPTIONAL";
+  static const status = "COMMON.STATUS";
+  static const placeOrder = "COMMON.PLACE_ORDER";
+  static const orderPlaced = "COMMON.ORDER_PLACED";
+  static const viewMyOrders = "COMMON.VIEW_MY_ORDERS";
+  static const backToHome = "COMMON.BACK_TO_HOME";
+  static const buildingPicture = "COMMON.BUILDING_PICTURE";
+  static const apartmentPicture = "COMMON.APARTMENT_PICTURE";
+  static const addFullAddress = "COMMON.ADD_FULL_ADDRESS";
+  static const city = "COMMON.CITY";
+  static const addressTitle = "COMMON.ADDRESS_TITLE";
+  static const buildingName = "COMMON.BUILDING_NAME";
+  static const aptFloor = "COMMON.APT_FLOOR";
+  static const selectDeliveryDateTime = "COMMON.SELECT_DELIVERY_DATE_TIME";
+  static const selectDeliveryType = "COMMON.SELECT_DELIVERY_TYPE";
+  static const bookingDetails = "COMMON.BOOKING_DETAILS";
+  static const orderDetails = "COMMON.ORDER_DETAILS";
+  static const additionalInformation = "COMMON.ADDITIONAL_INFORMATION";
+  static const myAddresses = "COMMON.MY_ADDRESSES";
+  static const confirmation = "COMMON.CONFIRMATION";
+  static const subtotal = "COMMON.SUBTOTAL";
+  static const deliveryCharges = "COMMON.DELIVERY_CHARGES";
+  static const addOns = "COMMON.ADD_ONS";
+  static const tax = "COMMON.TAX";
+  static const locationLabel = "COMMON.LOCATION_LABEL";
+  static const orderTime = "COMMON.ORDER_TIME";
+  static const youQualifyForFreeDelivery =
+      "COMMON.YOU_QUALIFY_FOR_FREE_DELIVERY";
+  static const remainingToFreeDelivery = "COMMON.REMAINING_TO_FREE_DELIVERY";
+  static const noteAdditionalChargesExpress =
+      "COMMON.NOTE_ADDITIONAL_CHARGES_EXPRESS";
+  static const selectAddressFromOptions = "COMMON.SELECT_ADDRESS_FROM_OPTIONS";
+  static const inProgressOrder = "COMMON.IN_PROGRESS_ORDER";
+  static const orderDelivered = "COMMON.ORDER_DELIVERED";
+  static const orderReceived = "COMMON.ORDER_RECEIVED";
+  static const processing = "COMMON.PROCESSING";
+  static const orderReadyAwaitingPayment =
+      "COMMON.ORDER_READY_AWAITING_PAYMENT";
+  static const outForDelivery = "COMMON.OUT_FOR_DELIVERY";
+  static const delivered = "COMMON.DELIVERED";
+  static const orderId = "COMMON.ORDER_ID"; // prefix label
+  static const noSpecialInstructionsProvided =
+      "COMMON.NO_SPECIAL_INSTRUCTIONS_PROVIDED";
+  static const streetAreaLandmark = "COMMON.STREET_AREA_LANDMARK";
+  static const cityHint = "COMMON.CITY_HINT";
+  static const buildingNameHint = "COMMON.BUILDING_NAME_HINT";
+  static const apartmentFloorHint = "COMMON.APARTMENT_FLOOR_HINT";
+  static const uploadBuildingApartmentInstruction =
+      "COMMON.UPLOAD_BUILDING_APARTMENT_INSTRUCTION";
+  static const normal48Hours = "COMMON.NORMAL_48_HOURS";
+  static const express24Hours = "COMMON.EXPRESS_24_HOURS";
   static const cancel = "COMMON.CANCEL";
   static const days = "COMMON.DAYS";
   static const submit = "COMMON.SUBMIT";
@@ -194,6 +251,11 @@ class Common {
   static const completed = "COMMON.COMPLETED";
   static const location = "COMMON.LOCATION";
   static const writeMessage = "COMMON.WRITE_MESSAGE";
+  static const selectPickUpDateTime = "COMMON.SELECT_PICK_UP_DATE_TIME";
+  static const pickUpDate = "COMMON.PICK_UP_DATE";
+  static const pickUpTimeSlot = "COMMON.PICK_UP_TIME_SLOT";
+  static const deliveryDate = "COMMON.DELIVERY_DATE";
+  static const deliveryTimeSlot = "COMMON.DELIVERY_TIME_SLOT";
   static const bio = "COMMON.BIO";
   static const message = "COMMON.MESSAGE";
   static const messages = "COMMON.MESSAGES";
@@ -228,6 +290,7 @@ class Common {
   static const enterVerificationCodeYou = "COMMON.ENTER_VERIFICATION_CODE_YOU";
   static const resetYourPasswordWith = "COMMON.RESET_YOUR_PASSWORD_WITH";
   static const didNotYouRecieve = "COMMON.DID_NOT_YOU_RECIEVE";
+  static const pageNotFound = "COMMON.PAGE_NOT_FOUND";
 }
 
 // --- Ab baki sections ke liye alag classes --- //
