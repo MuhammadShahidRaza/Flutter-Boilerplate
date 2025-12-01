@@ -148,7 +148,7 @@ class _MyAddressState extends State<MyAddress> {
   @override
   Widget build(BuildContext context) {
     return AppWrapper(
-      heading: "My Addresses",
+      heading: Common.myAddresses,
       scrollable: true,
       showBackButton: true,
       child: Stack(
@@ -193,7 +193,7 @@ class _MyAddressState extends State<MyAddress> {
                         item: AddressModel(
                           id: -1,
                           userId: null,
-                          label: "Add New Address",
+                          label: Common.addFullAddress,
                           address: "",
                           city: "",
                           state: "",
@@ -224,7 +224,7 @@ class _MyAddressState extends State<MyAddress> {
                               onImagePicked: (file) {
                                 setState(() => _buildingImage = file);
                               },
-                              title: "Building Picture",
+                              title: Common.buildingPicture,
                             ),
                           ),
                           Expanded(
@@ -237,13 +237,14 @@ class _MyAddressState extends State<MyAddress> {
                               onImagePicked: (file) {
                                 setState(() => _apartmentImage = file);
                               },
-                              title: "Apartment Picture",
+                              title: Common.apartmentPicture,
                             ),
                           ),
                         ],
                       ),
                       AppText(
-                        "Upload building image and image of the apartment or door",
+                        Common
+                            .buildingPicture, // Placeholder: Should have a dedicated key for instruction
                         maxLines: 3,
                         color: AppColors.border,
                         textAlign: TextAlign.center,
@@ -288,9 +289,9 @@ class _MyAddressState extends State<MyAddress> {
                           spacing: Dimens.spacingMSmall,
                           children: [
                             AppAutocomplete(
-                              title: "Add Full Address",
+                              title: Common.addFullAddress,
                               textEditingController: landFullAddressController,
-                              hint: "Street, Area, Landmark",
+                              hint: Common.streetAreaLandmark,
 
                               getPlaceDetailWithLatLng: (prediction) {
                                 setState(() {
@@ -324,10 +325,10 @@ class _MyAddressState extends State<MyAddress> {
 
                             AppInput(
                               fieldKey: FieldType.required,
-                              title: "City",
+                              title: Common.city,
                               enabled: false,
                               controller: cityController,
-                              hint: "Jeddah, Riyadh",
+                              hint: Common.cityHint,
                             ),
 
                             // Row(
@@ -356,10 +357,10 @@ class _MyAddressState extends State<MyAddress> {
                             // ),
                             AppInput(
                               fieldKey: FieldType.required,
-                              title: "Address Title",
+                              title: Common.addressTitle,
                               minLength: 3,
                               maxLength: 25,
-                              hint: "E.g. Home, Office",
+                              hint: Common.addressTitle,
                               controller: addressTitleController,
                             ),
                             Row(
@@ -369,8 +370,8 @@ class _MyAddressState extends State<MyAddress> {
                                 Expanded(
                                   child: AppInput(
                                     fieldKey: FieldType.required,
-                                    title: "Building Name",
-                                    hint: "Tower A, Building 5",
+                                    title: Common.buildingName,
+                                    hint: Common.buildingNameHint,
                                     minLength: 3,
                                     maxLength: 25,
                                     controller: buildingNameController,
@@ -379,8 +380,8 @@ class _MyAddressState extends State<MyAddress> {
                                 Expanded(
                                   child: AppInput(
                                     fieldKey: FieldType.required,
-                                    title: "Apt / Floor",
-                                    hint: "3rd Floor, Apt 12",
+                                    title: Common.aptFloor,
+                                    hint: Common.apartmentFloorHint,
                                     minLength: 3,
                                     maxLength: 25,
                                     controller: aptFloorController,
@@ -436,6 +437,25 @@ class _MyAddressState extends State<MyAddress> {
       ),
       description: item.address,
       onChanged: (val) {
+        if (val == -1) {
+          setState(() {
+            isEditing = false;
+            selectedAddress = -1;
+            selectedLatitude = null;
+            selectedLongitude = null;
+            selectedBuildingImage = null;
+            selectedApartmentImage = null;
+            _buildingImage = null;
+            _apartmentImage = null;
+            addressTitleController.clear();
+            cityController.clear();
+            stateController.clear();
+            buildingNameController.clear();
+            aptFloorController.clear();
+            landFullAddressController.clear();
+          });
+          return;
+        }
         setState(() => selectedAddress = item.id);
       },
       iconWidget: Row(

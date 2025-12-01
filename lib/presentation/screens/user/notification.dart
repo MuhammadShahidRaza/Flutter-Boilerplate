@@ -99,7 +99,7 @@ class _NotificationScreenState extends State<NotificationScreen> {
       child: dateKeys.isEmpty
           ? Center(
               child: AppText(
-                "No notifications available",
+                Common.noNotificationsAvailable,
                 style: context.textTheme.bodyMedium,
               ),
             )
