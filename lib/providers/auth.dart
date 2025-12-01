@@ -16,7 +16,6 @@ class AuthProvider extends ChangeNotifier {
 
     _isLoggedIn = token != null && token.isNotEmpty;
     _hasVisitedApp = isVisted != null && isVisted.isNotEmpty;
-
     notifyListeners();
   }
 

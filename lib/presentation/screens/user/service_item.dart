@@ -26,7 +26,6 @@ class _ServiceItemState extends State<ServiceItem> {
 
     return AppWrapper(
       heading: category.title,
-      safeArea: false,
       showBackButton: true,
       padding: EdgeInsets.only(bottom: 20),
       child: Column(
@@ -103,8 +102,8 @@ class _ServiceItemState extends State<ServiceItem> {
                           Expanded(
                             child: AppText(
                               isFreeDelivery
-                                  ? "You qualify for free delivery 🎉"
-                                  : "${remaining.toStringAsFixed(2)} ${settings.currency} remaining to qualify for free delivery",
+                                  ? Common.youQualifyForFreeDelivery
+                                  : '${remaining.toStringAsFixed(2)} ${settings.currency} ${context.tr(Common.remainingToFreeDelivery)}',
                               maxLines: 2,
                             ),
                           ),
@@ -116,7 +115,7 @@ class _ServiceItemState extends State<ServiceItem> {
                       ),
                     ),
                     AppButton(
-                      title: "Place Order",
+                      title: Common.placeOrder,
                       onPressed: () {
                         context.navigate(AppRoutes.orderDetails);
                       },
