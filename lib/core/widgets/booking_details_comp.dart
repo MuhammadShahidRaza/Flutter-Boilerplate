@@ -21,7 +21,7 @@ class BookingDetailsComp extends StatelessWidget {
         // Additional Notes
         if (details?["additionalNotes"] != null &&
             details?["additionalNotes"].isNotEmpty) ...[
-          AppText("Additional Notes:", style: context.textTheme.titleMedium),
+          AppText(Common.additionalNotes, style: context.textTheme.titleMedium),
           AppText(
             Utils.capitalize(details?["additionalNotes"]),
             style: context.textTheme.bodySmall!.copyWith(
@@ -34,37 +34,38 @@ class BookingDetailsComp extends StatelessWidget {
         if (details?["location"] != null)
           MessageBox(
             icon: Icons.location_on_outlined,
-            title: "Location:",
+            title: Common.locationLabel,
             value: Utils.capitalize(details?["location"]),
           ),
 
         if (details?["deliveryType"] != null)
           MessageBox(
             icon: Icons.local_shipping_outlined,
-            title: "Delivery Type:",
+            title: Common.selectDeliveryType,
             value: Utils.capitalize(details?["deliveryType"]),
           ),
 
         MessageBox(
           icon: Icons.calendar_today_outlined,
-          title: "Pick-up Date:",
+
+          title: Common.pickUpDate,
           value: details?["pickUpDate"],
         ),
         details?["pickUpTimeSlot"] != null
             ? MessageBox(
                 icon: Icons.access_time_outlined,
-                title: "Pick-up Time Slot:",
+                title: Common.pickUpTimeSlot,
                 value: details?["pickUpTimeSlot"],
               )
             : SizedBox.shrink(),
         MessageBox(
           icon: Icons.event_outlined,
-          title: "Delivery Date:",
+          title: Common.deliveryDate,
           value: details?["deliveryDate"],
         ),
         MessageBox(
           icon: Icons.event_outlined,
-          title: "Delivery Time Slot:",
+          title: Common.deliveryTimeSlot,
           value: details?["deliveryTimeSlot"],
         ),
         SizedBox(height: Dimens.spacingM),
