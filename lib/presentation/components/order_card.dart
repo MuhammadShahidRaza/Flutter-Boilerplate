@@ -10,7 +10,8 @@ class OrderCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final bool isCompleted = order.status == "Order Delivered";
+    // Compare backend literal; UI uses localized key for display only.
+    final bool isCompleted = order.status == 'Order Delivered';
     final firstService = order.bookingDetail.isNotEmpty
         ? order.bookingDetail.first.service
         : null;
@@ -46,22 +47,33 @@ class OrderCard extends StatelessWidget {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         AppText(
-                          firstService?.title ?? "Service Title",
+                          firstService?.title ?? "",
                           style: context.textTheme.titleMedium!.copyWith(
                             fontWeight: FontWeight.bold,
                           ),
                         ),
-                        AppText(
-                          "Order ID: ${order.id}",
-                          style: context.textTheme.bodySmall!.copyWith(
-                            fontWeight: FontWeight.bold,
-                            color: AppColors.primary,
-                          ),
+                        Row(
+                          children: [
+                            AppText(
+                              Common.orderId,
+                              style: context.textTheme.bodySmall!.copyWith(
+                                fontWeight: FontWeight.bold,
+                                color: AppColors.primary,
+                              ),
+                            ),
+                            AppText(
+                              ': ${order.id}',
+                              style: context.textTheme.bodySmall!.copyWith(
+                                fontWeight: FontWeight.bold,
+                                color: AppColors.primary,
+                              ),
+                            ),
+                          ],
                         ),
                         AppText(
                           order.specialInstructions.isNotEmpty
                               ? order.specialInstructions
-                              : "No special instructions provided.",
+                              : Common.noSpecialInstructionsProvided,
                           maxLines: 2,
                           style: context.textTheme.bodySmall!.copyWith(
                             color: AppColors.gray,
@@ -117,7 +129,7 @@ class OrderCard extends StatelessWidget {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           AppText(
-                            "Location:",
+                            Common.locationLabel,
                             style: context.textTheme.bodyMedium!.copyWith(
                               fontWeight: FontWeight.bold,
                             ),
@@ -138,7 +150,7 @@ class OrderCard extends StatelessWidget {
 
                   if (order.paymentStatus == "pending") ...[
                     AppButton(
-                      title: "Pay Now",
+                      title: Common.payNow,
                       textStyle: context.textTheme.bodySmall!.copyWith(
                         fontWeight: FontWeight.bold,
                         color: AppColors.white,
@@ -170,7 +182,7 @@ class OrderCard extends StatelessWidget {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             AppText(
-                              "Order Time:",
+                              Common.orderTime,
                               style: context.textTheme.bodyMedium!.copyWith(
                                 fontWeight: FontWeight.bold,
                               ),
@@ -178,7 +190,7 @@ class OrderCard extends StatelessWidget {
                             SizedBox(
                               width: context.w(0.25),
                               child: AppText(
-                                "8:00 AM",
+                                TemporaryText.time,
                                 style: context.textTheme.bodySmall!.copyWith(
                                   color: AppColors.text,
                                 ),

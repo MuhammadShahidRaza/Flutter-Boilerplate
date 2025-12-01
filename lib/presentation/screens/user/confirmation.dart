@@ -70,7 +70,7 @@ class _ConfirmationState extends State<Confirmation> {
     return AppWrapper(
       showBackButton: true,
       scrollable: true,
-      heading: "Confirmation",
+      heading: Common.confirmation,
       child: Column(
         spacing: Dimens.spacingM,
         children: [
@@ -103,14 +103,14 @@ class _ConfirmationState extends State<Confirmation> {
           ),
 
           AppText(
-            "Add-ons",
+            Common.addOns,
             style: context.textTheme.headlineSmall!.copyWith(
               fontWeight: FontWeight.bold,
             ),
           ),
 
           SizedBox(
-            height: context.h(0.15),
+            height: context.h(0.16),
             child: ListView.builder(
               scrollDirection: Axis.horizontal,
               itemCount: addOnsList.length,
@@ -175,8 +175,8 @@ class _ConfirmationState extends State<Confirmation> {
                       Expanded(
                         child: AppText(
                           isFreeDelivery
-                              ? "You qualify for free delivery 🎉"
-                              : "${remaining.toStringAsFixed(2)} ${settings.currency} remaining to qualify for free delivery",
+                              ? Common.youQualifyForFreeDelivery
+                              : '${remaining.toStringAsFixed(2)} ${settings.currency} ${context.tr(Common.remainingToFreeDelivery)}',
                           maxLines: 2,
                         ),
                       ),
@@ -189,7 +189,7 @@ class _ConfirmationState extends State<Confirmation> {
 
                   // Pricing Summary
                   _PricingRow(
-                    label: "Subtotal",
+                    label: Common.subtotal,
                     value:
                         "${totalAmount.toStringAsFixed(2)} ${settings.currency}",
                     isBold: true,
@@ -197,22 +197,22 @@ class _ConfirmationState extends State<Confirmation> {
                   ),
                   if (addons.isNotEmpty)
                     _PricingRow(
-                      label: "Add-ons",
+                      label: Common.addOns,
                       value:
                           "${cart.totalAddonsAmount.toStringAsFixed(2)} ${settings.currency}",
                     ),
                   _PricingRow(
-                    label: "Delivery Charges",
+                    label: Common.deliveryCharges,
                     value: "$deliveryCharges ${settings.currency}",
                   ),
                   _PricingRow(
-                    label: "Tax",
+                    label: Common.tax,
                     value: "${tax.toStringAsFixed(2)} ${settings.currency}",
                   ),
 
                   Divider(color: AppColors.lightGrey),
                   _PricingRow(
-                    label: "Total",
+                    label: Common.total,
                     value:
                         "${newTotalAmount.toStringAsFixed(2)} ${settings.currency}",
                     isBold: true,
@@ -220,7 +220,7 @@ class _ConfirmationState extends State<Confirmation> {
                   ),
 
                   AppButton(
-                    title: "Place Order",
+                    title: Common.placeOrder,
                     onPressed: () async {
                       final payload = cart.toOrderPayload();
                       final response = await _homeRepository.placeOrder(
@@ -231,7 +231,7 @@ class _ConfirmationState extends State<Confirmation> {
                         cart.clearOrder();
                         AppDialog.show(
                           context,
-                          title: "Order Placed",
+                          title: Common.orderPlaced,
                           imagePath: AppAssets.order,
                           borderColor: AppColors.primary,
                           borderWidth: 4,
@@ -242,7 +242,7 @@ class _ConfirmationState extends State<Confirmation> {
                             spacing: Dimens.spacingM,
                             children: [
                               AppButton(
-                                title: "View My Orders",
+                                title: Common.viewMyOrders,
                                 onPressed: () => {
                                   context.replacePage(
                                     AppRoutes.bookingDetails,
@@ -251,14 +251,17 @@ class _ConfirmationState extends State<Confirmation> {
                                 },
                               ),
                               AppButton(
-                                title: "Back to Home",
+                                title: Common.backToHome,
                                 style: ButtonStyle(
                                   side: WidgetStatePropertyAll(
                                     BorderSide(color: AppColors.secondary),
                                   ),
                                 ),
                                 textStyle: context.textTheme.bodyLarge!
-                                    .copyWith(color: AppColors.text),
+                                    .copyWith(
+                                      color: AppColors.text,
+                                      fontWeight: FontWeight.bold,
+                                    ),
                                 type: AppButtonType.outlined,
                                 onPressed: () =>
                                     context.replacePage(AppRoutes.home),
