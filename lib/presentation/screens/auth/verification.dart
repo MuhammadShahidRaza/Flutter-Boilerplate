@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:sanam_laundry/core/index.dart';
@@ -54,8 +55,8 @@ class _VerificationState extends State<Verification> {
     final user = await _authRepository.verifyOtp(
       phone: context.getParam<String>('phone') ?? '',
       otp: _otpCode,
+      deviceToken: await FirebaseMessaging.instance.getToken() ?? '',
       // device_type:Testing Tool
-      // device_token:abcdefghijklmnopqrstuvwxyz
       // udid:123456789
       // device_brand:Postman
       // device_os:Linux
