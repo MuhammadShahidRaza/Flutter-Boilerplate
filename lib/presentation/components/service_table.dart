@@ -18,7 +18,7 @@ class ServicesTable extends StatelessWidget {
               Expanded(
                 flex: 2,
                 child: AppText(
-                  "Services",
+                  Common.services,
                   style: context.textTheme.bodyLarge!.copyWith(
                     color: AppColors.primary,
                     fontWeight: FontWeight.bold,
@@ -27,7 +27,7 @@ class ServicesTable extends StatelessWidget {
               ),
               Expanded(
                 child: AppText(
-                  "QTY",
+                  Common.qty,
                   textAlign: TextAlign.center,
                   style: context.textTheme.bodyLarge!.copyWith(
                     color: AppColors.primary,
@@ -37,8 +37,8 @@ class ServicesTable extends StatelessWidget {
               ),
               Expanded(
                 child: AppText(
-                  "Charges",
-                  textAlign: TextAlign.right,
+                  Common.charges,
+                  textAlign: TextAlign.left,
                   style: context.textTheme.bodyLarge!.copyWith(
                     color: AppColors.primary,
                     fontWeight: FontWeight.bold,
@@ -112,8 +112,8 @@ class _ServiceRow extends StatelessWidget {
           Expanded(
             child: AppText(
               price,
-              textAlign: TextAlign.right,
-              style: context.textTheme.bodyMedium,
+              textAlign: TextAlign.left,
+              style: context.textTheme.bodyMedium!.copyWith(fontSize: 13),
             ),
           ),
         ],
