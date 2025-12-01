@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:io';
 import 'package:dio/dio.dart';
 
 class RetryInterceptor extends Interceptor {
@@ -8,7 +9,7 @@ class RetryInterceptor extends Interceptor {
 
   RetryInterceptor({
     required this.dio,
-    this.retries = 3,
+    this.retries = 1,
     this.retryDelay = const Duration(seconds: 2),
   });
 
@@ -31,9 +32,29 @@ class RetryInterceptor extends Interceptor {
   }
 
   bool _shouldRetry(DioException err) {
-    // Retry only on network timeout / server errors
-    return err.type == DioExceptionType.connectionTimeout ||
+    // Only retry idempotent requests
+    final method = err.requestOptions.method.toUpperCase();
+    final isIdempotent =
+        method == 'GET' || method == 'HEAD' || method == 'OPTIONS';
+
+    if (!isIdempotent) return false;
+
+    // Retry on network timeouts, transient server errors, and certain connection resets
+    final statusCode = err.response?.statusCode ?? 0;
+    final isServerError = statusCode >= 500;
+
+    final isTimeout =
+        err.type == DioExceptionType.connectionTimeout ||
         err.type == DioExceptionType.receiveTimeout ||
-        (err.response?.statusCode ?? 0) >= 500;
+        err.type == DioExceptionType.sendTimeout;
+
+    final isConnectionReset =
+        err.type == DioExceptionType.unknown ||
+        err.type == DioExceptionType.connectionError;
+
+    final cause = err.error;
+    final isHttpException = cause is HttpException;
+
+    return isTimeout || isServerError || (isConnectionReset && isHttpException);
   }
 }
