@@ -27,17 +27,28 @@ class AddonCard extends StatelessWidget {
           children: [
             Column(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 AppImage(
                   path: service.image,
                   width: context.w(0.2),
                   fit: BoxFit.contain,
-                  height: context.h(0.07),
+                  height: context.h(0.06),
                   borderRadius: Dimens.radiusS,
                 ),
-                AppText(
-                  service.title,
-                  style: context.textTheme.titleMedium!.copyWith(),
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+
+                  children: [
+                    AppText(
+                      service.title,
+                      style: context.textTheme.titleMedium!.copyWith(),
+                    ),
+                    AppText(
+                      "${service.amount} SAR",
+                      style: context.textTheme.bodySmall!.copyWith(),
+                    ),
+                  ],
                 ),
               ],
             ),
@@ -87,6 +98,7 @@ class AddonCard extends StatelessWidget {
                         cart.addService(service),
                         cart.addAddOn(service),
                       },
+                      size: 28,
                       icon: Icons.add_circle,
                       color: AppColors.primary,
                     ),
@@ -101,6 +113,7 @@ class AddonCard extends StatelessWidget {
                         cart.removeService(service),
                         cart.removeAddOn(service),
                       },
+                      size: 28,
                       icon: Icons.remove_circle,
                       color: AppColors.primary,
                     ),
