@@ -38,15 +38,15 @@ class _HomeState extends State<Home> {
   void initState() {
     super.initState();
     fetchBanners();
-    fetchCategories();
-    fetchSettings();
+
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      fetchCategories();
+      fetchSettings();
+    });
   }
 
   @override
   Widget build(BuildContext context) {
-    final serviceProvider = context.watch<ServicesProvider>();
-    final List<CategoryModel> categories = serviceProvider.categories;
-
     return AppWrapper(
       safeArea: false,
       scrollable: true,
@@ -58,26 +58,32 @@ class _HomeState extends State<Home> {
         children: [
           if (list.isNotEmpty) SliderList(list: list),
           AppText(Common.categories, fontSize: 20, fontWeight: FontWeight.bold),
-          AppListView<CategoryModel>(
-            state: AppListState<CategoryModel>(
-              items: categories,
-              loadingInitial: serviceProvider.loading,
-              loadingMore: false,
-              hasMore: false,
-            ),
-            separatorBuilderWidget: const SizedBox(height: Dimens.spacingS),
-            scrollPhysics: const NeverScrollableScrollPhysics(),
-            padding: const EdgeInsets.symmetric(vertical: Dimens.spacingS),
-            itemBuilder: (context, item, index) {
-              final isSelected = index == seletedItemIndex;
-              return CategoryCard(
-                data: item,
-                onTap: () {
-                  setState(() {
-                    seletedItemIndex = index;
-                  });
+          Consumer<ServicesProvider>(
+            builder: (context, serviceProvider, _) {
+              final List<CategoryModel> categories = serviceProvider.categories;
+
+              return AppListView<CategoryModel>(
+                state: AppListState<CategoryModel>(
+                  items: categories,
+                  loadingInitial: serviceProvider.loading,
+                  loadingMore: false,
+                  hasMore: false,
+                ),
+                separatorBuilderWidget: const SizedBox(height: Dimens.spacingS),
+                scrollPhysics: const NeverScrollableScrollPhysics(),
+                padding: const EdgeInsets.symmetric(vertical: Dimens.spacingS),
+                itemBuilder: (context, item, index) {
+                  final isSelected = index == seletedItemIndex;
+                  return CategoryCard(
+                    data: item,
+                    onTap: () {
+                      setState(() {
+                        seletedItemIndex = index;
+                      });
+                    },
+                    isSelected: isSelected,
+                  );
                 },
-                isSelected: isSelected,
               );
             },
           ),

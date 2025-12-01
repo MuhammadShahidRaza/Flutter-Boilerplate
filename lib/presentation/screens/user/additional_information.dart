@@ -56,7 +56,7 @@ class _AdditionalInformationState extends State<AdditionalInformation> {
   Widget build(BuildContext context) {
     return AppWrapper(
       showBackButton: true,
-      heading: "Additional Information",
+      heading: Common.additionalInformation,
       scrollable: true,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.center,
@@ -134,15 +134,17 @@ class _AdditionalInformationState extends State<AdditionalInformation> {
 
           AppInput(
             controller: additionalNotesController,
-            title: "Additional Notes (Optional)",
+            title: Common.additionalNotesOptional,
             maxLines: 10,
-            hint: TemporaryText.lorumIpsum,
+            maxLength: 100,
+            hint: Common.enterAnyAdditionalNotesHere,
           ),
 
           AppButton(
-            title: "Continue",
+            title: Common.continue_,
             onPressed: () {
               final cart = context.read<CartProvider>();
+
               cart.addOrderDetail(
                 "special_instructions",
                 additionalNotesController.text,
