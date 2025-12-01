@@ -1,6 +1,6 @@
 import 'package:dio/dio.dart';
 import 'package:sanam_laundry/core/index.dart';
-// import 'package:sanam_laundry/core/network/retry_interceptor.dart';
+import 'package:sanam_laundry/core/network/retry_interceptor.dart';
 import 'package:sanam_laundry/data/services/auth.dart';
 import 'package:sanam_laundry/providers/index.dart';
 
@@ -9,8 +9,9 @@ class ApiClient {
     _dio = Dio(
       BaseOptions(
         baseUrl: customBaseUrl ?? Environment.baseUrl,
-        connectTimeout: const Duration(seconds: 60),
-        receiveTimeout: const Duration(seconds: 60),
+        // Tighter defaults to fail fast on flaky connections
+        connectTimeout: const Duration(seconds: 20),
+        receiveTimeout: const Duration(seconds: 30),
         headers: const {'Accept': 'application/json'},
       ),
     );
@@ -19,6 +20,8 @@ class ApiClient {
       _AuthInterceptor(),
       _LanguageInterceptor(),
       _LoaderInterceptor(),
+      // Retry before error handling so users don't see toasts for transient issues
+      RetryInterceptor(dio: _dio),
       _SuccessInterceptor(),
       _ErrorInterceptor(),
       if (Environment.enableLogs)
@@ -28,7 +31,6 @@ class ApiClient {
           responseBody: true,
           responseHeader: false,
         ),
-      // RetryInterceptor(dio: _dio),
     ]);
   }
 
@@ -167,7 +169,21 @@ class _ErrorInterceptor extends Interceptor {
     final exception = DioExceptions.fromDioError(err);
 
     if (config.showErrorToast) {
-      AppToast.showToast(exception.message, isError: true);
+      if (exception.message.isNotEmpty) {
+        if (exception.message == "Unauthenticated." ||
+            exception.isUnauthorized) {
+          AppToast.showToast(
+            "Session expired. Please login again.",
+            isError: true,
+          );
+        } else {
+          if (exception.message ==
+              "Something went wrong. Please try again later.") {
+          } else {
+            AppToast.showToast(exception.message, isError: true);
+          }
+        }
+      }
     }
 
     if (exception.isUnauthorized) {
