@@ -31,7 +31,7 @@ class HomeAppBar extends StatelessWidget implements PreferredSizeWidget {
           vertical: Dimens.spacingS,
         ),
         child: Row(
-          spacing: Dimens.spacingM,
+          spacing: Dimens.spacingMSmall,
           children: [
             // 👤 User avatar
             Consumer<UserProvider>(
@@ -56,6 +56,7 @@ class HomeAppBar extends StatelessWidget implements PreferredSizeWidget {
                   AppText(
                     Common.welcomeComma,
                     style: theme.textTheme.bodySmall?.copyWith(
+                      height: 1.0,
                       color: AppColors.textSecondary,
                     ),
                     onTap: onProfileTap,
@@ -94,7 +95,7 @@ class HomeAppBar extends StatelessWidget implements PreferredSizeWidget {
               icon: Icons.notifications_none_rounded,
               borderWidth: 1,
               color: AppColors.bottomTabText,
-              padding: EdgeInsets.all(10),
+              padding: EdgeInsets.all(5),
               onTap: onNotificationTap,
               borderRadius: Dimens.radiusXL,
               backgroundColor: AppColors.lightWhite,

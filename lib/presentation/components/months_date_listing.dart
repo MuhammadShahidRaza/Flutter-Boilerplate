@@ -18,7 +18,7 @@ class MonthsDateListing extends StatefulWidget {
   const MonthsDateListing({
     super.key,
     required this.slots,
-    this.heading = "Select Pick-up Date & Time",
+    this.heading = Common.selectPickUpDateTime,
     required this.onDateSelected,
     required this.onSlotSelected,
     this.disabledExtraDays = 0,
@@ -164,27 +164,55 @@ class _MonthsDateListingState extends State<MonthsDateListing> {
     });
   }
 
-  void _onMonthSelected(String? monthString) {
-    if (monthString != null) {
-      final selectedDate = DateFormat('MMMM yyyy').parse(monthString);
-      setState(() {
-        _selectedMonth = selectedDate;
-      });
-      // Scroll based on whether it's current month or not
-      WidgetsBinding.instance.addPostFrameCallback((_) {
-        final now = DateTime.now();
-        if (selectedDate.month == now.month && selectedDate.year == now.year) {
-          _scrollToCurrentDate();
-        } else if (_dateScrollController.hasClients) {
-          _dateScrollController.animateTo(
-            0,
-            duration: const Duration(milliseconds: 300),
-            curve: Curves.easeInOut,
-          );
-        }
-      });
-    }
+  void _goToPreviousMonth() {
+    setState(() {
+      final now = DateTime.now();
+      final previousMonth = DateTime(
+        _selectedMonth.year,
+        _selectedMonth.month - 1,
+      );
+      final currentMonth = DateTime(now.year, now.month);
+
+      // Only allow previous month if it's not before current month
+      if (!previousMonth.isBefore(
+        DateTime(currentMonth.year, currentMonth.month),
+      )) {
+        _selectedMonth = previousMonth;
+        // Scroll to beginning of new month
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          if (_dateScrollController.hasClients) {
+            _dateScrollController.animateTo(
+              0,
+              duration: const Duration(milliseconds: 300),
+              curve: Curves.easeInOut,
+            );
+          }
+        });
+      }
+    });
   }
+
+  // void _onMonthSelected(String? monthString) {
+  //   if (monthString != null) {
+  //     final selectedDate = DateFormat('MMMM yyyy').parse(monthString);
+  //     setState(() {
+  //       _selectedMonth = selectedDate;
+  //     });
+  //     // Scroll based on whether it's current month or not
+  //     WidgetsBinding.instance.addPostFrameCallback((_) {
+  //       final now = DateTime.now();
+  //       if (selectedDate.month == now.month && selectedDate.year == now.year) {
+  //         _scrollToCurrentDate();
+  //       } else if (_dateScrollController.hasClients) {
+  //         _dateScrollController.animateTo(
+  //           0,
+  //           duration: const Duration(milliseconds: 300),
+  //           curve: Curves.easeInOut,
+  //         );
+  //       }
+  //     });
+  //   }
+  // }
 
   @override
   Widget build(BuildContext context) {
@@ -203,27 +231,42 @@ class _MonthsDateListingState extends State<MonthsDateListing> {
         Row(
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
+            // Expanded(
+            //   child: AppDropdown<String>(
+            //     items: _availableMonths,
+            //     value: _currentMonthString,
+            //     onChanged: _onMonthSelected,
+            //     showBorder: false,
+            //     itemTextStyle: context.textTheme.titleMedium!.copyWith(
+            //       fontWeight: FontWeight.bold,
+            //     ),
+            //   ),
+            // ),
             Expanded(
-              child: AppDropdown<String>(
-                items: _availableMonths,
-                value: _currentMonthString,
-                onChanged: _onMonthSelected,
-                showBorder: false,
-                itemTextStyle: context.textTheme.titleMedium!.copyWith(
-                  fontWeight: FontWeight.bold,
-                ),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.start,
+                children: [
+                  AppIcon(
+                    icon: Icons.chevron_left,
+                    color: AppColors.primary,
+                    onTap: _goToPreviousMonth,
+                  ),
+                  AppText(
+                    _currentMonthString,
+                    style: context.textTheme.titleMedium!.copyWith(
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ],
               ),
             ),
-
             Expanded(
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.end,
                 children: [
                   AppText(
                     DateFormat('MMM yyyy').format(_selectedNextMonth),
-                    style: context.textTheme.titleMedium!.copyWith(
-                      // fontWeight: FontWeight.bold,
-                    ),
+                    style: context.textTheme.titleMedium!.copyWith(),
                   ),
                   AppIcon(
                     icon: Icons.chevron_right,
