@@ -44,7 +44,7 @@ class _OrderDetailsState extends State<OrderDetails> {
     return AppWrapper(
       showBackButton: true,
       scrollable: true,
-      heading: "Order Details",
+      heading: Common.orderDetails,
       child: Column(
         spacing: Dimens.spacingM,
         children: [
@@ -52,8 +52,8 @@ class _OrderDetailsState extends State<OrderDetails> {
           AppInput(
             controller: controller,
             enabled: false,
-            title: "Address",
-            hint: "Select Address from below options",
+            title: Common.location,
+            hint: Common.selectAddressFromOptions,
             suffixIcon: AppIcon(
               icon: Icons.add,
               size: Dimens.iconL,
@@ -117,22 +117,22 @@ class _OrderDetailsState extends State<OrderDetails> {
           ),
 
           AppDropdown(
-            title: "Select Delivery Type",
-            hint: "Normal (48 Hours)",
+            title: Common.selectDeliveryType,
+            hint: Common.normal48Hours,
             value: deliveryType == DeliveryType.express
-                ? "Express (24 Hours)"
-                : "Normal (48 Hours)",
-            items: ["Normal (48 Hours)", "Express (24 Hours)"],
+                ? Common.express24Hours
+                : Common.normal48Hours,
+            items: [Common.normal48Hours, Common.express24Hours],
             onChanged: (value) {
               setState(() {
-                deliveryType = value == "Express (24 Hours)"
+                deliveryType = value == Common.express24Hours
                     ? DeliveryType.express
                     : DeliveryType.normal;
               });
             },
           ),
           AppText(
-            "Note: Additional charges for express delivery.",
+            Common.noteAdditionalChargesExpress,
             textAlign: TextAlign.center,
             color: AppColors.secondary,
           ),
@@ -170,7 +170,7 @@ class _OrderDetailsState extends State<OrderDetails> {
           // ),
           MonthsDateListing(
             slots: context.watch<ServicesProvider>().slots,
-            heading: "Select Pick-up Date & Time",
+            heading: Common.selectPickUpDateTime,
             onDateSelected: (date) {
               setState(() {
                 selectedPickUpDate = date;
@@ -189,7 +189,7 @@ class _OrderDetailsState extends State<OrderDetails> {
           if (selectedPickUpDate != null && selectedPickUpSlotId.isNotEmpty)
             MonthsDateListing(
               slots: context.watch<ServicesProvider>().slots,
-              heading: "Select Delivery Date & Time",
+              heading: Common.selectDeliveryDateTime,
               onDateSelected: (date) {
                 setState(() {
                   selectedDeliveryDate = date;
@@ -207,7 +207,7 @@ class _OrderDetailsState extends State<OrderDetails> {
             ),
           SizedBox(height: Dimens.spacingM),
           AppButton(
-            title: "Order Now",
+            title: Common.placeOrder,
             isEnabled:
                 selectedPickUpDate != null &&
                 selectedPickUpSlotId.isNotEmpty &&

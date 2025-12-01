@@ -105,17 +105,17 @@ class _MyAccountState extends State<MyAccount> {
             primaryButtonText: Common.yes,
             secondaryButtonText: Common.no,
             onPrimaryPressed: () async {
-              setState(() {
-                isLoading = true;
-              });
+              // setState(() {
+              //   isLoading = true;
+              // });
               context.back();
               final currentContext = context;
               final isDeleted = await _authRepository.deleteAccount();
               if (isDeleted != null) {
                 if (!currentContext.mounted) return;
-                setState(() {
-                  isLoading = false;
-                });
+                // setState(() {
+                //   isLoading = false;
+                // });
                 clearSession(context);
                 AppDialog.show(
                   context,
@@ -238,6 +238,7 @@ class _MyAccountState extends State<MyAccount> {
                         context.replacePage(AppRoutes.getStarted);
                         // await performLogout(context);
                         _authRepository.logout();
+                        await clearSession(context);
                       },
                       crossAxisAlignment: CrossAxisAlignment.center,
                       insetPadding: EdgeInsets.all(Dimens.spacingMLarge),
@@ -273,16 +274,19 @@ class _MyAccountState extends State<MyAccount> {
 
           // 🔹 Profile image
           Positioned(
-            top: 110, // half overlaps header
+            top: 110,
             child: Consumer<UserProvider>(
               builder: (context, provider, child) {
                 final profileImage =
                     provider.user?.profileImage ?? AppAssets.user;
-                return AppImage(
-                  path: profileImage,
-                  height: 90,
+                return Container(
                   width: 90,
-                  isCircular: true,
+                  height: 90,
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    border: Border.all(color: AppColors.primary, width: 3),
+                  ),
+                  child: AppImage(path: profileImage, isCircular: true),
                 );
               },
             ),

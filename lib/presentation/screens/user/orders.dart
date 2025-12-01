@@ -44,8 +44,8 @@ class _OrdersState extends State<Orders> {
 
   Future<void> _loadCategories() async {
     final data = [
-      {"id": "pending", "title": "In-Progress Order"},
-      {"id": "completed", "title": "Completed"},
+      {"id": "pending", "title": Common.inProgressOrder},
+      {"id": "completed", "title": Common.completed},
     ];
 
     setState(() {
@@ -133,7 +133,7 @@ class _OrdersState extends State<Orders> {
   Widget build(BuildContext context) {
     return AppWrapper(
       safeArea: false,
-      heading: "Orders",
+      heading: Common.myOrders,
       // showBackButton: true,
       padding: EdgeInsets.zero,
       child: Column(
@@ -166,7 +166,7 @@ class _OrdersState extends State<Orders> {
             child: loadingOrders
                 ? const Center(child: CircularProgressIndicator.adaptive())
                 : orders.isEmpty
-                ? const Center(child: AppText("No Orders available"))
+                ? const Center(child: AppText(Common.noDataAvailable))
                 : ListView.builder(
                     padding: const EdgeInsets.symmetric(horizontal: 16),
                     itemCount: orders.length,

@@ -44,7 +44,9 @@ class _BookingDetailsState extends State<BookingDetails> {
   }
 
   String _formatDate(dynamic val) {
-    if (val is DateTime) return DateFormat('EEE, d MMM').format(val);
+    if (val is DateTime) {
+      return DateFormat('d MMMM, yyyy').format(val);
+    }
     return val?.toString() ?? '';
   }
 
@@ -58,7 +60,7 @@ class _BookingDetailsState extends State<BookingDetails> {
     return AppWrapper(
       showBackButton: true,
       scrollable: true,
-      heading: "Booking Details",
+      heading: Common.bookingDetails,
       child: orderDetails == null
           ? const Center(child: CircularProgressIndicator.adaptive())
           : Column(
@@ -82,12 +84,23 @@ class _BookingDetailsState extends State<BookingDetails> {
                         fontWeight: FontWeight.bold,
                       ),
                     ),
-                    AppText(
-                      "Order ID: ${orderDetails?.id ?? ''}",
-                      style: context.textTheme.titleSmall!.copyWith(
-                        fontWeight: FontWeight.bold,
-                        color: AppColors.primary,
-                      ),
+                    Row(
+                      children: [
+                        AppText(
+                          Common.orderId,
+                          style: context.textTheme.titleSmall!.copyWith(
+                            fontWeight: FontWeight.bold,
+                            color: AppColors.primary,
+                          ),
+                        ),
+                        AppText(
+                          ': ${orderDetails?.id}',
+                          style: context.textTheme.titleSmall!.copyWith(
+                            fontWeight: FontWeight.bold,
+                            color: AppColors.primary,
+                          ),
+                        ),
+                      ],
                     ),
                   ],
                 ),
@@ -96,10 +109,13 @@ class _BookingDetailsState extends State<BookingDetails> {
                 Row(
                   spacing: Dimens.spacingM,
                   children: [
-                    AppText("Status", style: context.textTheme.titleMedium),
+                    AppText(
+                      Common.status,
+                      style: context.textTheme.titleMedium,
+                    ),
                     if (isCompleted)
                       AppButton(
-                        title: "Completed",
+                        title: Common.completed,
                         onPressed: () {},
                         backgroundColor: AppColors.secondary,
                         padding: EdgeInsets.symmetric(
@@ -128,30 +144,41 @@ class _BookingDetailsState extends State<BookingDetails> {
                 HorizontalStepper(
                   currentStep: 0,
                   steps: const [
-                    "Order Received",
-                    "Processing",
-                    "Order ready - awaiting Payment",
-                    "Out for Delivery",
-                    "Delivered",
+                    Common.orderReceived,
+                    Common.processing,
+                    Common.orderReadyAwaitingPayment,
+                    Common.outForDelivery,
+                    Common.delivered,
                   ],
                 ),
 
                 BookingDetailsComp(
                   details: {
-                    "services":
-                        (orderDetails?.bookingDetail
-                                    .map((e) => e.service)
-                                    .toList() ??
-                                [])
-                            .map(
-                              (e) => CartItem(
-                                serviceId: e?.id ?? 0,
-                                serviceName: e?.title ?? '',
-                                quantity: 1, // or e.quantity if available
-                                amount: double.tryParse(e?.amount ?? "0") ?? 0,
-                              ),
-                            )
-                            .toList(),
+                    // "services":
+                    //     (orderDetails?.bookingDetail
+                    //                 .map((e) => e.service)
+                    //                 .toList() ??
+                    //             [])
+                    //         .map(
+                    //           (e) => CartItem(
+                    //             serviceId: e?.id ?? 0,
+                    //             serviceName: e?.title ?? '',
+                    //             quantity: 1, // or e.quantity if available
+                    //             amount: double.tryParse(e?.amount ?? "0") ?? 0,
+                    //           ),
+                    //         )
+                    //         .toList(),
+                    "services": (orderDetails?.bookingDetail ?? [])
+                        .map(
+                          (item) => CartItem(
+                            serviceId: item.service?.id ?? 0,
+                            serviceName: item.service?.title ?? '',
+                            quantity: item.quantity ?? 1,
+                            amount: double.tryParse(item.amount ?? "0") ?? 0,
+                          ),
+                        )
+                        .toList(),
+
                     "additionalNotes": orderDetails?.specialInstructions ?? "",
                     "location": orderDetails?.address ?? "",
                     "deliveryType": orderDetails?.deliveryType ?? "",
@@ -167,23 +194,23 @@ class _BookingDetailsState extends State<BookingDetails> {
                 ),
                 // Pricing Summary
                 _PricingRow(
-                  label: "Subtotal",
+                  label: Common.subtotal,
                   value: "${orderDetails?.subTotal ?? ''} SAR",
                   isBold: true,
                   valueColor: AppColors.primary,
                 ),
                 // _PricingRow(label: "Hanger (Add-ons)", value: "20 SAR"),
                 _PricingRow(
-                  label: "Tax",
+                  label: Common.tax,
                   value: "${orderDetails?.tax ?? ''} SAR",
                 ),
                 _PricingRow(
-                  label: "Delivery Charges",
+                  label: Common.deliveryCharges,
                   value: "${orderDetails?.deliveryCharges ?? ''} SAR",
                 ),
                 Divider(color: AppColors.lightGrey),
                 _PricingRow(
-                  label: "Total",
+                  label: Common.total,
                   value: "${orderDetails?.totalAmount ?? ''} SAR",
                   isBold: true,
                   valueColor: AppColors.primary,
@@ -199,7 +226,6 @@ class _PricingRow extends StatelessWidget {
   final String value;
   final bool isBold;
   final Color? valueColor;
-
   const _PricingRow({
     required this.label,
     required this.value,

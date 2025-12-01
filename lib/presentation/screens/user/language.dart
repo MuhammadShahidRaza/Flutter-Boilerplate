@@ -90,8 +90,9 @@ class _ChangeLanguageState extends State<ChangeLanguage> {
 
                   if (isFromSplash) {
                     context.replacePage(AppRoutes.onboarding);
+                    return;
                   }
-                  // context.back();
+                  context.back();
                 },
               ),
             ],
