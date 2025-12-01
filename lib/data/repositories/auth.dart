@@ -127,6 +127,7 @@ class AuthRepository {
   Future<UserModel?> verifyOtp({
     required String phone,
     required String otp,
+    required String deviceToken,
   }) async {
     return await ApiResponseHandler.handleRequest<UserModel>(
       () => _apiService.post(
@@ -135,7 +136,7 @@ class AuthRepository {
           'phone': phone,
           'otp': otp,
           // device_type:Testing Tool
-          // device_token:abcdefghijklmnopqrstuvwxyz
+          "device_token": deviceToken,
           // udid:123456789
           // device_brand:Postman
           // device_os:Linux
