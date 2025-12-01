@@ -125,7 +125,7 @@ class GoRouterSetup {
     ],
 
     errorBuilder: (context, state) => AppWrapper(
-      child: Center(child: AppText('Page not found: ${state.error}')),
+      child: Center(child: AppText('${Common.pageNotFound}: ${state.error}')),
     ),
   );
 }
