@@ -1,6 +1,5 @@
 import 'package:dio/dio.dart';
 import 'package:sanam_laundry/core/index.dart';
-import 'package:sanam_laundry/core/network/retry_interceptor.dart';
 import 'package:sanam_laundry/data/services/auth.dart';
 import 'package:sanam_laundry/providers/index.dart';
 
@@ -10,7 +9,7 @@ class ApiClient {
       BaseOptions(
         baseUrl: customBaseUrl ?? Environment.baseUrl,
         // Tighter defaults to fail fast on flaky connections
-        connectTimeout: const Duration(seconds: 20),
+        connectTimeout: const Duration(seconds: 25),
         receiveTimeout: const Duration(seconds: 30),
         headers: const {'Accept': 'application/json'},
       ),
@@ -162,6 +161,10 @@ class _SuccessInterceptor extends Interceptor {
   }
 }
 
+class AuthStateService {
+  static bool isLoggedIn = false;
+}
+
 class _ErrorInterceptor extends Interceptor {
   @override
   void onError(DioException err, ErrorInterceptorHandler handler) {
@@ -171,7 +174,7 @@ class _ErrorInterceptor extends Interceptor {
     if (config.showErrorToast) {
       if (exception.message.isNotEmpty) {
         if (exception.message == "Unauthenticated." ||
-            exception.isUnauthorized) {
+            exception.isUnauthorized && AuthStateService.isLoggedIn) {
           AppToast.showToast(
             "Session expired. Please login again.",
             isError: true,
@@ -186,7 +189,7 @@ class _ErrorInterceptor extends Interceptor {
       }
     }
 
-    if (exception.isUnauthorized) {
+    if (exception.isUnauthorized && AuthStateService.isLoggedIn) {
       AuthService.removeToken();
       final router = GoRouterSetup.router;
       router.go(AppRoutes.getStarted);
