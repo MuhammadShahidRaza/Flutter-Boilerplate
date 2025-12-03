@@ -34,4 +34,11 @@ class AppRoutes {
 
   // App Navigation route names
   static const String profile = '/profile';
+
+  //Rider Navigation route names
+  static const String riderHome = '/rider_home';
+  static const String riderOrders = '/rider_orders';
+  static const String riderOrderDetails = '/rider_order_details';
+  static const String riderEarnings = '/rider_earnings';
+  static const String riderProfile = '/rider_profile';
 }
