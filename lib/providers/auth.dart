@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:sanam_laundry/core/index.dart';
 import 'package:sanam_laundry/data/index.dart';
 import 'package:sanam_laundry/providers/index.dart';
 
@@ -15,6 +16,7 @@ class AuthProvider extends ChangeNotifier {
     final token = await AuthService.loadToken();
 
     _isLoggedIn = token != null && token.isNotEmpty;
+    AuthStateService.isLoggedIn = token != null && token.isNotEmpty;
     _hasVisitedApp = isVisted != null && isVisted.isNotEmpty;
     notifyListeners();
   }
@@ -24,12 +26,14 @@ class AuthProvider extends ChangeNotifier {
     if (!context.mounted) return;
     context.read<UserProvider>().updateUser(user);
     _isLoggedIn = true;
+    AuthStateService.isLoggedIn = true;
     notifyListeners();
   }
 
   Future<void> logout() async {
     await AuthService.removeToken();
     _isLoggedIn = false;
+    AuthStateService.isLoggedIn = false;
     notifyListeners();
   }
 }
