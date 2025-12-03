@@ -126,9 +126,9 @@ class _VerificationState extends State<Verification> {
   void _onResendPressed() async {
     if (_secondsRemaining == 0) {
       _startTimer();
-      await _authRepository.login(
-        phone: context.getParam<String>('phone') ?? '',
-      );
+      await _authRepository.login({
+        'phone': context.getParam<String>('phone') ?? '',
+      });
     }
   }
 
