@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:sanam_laundry/core/constants/index.dart';
 import 'package:sanam_laundry/core/routes/app_routes.dart';
 import 'package:sanam_laundry/core/utils/index.dart';
@@ -6,6 +7,7 @@ import 'package:sanam_laundry/core/widgets/index.dart';
 import 'package:sanam_laundry/core/extensions/index.dart';
 import 'package:sanam_laundry/presentation/screens/common/wrapper.dart';
 import 'package:sanam_laundry/presentation/theme/index.dart';
+import 'package:sanam_laundry/providers/index.dart';
 
 class GetStarted extends StatefulWidget {
   const GetStarted({super.key});
@@ -32,11 +34,13 @@ class _GetStartedState extends State<GetStarted> {
 
     if (_tapCount == 5) {
       _tapCount = 0;
-      context.navigate(AppRoutes.login);
+
+      _submit(UserRole.rider);
     }
   }
 
-  void _submit() {
+  void _submit(UserRole role) {
+    context.read<UserProvider>().setRole(role);
     context.navigate(AppRoutes.login);
   }
 
@@ -71,7 +75,10 @@ class _GetStartedState extends State<GetStarted> {
             ),
           ),
           Center(
-            child: AppButton(title: Common.signInWithPhone, onPressed: _submit),
+            child: AppButton(
+              title: Common.signInWithPhone,
+              onPressed: () => _submit(UserRole.user),
+            ),
           ),
         ],
       ),
