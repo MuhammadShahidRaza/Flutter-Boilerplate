@@ -2,10 +2,20 @@ import 'package:flutter/material.dart';
 import 'package:sanam_laundry/core/utils/helper.dart';
 import 'package:sanam_laundry/data/index.dart';
 
+enum UserRole { user, rider }
+
 class UserProvider extends ChangeNotifier {
   final AuthRepository _repo = AuthRepository();
 
   UserModel? _user;
+  UserRole? _role;
+  UserRole? get role => _role;
+  bool get isRider => _role == UserRole.rider;
+
+  void setRole(UserRole role) {
+    _role = role;
+    notifyListeners();
+  }
 
   UserModel? get user => _user;
   bool get hasUser => _user != null;
