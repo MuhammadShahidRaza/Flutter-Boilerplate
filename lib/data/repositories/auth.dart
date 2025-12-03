@@ -8,13 +8,13 @@ import 'package:sanam_laundry/providers/auth.dart';
 class AuthRepository {
   final ApiService _apiService = ApiService();
 
-  Future<String?> login({required String phone}) async {
+  Future<String?> login(Map<String, dynamic> data) async {
     String? message;
 
     await ApiResponseHandler.handleRequest(
       () => _apiService.post(
         Endpoints.login,
-        data: {'phone': phone},
+        data: data,
         config: ApiRequestConfig(requiresAuth: false, showErrorToast: false),
       ),
       onSuccess: (data, statusCode) {
@@ -57,23 +57,6 @@ class AuthRepository {
         },
         config: const ApiRequestConfig(requiresAuth: false),
       ),
-
-      // onError: (error, statusCode) {
-      //   if (statusCode == 404) {
-      //     return ErrorMessages.userNotFound;
-      //   } else if (statusCode == 403) {
-      //     return ErrorMessages.userNotVerified;
-      //   } else if (statusCode == 401) {
-      //     return ErrorMessages.invalidUser;
-      //   } else {
-      //     return null;
-      //   }
-      // },
-
-      // onSuccess: (data) {
-      //   final userData = data['user'] ?? data['data'] ?? data;
-      //   return UserModel.fromJson(userData);
-      // },
     );
   }
 
@@ -85,19 +68,6 @@ class AuthRepository {
         final userData = data['user'];
         return UserModel.fromJson(userData);
       },
-    );
-  }
-
-  /// 🔹 REFRESH TOKEN
-  Future<void> refreshAuthToken() async {
-    await ApiResponseHandler.handleRequest(
-      () => _apiService.post(
-        Endpoints.refreshToken,
-        config: const ApiRequestConfig(
-          requiresAuth: true,
-          showErrorToast: false,
-        ),
-      ),
     );
   }
 
