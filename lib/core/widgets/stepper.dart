@@ -68,12 +68,6 @@ class HorizontalStepper extends StatelessWidget {
                       ),
                     ),
                   ),
-                  AppText(
-                    'Step ${index + 1}',
-                    style: context.textTheme.bodySmall!.copyWith(
-                      color: AppColors.textSecondary,
-                    ),
-                  ),
                 ],
               ),
             ],
