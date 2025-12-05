@@ -52,6 +52,7 @@ class _SliderListState extends State<SliderList> {
         children: [
           PageView.builder(
             controller: _pageController,
+            physics: NeverScrollableScrollPhysics(),
             itemCount: widget.list.length,
             onPageChanged: (index) => setState(() => _currentIndex = index),
             itemBuilder: (context, index) {
