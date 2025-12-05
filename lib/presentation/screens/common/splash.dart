@@ -26,6 +26,7 @@ class _SplashState extends State<Splash> {
   }
 
   Future<void> _initFlow() async {
+    // Storage.clearAllDataFromStorage();
     await Future.delayed(const Duration(seconds: 1));
     if (!mounted) return;
 
@@ -35,18 +36,22 @@ class _SplashState extends State<Splash> {
     await authProvider.loadLoginStatus();
 
     final hasLanguage = await appProvider.hasSelectedLanguage();
+
+    if (authProvider.isLoggedIn) {
+      await userProvider.loadUserData();
+    }
+    if (!mounted) return;
+
     final route = authProvider.isLoggedIn
-        ? AppRoutes.home
+        ? userProvider.isRider
+              ? AppRoutes.riderHome
+              : AppRoutes.home
         : !hasLanguage
         ? AppRoutes.language
         : !authProvider.hasVisitedApp
         ? AppRoutes.onboarding
         : AppRoutes.getStarted;
 
-    if (authProvider.isLoggedIn) {
-      await userProvider.loadUserData();
-    }
-    if (!mounted) return;
     context.replacePage(
       route,
       params: !hasLanguage ? {'isFromSplash': true} : {},
