@@ -2,6 +2,31 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:sanam_laundry/core/index.dart';
 import 'package:sanam_laundry/presentation/index.dart';
+import 'package:sanam_laundry/presentation/screens/rider/my_jobs.dart';
+import 'package:sanam_laundry/presentation/screens/rider/rider_account.dart';
+import 'package:sanam_laundry/presentation/screens/rider/rider_home.dart';
+
+class UserShell extends StatelessWidget {
+  final StatefulNavigationShell navigationShell;
+
+  const UserShell({super.key, required this.navigationShell});
+
+  @override
+  Widget build(BuildContext context) {
+    return AppShell(navigationShell: navigationShell, isRider: false);
+  }
+}
+
+class RiderShell extends StatelessWidget {
+  final StatefulNavigationShell navigationShell;
+
+  const RiderShell({super.key, required this.navigationShell});
+
+  @override
+  Widget build(BuildContext context) {
+    return AppShell(navigationShell: navigationShell, isRider: true);
+  }
+}
 
 class GoRouterSetup {
   static final GlobalKey<NavigatorState> navigatorKey =
@@ -37,46 +62,82 @@ class GoRouterSetup {
         builder: (context, state) => const Verification(),
       ),
 
-      // App stack with persistent tab navigation
+      /// USER BOTTOM TABS
       StatefulShellRoute.indexedStack(
         builder: (context, state, navigationShell) =>
-            AppShell(navigationShell: navigationShell),
+            UserShell(navigationShell: navigationShell),
+
         branches: [
           StatefulShellBranch(
             routes: [
-              GoRoute(
-                path: AppRoutes.home,
-                builder: (context, state) => const Home(),
-              ),
+              GoRoute(path: AppRoutes.home, builder: (_, __) => const Home()),
             ],
           ),
+
           StatefulShellBranch(
             routes: [
               GoRoute(
                 path: AppRoutes.services,
-                builder: (context, state) => const Services(),
+                builder: (_, __) => const Services(),
               ),
             ],
           ),
+
           StatefulShellBranch(
             routes: [
               GoRoute(
                 path: AppRoutes.orders,
-                builder: (context, state) => const Orders(),
+                builder: (_, __) => const Orders(),
               ),
             ],
           ),
+
           StatefulShellBranch(
             routes: [
               GoRoute(
                 path: AppRoutes.myAccount,
-                builder: (context, state) => MyAccount(),
+                builder: (_, __) => const MyAccount(),
               ),
             ],
           ),
         ],
       ),
 
+      /// RIDER BOTTOM TABS
+      StatefulShellRoute.indexedStack(
+        builder: (context, state, navigationShell) =>
+            RiderShell(navigationShell: navigationShell),
+
+        branches: [
+          StatefulShellBranch(
+            routes: [
+              GoRoute(
+                path: AppRoutes.riderHome,
+                builder: (_, __) => const RiderHome(),
+              ),
+            ],
+          ),
+
+          StatefulShellBranch(
+            routes: [
+              GoRoute(
+                path: AppRoutes.myJobs,
+                builder: (_, __) => const MyJobs(),
+              ),
+            ],
+          ),
+          StatefulShellBranch(
+            routes: [
+              GoRoute(
+                path: AppRoutes.riderAccount,
+                builder: (_, __) => const RiderMyAccount(),
+              ),
+            ],
+          ),
+        ],
+      ),
+
+      // App stack with persistent tab navigation
       GoRoute(
         path: AppRoutes.contactUs,
         builder: (context, state) => const ContactUs(),
