@@ -23,7 +23,12 @@ class UserProvider extends ChangeNotifier {
   /// Load user data only once
   Future<void> loadUserData() async {
     if (_user == null) {
-      final storedUser = await _repo.getProfile();
+      _role = await UserService.getRole();
+
+      final storedUser = await _repo.getProfile(
+        isRider: _role == UserRole.rider,
+      );
+      _role = storedUser?.userRole == 'rider' ? UserRole.rider : UserRole.user;
       _user = storedUser;
       notifyListeners();
     }
@@ -31,6 +36,10 @@ class UserProvider extends ChangeNotifier {
 
   Future<void> updateUser(UserModel user) async {
     await UserService.saveUser(user);
+    await UserService.saveRole(
+      user.userRole == 'rider' ? UserRole.rider : UserRole.user,
+    );
+    _role = user.userRole == 'rider' ? UserRole.rider : UserRole.user;
     _user = user;
     notifyListeners();
   }
