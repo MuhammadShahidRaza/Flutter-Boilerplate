@@ -4,9 +4,14 @@ import 'package:sanam_laundry/core/index.dart';
 import 'package:sanam_laundry/presentation/index.dart';
 
 class AppShell extends StatelessWidget {
-  const AppShell({super.key, required this.navigationShell});
+  const AppShell({
+    super.key,
+    required this.navigationShell,
+    required this.isRider,
+  });
 
   final StatefulNavigationShell navigationShell;
+  final bool isRider;
 
   @override
   Widget build(BuildContext context) {
@@ -18,7 +23,7 @@ class AppShell extends StatelessWidget {
         children: [
           Expanded(child: navigationShell),
           AppBottomNavigation(
-            items: getBottomNavItems(context),
+            items: getBottomNavItems(context, isRider),
             currentIndex: navigationShell.currentIndex,
             onItemSelected: (index) {
               navigationShell.goBranch(

@@ -17,6 +17,7 @@ class _LoginState extends State<Login> {
   final AuthRepository _authRepository = AuthRepository();
   final RiderRepository _riderRepository = RiderRepository();
   final _formKey = GlobalKey<FormState>();
+  bool rememberMe = false;
   final phoneController = TextEditingController();
   final emailController = TextEditingController(
     text: kDebugMode ? "harley58@example.com" : "",
@@ -112,6 +113,16 @@ class _LoginState extends State<Login> {
               controller: passwordController,
               fieldKey: FieldType.password,
               obscureText: true,
+            ),
+
+            AppCheckbox(
+              value: rememberMe,
+              onChanged: (value) {
+                setState(() {
+                  rememberMe = value;
+                });
+              },
+              label: Common.rememberMe,
             ),
           ] else ...[
             AppPhoneInput(
