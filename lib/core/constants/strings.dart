@@ -4,6 +4,12 @@ class Common {
   static const password = "COMMON.PASSWORD";
   static const forgotPassword = "COMMON.FORGOT_PASSWORD";
   static const resetPassword = "COMMON.RESET_PASSWORD";
+  static const delivery = "COMMON.DELIVERY";
+  static const pickUp = "COMMON.PICK_UP";
+  static const todayOrders = "COMMON.TODAY_ORDERS";
+  static const todayDelivered = "COMMON.TODAY_DELIVERED";
+  static const onlineTime = "COMMON.ONLINE_TIME";
+
   static const signUp = "COMMON.SIGN_UP";
   static const noNotificationsAvailable = "COMMON.NO_NOTIFICATIONS_AVAILABLE";
   static const signIn = "COMMON.SIGN_IN";
@@ -13,6 +19,7 @@ class Common {
       "COMMON.ENTER_ANY_ADDITIONAL_NOTES_HERE";
   static const qty = "COMMON.QTY";
   static const charges = "COMMON.CHARGES";
+  static const myJobs = "COMMON.MY_JOBS";
   static const selectLanguageYouAreComfortableWith =
       "COMMON.SELECT_LANGUAGE_YOU_ARE_COMFORTABLE_WITH";
   static const areYouSureYouWantToLogout =
