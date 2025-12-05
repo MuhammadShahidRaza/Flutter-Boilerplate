@@ -9,20 +9,31 @@ import 'package:sanam_laundry/core/widgets/icon.dart';
 class AddressPickerMap extends StatefulWidget {
   /// When an address is selected externally (e.g., via Autocomplete),
   /// provide the coordinates here to move the camera and update the marker.
+  final Widget? children;
   final LatLng? selectedLatLng;
+  final List<Marker>? markers;
+
   final Function({
     required String fullAddress,
     required String city,
     required String state,
     required double lat,
     required double lng,
-  })
+  })?
   onAddressSelected;
+  final bool showCurrentLocationButton;
+  final bool showCurrentLocationMarker;
+  final bool showMarkerOnTap;
 
   const AddressPickerMap({
     super.key,
-    required this.onAddressSelected,
+    this.onAddressSelected,
     this.selectedLatLng,
+    this.showCurrentLocationButton = true,
+    this.showCurrentLocationMarker = true,
+    this.showMarkerOnTap = true,
+    this.children,
+    this.markers,
   });
 
   @override
@@ -32,6 +43,7 @@ class AddressPickerMap extends StatefulWidget {
 class _AddressPickerMapState extends State<AddressPickerMap> {
   final Completer<GoogleMapController> _controller = Completer();
   Marker? marker;
+  final Set<Marker> allMarkers = {};
 
   LatLng _initialLatLng = const LatLng(23.8859, 45.0792);
   LatLng? _lastAppliedExternalSelection;
@@ -77,13 +89,14 @@ class _AddressPickerMapState extends State<AddressPickerMap> {
     _initialLatLng = LatLng(pos.latitude, pos.longitude);
 
     _moveCamera(_initialLatLng);
-
-    setState(() {
-      marker = Marker(
-        markerId: const MarkerId("selected"),
-        position: _initialLatLng,
-      );
-    });
+    if (widget.showCurrentLocationMarker) {
+      setState(() {
+        marker = Marker(
+          markerId: const MarkerId("selected"),
+          position: _initialLatLng,
+        );
+      });
+    }
 
     // _reverseGeocode(_initialLatLng);
   }
@@ -140,6 +153,14 @@ class _AddressPickerMapState extends State<AddressPickerMap> {
 
   @override
   Widget build(BuildContext context) {
+    if (widget.markers != null) {
+      allMarkers.addAll(widget.markers!);
+    }
+
+    if (marker != null) {
+      allMarkers.add(marker!);
+    }
+
     return Stack(
       children: [
         GoogleMap(
@@ -148,22 +169,25 @@ class _AddressPickerMapState extends State<AddressPickerMap> {
             zoom: 12,
           ),
           onMapCreated: (controller) => _controller.complete(controller),
-          markers: marker != null ? {marker!} : {},
-          onTap: _handleTap,
+          markers: allMarkers,
+          onTap: widget.showMarkerOnTap ? _handleTap : null,
           myLocationEnabled: false,
           myLocationButtonEnabled: false,
         ),
 
-        Positioned(
-          bottom: 20,
-          right: 10,
-          child: FloatingActionButton(
-            mini: true,
-            backgroundColor: Colors.white,
-            child: AppIcon(icon: Icons.my_location, color: Colors.blue),
-            onPressed: () => _setCurrentLocation(showToast: true),
+        widget.children ?? const SizedBox.shrink(),
+
+        if (widget.showCurrentLocationButton)
+          Positioned(
+            bottom: 20,
+            right: 10,
+            child: FloatingActionButton(
+              mini: true,
+              backgroundColor: Colors.white,
+              child: AppIcon(icon: Icons.my_location, color: Colors.blue),
+              onPressed: () => _setCurrentLocation(showToast: true),
+            ),
           ),
-        ),
       ],
     );
   }
