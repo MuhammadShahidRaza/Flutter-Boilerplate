@@ -1,5 +1,7 @@
 class AppRoutes {
   // Auth Navigation route names
+
+  // Common route names
   static const String splash = '/splash';
   static const String onboarding = '/onboarding';
   static const String login = '/login';
@@ -37,7 +39,9 @@ class AppRoutes {
 
   //Rider Navigation route names
   static const String riderHome = '/rider_home';
-  static const String riderOrders = '/rider_orders';
+  static const String myJobs = '/my_jobs';
+  static const String riderAccount = '/rider_account';
+
   static const String riderOrderDetails = '/rider_order_details';
   static const String riderEarnings = '/rider_earnings';
   static const String riderProfile = '/rider_profile';
