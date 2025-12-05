@@ -3,6 +3,7 @@ import 'package:sanam_laundry/core/index.dart';
 import 'package:sanam_laundry/core/network/api_response.dart';
 import 'package:sanam_laundry/data/index.dart';
 import 'package:sanam_laundry/data/services/endpoints.dart';
+import 'package:sanam_laundry/data/services/rider_endpoints.dart';
 import 'package:sanam_laundry/providers/auth.dart';
 
 class AuthRepository {
@@ -61,9 +62,11 @@ class AuthRepository {
   }
 
   /// 🔹 PROFILE
-  Future<UserModel?> getProfile() async {
+  Future<UserModel?> getProfile({bool? isRider = false}) async {
     return await ApiResponseHandler.handleRequest<UserModel>(
-      () => _apiService.get(Endpoints.profile),
+      () => _apiService.get(
+        isRider! ? RiderEndpoints.profile : Endpoints.profile,
+      ),
       onSuccess: (data, _) {
         final userData = data['user'];
         return UserModel.fromJson(userData);
