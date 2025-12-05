@@ -8,11 +8,13 @@ class HomeAppBar extends StatelessWidget implements PreferredSizeWidget {
   final String? userName;
   final String? profileImage;
   final VoidCallback? onNotificationTap;
+  final Widget? iconWidget;
 
   const HomeAppBar({
     super.key,
     this.userName,
     this.profileImage,
+    this.iconWidget,
     this.onNotificationTap,
   });
 
@@ -64,20 +66,24 @@ class HomeAppBar extends StatelessWidget implements PreferredSizeWidget {
                   Row(
                     spacing: Dimens.spacingS,
                     children: [
-                      Consumer<UserProvider>(
-                        builder: (context, provider, child) {
-                          final name = provider.fullName.isNotEmpty == true
-                              ? provider.fullName
-                              : Common.guest;
-                          return AppText(
-                            name,
-                            style: theme.textTheme.titleMedium?.copyWith(
-                              fontWeight: FontWeight.bold,
-                              color: AppColors.bottomTabText,
-                            ),
-                            onTap: onProfileTap,
-                          );
-                        },
+                      ConstrainedBox(
+                        constraints: BoxConstraints(maxWidth: 140),
+                        child: Consumer<UserProvider>(
+                          builder: (context, provider, child) {
+                            final name = provider.fullName.isNotEmpty == true
+                                ? provider.fullName
+                                : Common.guest;
+                            return AppText(
+                              name,
+                              style: theme.textTheme.titleMedium?.copyWith(
+                                fontWeight: FontWeight.bold,
+
+                                color: AppColors.bottomTabText,
+                              ),
+                              onTap: onProfileTap,
+                            );
+                          },
+                        ),
                       ),
                       AppText(
                         '👋',
@@ -89,6 +95,8 @@ class HomeAppBar extends StatelessWidget implements PreferredSizeWidget {
                 ],
               ),
             ),
+
+            iconWidget ?? SizedBox.shrink(),
 
             // 🔔 Notification icon
             AppIcon(
