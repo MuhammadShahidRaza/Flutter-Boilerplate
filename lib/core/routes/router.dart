@@ -5,6 +5,7 @@ import 'package:sanam_laundry/presentation/index.dart';
 import 'package:sanam_laundry/presentation/screens/rider/my_jobs.dart';
 import 'package:sanam_laundry/presentation/screens/rider/rider_account.dart';
 import 'package:sanam_laundry/presentation/screens/rider/rider_home.dart';
+import 'package:sanam_laundry/presentation/screens/user/job_details.dart';
 
 class UserShell extends StatelessWidget {
   final StatefulNavigationShell navigationShell;
@@ -154,6 +155,10 @@ class GoRouterSetup {
       GoRoute(
         path: AppRoutes.bookingDetails,
         builder: (context, state) => const BookingDetails(),
+      ),
+      GoRoute(
+        path: AppRoutes.jobDetails,
+        builder: (context, state) => const JobDetails(),
       ),
       GoRoute(
         path: AppRoutes.notifications,
