@@ -29,6 +29,7 @@ class Dimens {
   static const double iconL = 32.0;
 
   // Font sizes
+  static const double fontXXS = 8.0;
   static const double fontXS = 10.0;
   static const double fontS = 12.0;
   static const double fontM = 14.0;
