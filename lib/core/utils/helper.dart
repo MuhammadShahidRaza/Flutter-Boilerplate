@@ -21,4 +21,10 @@ class Utils {
     final v = value.trim();
     return v[0].toUpperCase() + v.substring(1).toLowerCase();
   }
+
+  static String getfullName(user) {
+    final f = Utils.capitalize(user?.firstName);
+    final l = Utils.capitalize(user?.lastName);
+    return [f, l].where((e) => e.isNotEmpty).join(' ');
+  }
 }
