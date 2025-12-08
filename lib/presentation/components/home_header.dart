@@ -9,11 +9,13 @@ class HomeAppBar extends StatelessWidget implements PreferredSizeWidget {
   final String? profileImage;
   final VoidCallback? onNotificationTap;
   final Widget? iconWidget;
+  final double containerGap;
 
   const HomeAppBar({
     super.key,
     this.userName,
     this.profileImage,
+    this.containerGap = Dimens.spacingMSmall,
     this.iconWidget,
     this.onNotificationTap,
   });
@@ -33,7 +35,7 @@ class HomeAppBar extends StatelessWidget implements PreferredSizeWidget {
           vertical: Dimens.spacingS,
         ),
         child: Row(
-          spacing: Dimens.spacingMSmall,
+          spacing: containerGap,
           children: [
             // 👤 User avatar
             Consumer<UserProvider>(
@@ -67,7 +69,7 @@ class HomeAppBar extends StatelessWidget implements PreferredSizeWidget {
                     spacing: Dimens.spacingS,
                     children: [
                       ConstrainedBox(
-                        constraints: BoxConstraints(maxWidth: 140),
+                        constraints: BoxConstraints(maxWidth: 125),
                         child: Consumer<UserProvider>(
                           builder: (context, provider, child) {
                             final name = provider.fullName.isNotEmpty == true
