@@ -52,7 +52,7 @@ class _AppAutocompleteState extends State<AppAutocomplete> {
         GooglePlaceAutoCompleteTextField(
           textEditingController: widget.textEditingController,
           // googleAPIKey: Environment.mapKey,
-          googleAPIKey: '',
+          googleAPIKey: 'AIzaSyApndMQavta3YWmiNeVdfEX9oweWDn3hXg',
           inputDecoration: InputDecoration(
             errorMaxLines: 3,
             counterText: widget.counterText,
