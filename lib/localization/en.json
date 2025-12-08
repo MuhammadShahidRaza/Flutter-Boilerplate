@@ -1,5 +1,19 @@
 {
   "COMMON": {
+    "ASSIGNED": "Assigned",
+    "UPDATE_STATUS": "Update Status",
+    "ORDERS_IN_VEHICLE": "Orders In Vehicle",
+    "JOB_DETAILS": "Job Details",
+    "JOB_DONE": "Job Done",
+    "VIEW_PICTURE": "View Picture",
+    "SUBMITTED_TO_SHOP": "Submitted to Shop",
+    "ON_THE_WAY_FOR_PICKUP": "On the way for Pickup",
+    "CUSTOMER_PHONE": "Customer Phone",
+    "PICKED_UP": "Picked-Up",
+    "ARRIVED": "Arrived",
+    "UNSUCCESSFULL_ATTEMPT": "Unsuccessfull Attempt",
+    "ARE_YOU_SURE_YOU_WANT_TO_UPDATE_STATUS": "Are you sure you want to update status",
+
     "FEILD": "Feild",
     "EMAIL": "Email",
     "PASSWORD": "Password",
