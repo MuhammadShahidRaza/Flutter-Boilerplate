@@ -41,6 +41,7 @@ class AppRoutes {
   static const String riderHome = '/rider_home';
   static const String myJobs = '/my_jobs';
   static const String riderAccount = '/rider_account';
+  static const String jobDetails = '/job_details';
 
   static const String riderOrderDetails = '/rider_order_details';
   static const String riderEarnings = '/rider_earnings';
