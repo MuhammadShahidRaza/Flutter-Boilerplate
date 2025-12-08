@@ -24,6 +24,8 @@ class AddressPickerMap extends StatefulWidget {
   final bool showCurrentLocationButton;
   final bool showCurrentLocationMarker;
   final bool showMarkerOnTap;
+  final bool showMapCurrentLocationMarker;
+  final double bottomHeight;
 
   const AddressPickerMap({
     super.key,
@@ -32,7 +34,9 @@ class AddressPickerMap extends StatefulWidget {
     this.showCurrentLocationButton = true,
     this.showCurrentLocationMarker = true,
     this.showMarkerOnTap = true,
+    this.showMapCurrentLocationMarker = false,
     this.children,
+    this.bottomHeight = 20,
     this.markers,
   });
 
@@ -171,7 +175,7 @@ class _AddressPickerMapState extends State<AddressPickerMap> {
           onMapCreated: (controller) => _controller.complete(controller),
           markers: allMarkers,
           onTap: widget.showMarkerOnTap ? _handleTap : null,
-          myLocationEnabled: false,
+          myLocationEnabled: widget.showMapCurrentLocationMarker,
           myLocationButtonEnabled: false,
         ),
 
@@ -179,7 +183,7 @@ class _AddressPickerMapState extends State<AddressPickerMap> {
 
         if (widget.showCurrentLocationButton)
           Positioned(
-            bottom: 20,
+            bottom: widget.bottomHeight,
             right: 10,
             child: FloatingActionButton(
               mini: true,
