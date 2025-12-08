@@ -84,7 +84,7 @@ class RiderRepository {
       () => _apiService.get(RiderEndpoints.slots),
       onSuccess: (data, _) {
         final list = Utils.safeList(
-          data["slots"],
+          data,
         ).map((e) => SlotModel.fromJson(e)).toList();
         return list;
       },
@@ -207,14 +207,37 @@ class RiderRepository {
     );
   }
 
-  Future getOrders(String status) async {
+  Future getOrders({type, slotId, status, search}) async {
+    final query = {"type": type, "slot_id": slotId};
+    if (status == "completed") {
+      query["completed"] = true;
+    } else if (status != null) {
+      query["status"] = status;
+    }
+
+    if (search != null && search.isNotEmpty) {
+      query["search"] = search;
+    }
     return await ApiResponseHandler.handleRequest(
-      () =>
-          _apiService.get(RiderEndpoints.getOrders, query: {"status": status}),
+      () => _apiService.get(RiderEndpoints.getOrders, query: query),
       onSuccess: (data, _) {
-        final orders = Utils.safeList(data?["Booking"]);
+        final orders = Utils.safeList(data["bookings"]);
         final list = orders.map((e) => OrderModel.fromJson(e)).toList();
         return list;
+      },
+    );
+  }
+
+  Future getHomeOrders({type, slotId}) async {
+    return await ApiResponseHandler.handleRequest(
+      () => _apiService.get(
+        RiderEndpoints.getHomeOrders,
+        query: {"type": type, "slot_id": slotId},
+      ),
+      onSuccess: (data, _) {
+        final orders = Utils.safeList(data?["bookings"]);
+        final list = orders.map((e) => OrderModel.fromJson(e)).toList();
+        return {"orders": list, "info": data?["rider_info"]};
       },
     );
   }
