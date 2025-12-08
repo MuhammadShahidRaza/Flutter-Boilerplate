@@ -1,4 +1,19 @@
 class Common {
+  static const assigned = "COMMON.ASSIGNED";
+  static const updateStatus = "COMMON.UPDATE_STATUS";
+  static const ordersInVehicle = "COMMON.ORDERS_IN_VEHICLE";
+  static const jobDetails = "COMMON.JOB_DETAILS";
+  static const jobDone = "COMMON.JOB_DONE";
+  static const viewPicture = "COMMON.VIEW_PICTURE";
+  static const submittedToShop = "COMMON.SUBMITTED_TO_SHOP";
+  static const onTheWayForPickup = "COMMON.ON_THE_WAY_FOR_PICKUP";
+  static const customerPhone = "COMMON.CUSTOMER_PHONE";
+  static const pickedUp = "COMMON.PICKED_UP";
+  static const arrived = "COMMON.ARRIVED";
+  static const unsuccessfullAttempt = "COMMON.UNSUCCESSFULL_ATTEMPT";
+  static const areYouSureYouWantToUpdateStatus =
+      "COMMON.ARE_YOU_SURE_YOU_WANT_TO_UPDATE_STATUS";
+
   static const email = "COMMON.EMAIL";
   static const feild = "COMMON.FEILD";
   static const password = "COMMON.PASSWORD";
