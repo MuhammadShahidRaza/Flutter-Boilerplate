@@ -18,6 +18,7 @@ class RiderEndpoints {
   static const String updateUserProfile = "rider/user/update";
 
   // Orders
+  static const String getHomeOrders = "rider/home";
   static const String getOrders = "rider/booking";
   static const String createOrder = "rider/booking/create";
   static const String updateOrder = "rider//orders/update";
@@ -25,7 +26,7 @@ class RiderEndpoints {
   //SETTINGS
   static const String notifications = "rider/notification";
   static const String settings = "rider/setting";
-  static const String slots = "rider/slot";
+  static const String slots = "rider/slots";
   static const String additionalInfo = "rider/additional-info";
   static const String contactUs = "rider/contact/create";
   static const String privacyPolicy = "rider/content/privacy-policy";
