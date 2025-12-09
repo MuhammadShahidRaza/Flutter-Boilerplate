@@ -20,34 +20,34 @@ class _RiderMyAccountState extends State<RiderMyAccount> {
   @override
   Widget build(BuildContext context) {
     final List<_AccountOption> options = [
+      // _AccountOption(
+      //   icon: Icons.edit_outlined,
+      //   title: Common.editProfile,
+      //   onTap: () {
+      //     context.navigate(AppRoutes.editProfile);
+      //   },
+      // ),
       _AccountOption(
-        icon: Icons.edit_outlined,
-        title: Common.editProfile,
+        icon: Icons.directions_car_outlined,
+        title: Common.myJobs,
         onTap: () {
-          context.navigate(AppRoutes.editProfile);
+          context.replacePage(AppRoutes.myJobs);
         },
       ),
-      _AccountOption(
-        icon: Icons.list,
-        title: Common.myOrders,
-        onTap: () {
-          context.replacePage(AppRoutes.orders);
-        },
-      ),
-      _AccountOption(
-        icon: Icons.location_on_outlined,
-        title: Common.myAddress,
-        onTap: () {
-          context.navigate(AppRoutes.myAddress);
-        },
-      ),
-      _AccountOption(
-        icon: Icons.credit_card,
-        title: Common.payment,
-        onTap: () {
-          // context.navigate(AppRoutes.payment);
-        },
-      ),
+      // _AccountOption(
+      //   icon: Icons.location_on_outlined,
+      //   title: Common.myAddress,
+      //   onTap: () {
+      //     context.navigate(AppRoutes.myAddress);
+      //   },
+      // ),
+      // _AccountOption(
+      //   icon: Icons.credit_card,
+      //   title: Common.payment,
+      //   onTap: () {
+      //     // context.navigate(AppRoutes.payment);
+      //   },
+      // ),
       _AccountOption(
         icon: Icons.translate,
         title: Common.language,
@@ -210,7 +210,7 @@ class _RiderMyAccountState extends State<RiderMyAccount> {
                 ),
               ),
               Padding(
-                padding: const EdgeInsets.symmetric(vertical: Dimens.spacingM),
+                padding: const EdgeInsets.symmetric(vertical: Dimens.spacingXL),
                 child: AppButton(
                   isLoading: isLoading,
                   title: Common.logout,
@@ -264,7 +264,6 @@ class _RiderMyAccountState extends State<RiderMyAccount> {
             height: 160,
             width: double.infinity,
             decoration: const BoxDecoration(
-              color: AppColors.primary,
               borderRadius: BorderRadius.only(
                 bottomLeft: Radius.circular(Dimens.radiusL),
                 bottomRight: Radius.circular(Dimens.radiusL),
@@ -309,15 +308,6 @@ class _RiderMyAccountState extends State<RiderMyAccount> {
                       style: context.textTheme.titleMedium?.copyWith(
                         fontWeight: FontWeight.bold,
                         color: AppColors.mediumGrey,
-                      ),
-                    ),
-
-                    // Customer ID
-                    AppText(
-                      "Customer ID: $customerId",
-                      style: context.textTheme.titleMedium?.copyWith(
-                        fontWeight: FontWeight.bold,
-                        color: AppColors.black,
                       ),
                     ),
                   ],
