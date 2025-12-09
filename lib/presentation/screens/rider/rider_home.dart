@@ -80,7 +80,7 @@ class _RiderHomeState extends State<RiderHome> {
                 infoWindow: InfoWindow(
                   onTap: () {
                     context.navigate(
-                      AppRoutes.bookingDetails,
+                      AppRoutes.jobDetails,
                       extra: e.id.toString(),
                     );
                   },
@@ -184,243 +184,244 @@ class _RiderHomeState extends State<RiderHome> {
           ],
         ),
       ),
-      child: GestureDetector(
-        onVerticalDragUpdate: (details) {
-          if (details.delta.dy > 0) {
-            // user dragging DOWN → hide list
-            if (showOrders) {
-              setState(() => showOrders = false);
-            }
-          } else if (details.delta.dy < 0) {
-            // user dragging UP → show list
-            if (!showOrders) {
-              setState(() => showOrders = true);
-            }
-          }
-        },
-        child: AddressPickerMap(
-          showMarkerOnTap: false,
-          showCurrentLocationMarker: false,
-          showMapCurrentLocationMarker: true,
-          bottomHeight: 90,
-          markers: [...nearbyMarkers],
-          // overlay children stacked on top of map
-          children: Stack(
-            children: [
-              // TOP overlay: profile + slot chips + pickup/delivery
-              Positioned(
-                top: 12,
-                left: 5,
-                right: 5,
-                child: Row(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  spacing: Dimens.radiusM,
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    // Slots horizontal chips
-                    if (slots.isNotEmpty)
-                      Expanded(
-                        child: Container(
-                          padding: const EdgeInsets.all(5),
-                          decoration: BoxDecoration(
-                            color: AppColors.white,
-                            borderRadius: BorderRadius.circular(25),
-                            boxShadow: [
-                              BoxShadow(
-                                color: Colors.black.withValues(alpha: 0.05),
-                                blurRadius: 4,
-                              ),
-                            ],
-                          ),
-                          height: 40,
-                          child: AppListView(
-                            state: AppListState(
-                              items: slots,
-                              loadingInitial: false,
-                              loadingMore: false,
-                              hasMore: false,
+      child: AddressPickerMap(
+        showMarkerOnTap: false,
+        showCurrentLocationMarker: false,
+        showMapCurrentLocationMarker: true,
+        bottomHeight: 90,
+        markers: [...nearbyMarkers],
+        // overlay children stacked on top of map
+        children: Stack(
+          children: [
+            // TOP overlay: profile + slot chips + pickup/delivery
+            Positioned(
+              top: 12,
+              left: 5,
+              right: 5,
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                spacing: Dimens.radiusM,
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  // Slots horizontal chips
+                  if (slots.isNotEmpty)
+                    Expanded(
+                      child: Container(
+                        padding: const EdgeInsets.all(5),
+                        decoration: BoxDecoration(
+                          color: AppColors.white,
+                          borderRadius: BorderRadius.circular(25),
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.black.withValues(alpha: 0.05),
+                              blurRadius: 4,
                             ),
-                            scrollDirection: Axis.horizontal,
-                            itemBuilder: (context, item, index) {
-                              final s = slots[index];
-                              final selected = s.id == selectedSlotId;
-                              return GestureDetector(
-                                onTap: () {
-                                  if (selectedSlotId == s.id) return;
-                                  setState(() => selectedSlotId = s.id);
-                                  _loadOrders();
-                                },
-                                child: Container(
-                                  padding: const EdgeInsets.symmetric(
-                                    horizontal: 17,
-                                    vertical: 8,
-                                  ),
-                                  decoration: BoxDecoration(
+                          ],
+                        ),
+                        height: 40,
+                        child: AppListView(
+                          state: AppListState(
+                            items: slots,
+                            loadingInitial: false,
+                            loadingMore: false,
+                            hasMore: false,
+                          ),
+                          scrollDirection: Axis.horizontal,
+                          itemBuilder: (context, item, index) {
+                            final s = slots[index];
+                            final selected = s.id == selectedSlotId;
+                            return GestureDetector(
+                              onTap: () {
+                                if (selectedSlotId == s.id) return;
+                                setState(() => selectedSlotId = s.id);
+                                _loadOrders();
+                              },
+                              child: Container(
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: 17,
+                                  vertical: 8,
+                                ),
+                                decoration: BoxDecoration(
+                                  color: selected
+                                      ? AppColors.primary
+                                      : AppColors.white,
+                                  borderRadius: BorderRadius.circular(25),
+                                ),
+                                child: AppText(
+                                  s.title ?? "",
+                                  style: context.textTheme.bodySmall!.copyWith(
+                                    fontWeight: FontWeight.bold,
                                     color: selected
-                                        ? AppColors.primary
-                                        : AppColors.white,
-                                    borderRadius: BorderRadius.circular(25),
-                                  ),
-                                  child: AppText(
-                                    s.title ?? "",
-                                    style: context.textTheme.bodySmall!
-                                        .copyWith(
-                                          fontWeight: FontWeight.bold,
-                                          color: selected
-                                              ? AppColors.white
-                                              : AppColors.text,
-                                        ),
+                                        ? AppColors.white
+                                        : AppColors.text,
                                   ),
                                 ),
-                              );
-                            },
-                          ),
+                              ),
+                            );
+                          },
                         ),
-                      ),
-
-                    // Pickup / Delivery toggle chips
-                    Container(
-                      padding: const EdgeInsets.all(5),
-                      decoration: BoxDecoration(
-                        color: AppColors.white,
-                        borderRadius: BorderRadius.circular(25),
-                        boxShadow: [
-                          BoxShadow(
-                            color: Colors.black.withValues(alpha: 0.05),
-                            blurRadius: 4,
-                          ),
-                        ],
-                      ),
-                      height: 40,
-                      child: Row(
-                        children: [
-                          GestureDetector(
-                            onTap: () {
-                              if (isPickup) return;
-                              setState(() => isPickup = true);
-                              _loadOrders();
-                            },
-                            child: Container(
-                              padding: const EdgeInsets.symmetric(
-                                horizontal: 15,
-                                vertical: 8,
-                              ),
-                              decoration: BoxDecoration(
-                                color: isPickup
-                                    ? AppColors.primary
-                                    : AppColors.white,
-                                borderRadius: BorderRadius.circular(18),
-                              ),
-                              child: AppText(
-                                Common.pickUp,
-                                style: context.textTheme.bodySmall!.copyWith(
-                                  fontWeight: FontWeight.bold,
-                                  color: isPickup
-                                      ? AppColors.white
-                                      : AppColors.text,
-                                ),
-                              ),
-                            ),
-                          ),
-                          GestureDetector(
-                            onTap: () {
-                              if (!isPickup) return;
-                              setState(() => isPickup = false);
-                              _loadOrders();
-                            },
-                            child: Container(
-                              padding: const EdgeInsets.symmetric(
-                                horizontal: 11,
-                                vertical: 5,
-                              ),
-                              decoration: BoxDecoration(
-                                color: !isPickup
-                                    ? AppColors.primary
-                                    : AppColors.white,
-                                borderRadius: BorderRadius.circular(18),
-                              ),
-                              child: AppText(
-                                Common.delivery,
-
-                                style: context.textTheme.bodySmall!.copyWith(
-                                  fontWeight: FontWeight.bold,
-                                  color: !isPickup
-                                      ? AppColors.white
-                                      : AppColors.text,
-                                ),
-                              ),
-                            ),
-                          ),
-                        ],
                       ),
                     ),
-                  ],
-                ),
-              ),
 
-              if (orders.isNotEmpty) ...[
-                Positioned(
-                  bottom: 140,
-                  left: 15,
-                  right: 15,
-                  child: AnimatedOpacity(
-                    duration: Duration(milliseconds: 250),
-                    opacity: showOrders ? 1 : 0,
-                    child: Visibility(
-                      visible: showOrders,
-                      child: AppListView(
-                        state: AppListState(
-                          items: orders.take(2).toList(),
-                          loadingInitial: false,
-                          loadingMore: false,
-                          hasMore: false,
-                        ),
-                        scrollPhysics: NeverScrollableScrollPhysics(),
-                        itemBuilder: (context, item, index) {
-                          return JobCard(
-                            order: item,
-                            type: isPickup ? "pickup" : "delivery",
-                          );
-                        },
-                      ),
-                    ),
-                  ),
-                ),
-              ],
-
-              // BOTTOM overlay: stats row
-              Positioned(
-                left: 12,
-                right: 12,
-                bottom: 10,
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    // card style container that looks like screenshot
-                    Row(
-                      children: [
-                        statBox(
-                          context,
-                          Common.todayOrders,
-                          todayOrders.toString(),
-                        ),
-                        statBox(
-                          context,
-                          Common.todayDelivered,
-                          todayDelivered.toString(),
-                        ),
-                        statBox(
-                          context,
-                          Common.onlineTime,
-                          onlineTime.toString(),
+                  // Pickup / Delivery toggle chips
+                  Container(
+                    padding: const EdgeInsets.all(5),
+                    decoration: BoxDecoration(
+                      color: AppColors.white,
+                      borderRadius: BorderRadius.circular(25),
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.black.withValues(alpha: 0.05),
+                          blurRadius: 4,
                         ),
                       ],
                     ),
-                  ],
+                    height: 40,
+                    child: Row(
+                      children: [
+                        GestureDetector(
+                          onTap: () {
+                            if (isPickup) return;
+                            setState(() => isPickup = true);
+                            _loadOrders();
+                          },
+                          child: Container(
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 15,
+                              vertical: 8,
+                            ),
+                            decoration: BoxDecoration(
+                              color: isPickup
+                                  ? AppColors.primary
+                                  : AppColors.white,
+                              borderRadius: BorderRadius.circular(18),
+                            ),
+                            child: AppText(
+                              Common.pickUp,
+                              style: context.textTheme.bodySmall!.copyWith(
+                                fontWeight: FontWeight.bold,
+                                color: isPickup
+                                    ? AppColors.white
+                                    : AppColors.text,
+                              ),
+                            ),
+                          ),
+                        ),
+                        GestureDetector(
+                          onTap: () {
+                            if (!isPickup) return;
+                            setState(() => isPickup = false);
+                            _loadOrders();
+                          },
+                          child: Container(
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 11,
+                              vertical: 5,
+                            ),
+                            decoration: BoxDecoration(
+                              color: !isPickup
+                                  ? AppColors.primary
+                                  : AppColors.white,
+                              borderRadius: BorderRadius.circular(18),
+                            ),
+                            child: AppText(
+                              Common.delivery,
+
+                              style: context.textTheme.bodySmall!.copyWith(
+                                fontWeight: FontWeight.bold,
+                                color: !isPickup
+                                    ? AppColors.white
+                                    : AppColors.text,
+                              ),
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+            ),
+
+            if (orders.isNotEmpty && showOrders) ...[
+              Positioned(
+                bottom: 140,
+                left: 15,
+                right: 15,
+                child: AnimatedOpacity(
+                  duration: Duration(milliseconds: 250),
+                  opacity: showOrders ? 1 : 0,
+                  child: Visibility(
+                    visible: showOrders,
+                    child: AppListView(
+                      state: AppListState(
+                        items: orders.take(2).toList(),
+                        loadingInitial: false,
+                        loadingMore: false,
+                        hasMore: false,
+                      ),
+                      scrollPhysics: NeverScrollableScrollPhysics(),
+                      itemBuilder: (context, item, index) {
+                        return JobCard(
+                          order: item,
+                          type: isPickup ? "pickup" : "delivery",
+                        );
+                      },
+                    ),
+                  ),
                 ),
               ),
             ],
-          ),
+
+            if (orders.isNotEmpty)
+              Positioned(
+                bottom: 90,
+                left: 12,
+                child: FloatingActionButton(
+                  mini: true,
+                  backgroundColor: Colors.white,
+                  child: AppIcon(
+                    icon: showOrders
+                        ? Icons.arrow_downward
+                        : Icons.arrow_upward,
+                    color: Colors.blue,
+                  ),
+                  onPressed: () => setState(() => showOrders = !showOrders),
+                ),
+              ),
+
+            // BOTTOM overlay: stats row
+            Positioned(
+              left: 12,
+              right: 12,
+              bottom: 10,
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  // card style container that looks like screenshot
+                  Row(
+                    children: [
+                      statBox(
+                        context,
+                        Common.todayOrders,
+                        todayOrders.toString(),
+                      ),
+                      statBox(
+                        context,
+                        Common.todayDelivered,
+                        todayDelivered.toString(),
+                      ),
+                      statBox(
+                        context,
+                        Common.onlineTime,
+                        onlineTime.toString(),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+            ),
+          ],
         ),
       ),
     );
