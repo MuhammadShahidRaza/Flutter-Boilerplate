@@ -41,7 +41,7 @@ class BookingDetailsComp extends StatelessWidget {
         if (details?["deliveryType"] != null)
           MessageBox(
             icon: Icons.local_shipping_outlined,
-            title: Common.selectDeliveryType,
+            title: Common.deliveryType,
             value: Utils.capitalize(details?["deliveryType"]),
           ),
 
