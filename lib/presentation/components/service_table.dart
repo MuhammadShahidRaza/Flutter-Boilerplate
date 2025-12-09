@@ -5,7 +5,12 @@ import 'package:sanam_laundry/presentation/index.dart';
 
 class ServicesTable extends StatelessWidget {
   final List<CartItem> services;
-  const ServicesTable({super.key, required this.services});
+  final bool showCharges;
+  const ServicesTable({
+    super.key,
+    required this.services,
+    this.showCharges = true,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -28,23 +33,24 @@ class ServicesTable extends StatelessWidget {
               Expanded(
                 child: AppText(
                   Common.qty,
-                  textAlign: TextAlign.center,
+                  textAlign: showCharges ? TextAlign.center : TextAlign.right,
                   style: context.textTheme.bodyLarge!.copyWith(
                     color: AppColors.primary,
                     fontWeight: FontWeight.bold,
                   ),
                 ),
               ),
-              Expanded(
-                child: AppText(
-                  Common.charges,
-                  textAlign: TextAlign.left,
-                  style: context.textTheme.bodyLarge!.copyWith(
-                    color: AppColors.primary,
-                    fontWeight: FontWeight.bold,
+              if (showCharges)
+                Expanded(
+                  child: AppText(
+                    Common.charges,
+                    textAlign: TextAlign.left,
+                    style: context.textTheme.bodyLarge!.copyWith(
+                      color: AppColors.primary,
+                      fontWeight: FontWeight.bold,
+                    ),
                   ),
                 ),
-              ),
             ],
           ),
         ),
@@ -55,6 +61,7 @@ class ServicesTable extends StatelessWidget {
             qty: service.quantity.toString().padLeft(2, '0'),
             price:
                 "${(service.amount * service.quantity).toStringAsFixed(2)} SAR",
+            showCharges: showCharges,
           );
         }),
       ],
@@ -66,11 +73,13 @@ class _ServiceRow extends StatelessWidget {
   final String name;
   final String qty;
   final String price;
+  final bool showCharges;
 
   const _ServiceRow({
     required this.name,
     required this.qty,
     required this.price,
+    this.showCharges = true,
   });
 
   @override
@@ -105,17 +114,18 @@ class _ServiceRow extends StatelessWidget {
           Expanded(
             child: AppText(
               qty,
-              textAlign: TextAlign.center,
+              textAlign: showCharges ? TextAlign.center : TextAlign.right,
               style: context.textTheme.bodyMedium,
             ),
           ),
-          Expanded(
-            child: AppText(
-              price,
-              textAlign: TextAlign.left,
-              style: context.textTheme.bodyMedium!.copyWith(fontSize: 13),
+          if (showCharges)
+            Expanded(
+              child: AppText(
+                price,
+                textAlign: TextAlign.left,
+                style: context.textTheme.bodyMedium!.copyWith(fontSize: 13),
+              ),
             ),
-          ),
         ],
       ),
     );
