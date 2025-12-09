@@ -6,12 +6,14 @@ class MessageBox extends StatelessWidget {
   final IconData icon;
   final String title;
   final String value;
+  final int? descriptionMaxLines;
 
   const MessageBox({
     super.key,
     required this.icon,
     required this.title,
     required this.value,
+    this.descriptionMaxLines,
   });
 
   @override
@@ -35,6 +37,7 @@ class MessageBox extends StatelessWidget {
               ),
               AppText(
                 value,
+                maxLines: descriptionMaxLines,
                 style: context.textTheme.bodySmall!.copyWith(
                   color: AppColors.textSecondary,
                 ),
