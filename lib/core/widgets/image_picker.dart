@@ -15,6 +15,7 @@ class ImagePickerBox extends StatefulWidget {
   final double? imageBoxHeight;
   final Color? borderColor;
   final bool wantBottomSpace;
+  final bool enabled;
 
   const ImagePickerBox({
     super.key,
@@ -25,6 +26,7 @@ class ImagePickerBox extends StatefulWidget {
     this.imageBoxWidth,
     this.imageBoxHeight,
     this.borderColor,
+    this.enabled = true,
   });
 
   @override
@@ -80,7 +82,7 @@ class _ImagePickerBoxState extends State<ImagePickerBox> {
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
-      onTap: () => _showPickerOptions(context),
+      onTap: widget.enabled ? () => _showPickerOptions(context) : null,
       child: Column(
         spacing: Dimens.spacingS,
         children: [
