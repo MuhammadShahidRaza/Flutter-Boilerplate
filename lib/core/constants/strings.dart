@@ -8,6 +8,8 @@ class Common {
   static const submittedToShop = "COMMON.SUBMITTED_TO_SHOP";
   static const onTheWayForPickup = "COMMON.ON_THE_WAY_FOR_PICKUP";
   static const customerPhone = "COMMON.CUSTOMER_PHONE";
+  static const hideOrders = "COMMON.HIDE_ORDERS";
+  static const showOrders = "COMMON.SHOW_ORDERS";
   static const pickedUp = "COMMON.PICKED_UP";
   static const arrived = "COMMON.ARRIVED";
   static const unsuccessfullAttempt = "COMMON.UNSUCCESSFULL_ATTEMPT";
@@ -168,6 +170,7 @@ class Common {
   static const aptFloor = "COMMON.APT_FLOOR";
   static const selectDeliveryDateTime = "COMMON.SELECT_DELIVERY_DATE_TIME";
   static const selectDeliveryType = "COMMON.SELECT_DELIVERY_TYPE";
+  static const deliveryType = "COMMON.DELIVERY_TYPE";
   static const bookingDetails = "COMMON.BOOKING_DETAILS";
   static const orderDetails = "COMMON.ORDER_DETAILS";
   static const additionalInformation = "COMMON.ADDITIONAL_INFORMATION";
