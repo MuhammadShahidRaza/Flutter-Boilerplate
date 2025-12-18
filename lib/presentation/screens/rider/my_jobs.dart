@@ -115,65 +115,66 @@ class _MyJobsState extends State<MyJobs> {
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     // Slots horizontal chips
-                    if (slots.isNotEmpty)
-                      Expanded(
-                        child: Container(
-                          padding: const EdgeInsets.all(5),
-                          decoration: BoxDecoration(
-                            color: AppColors.white,
-                            borderRadius: BorderRadius.circular(25),
-                            boxShadow: [
-                              BoxShadow(
-                                color: Colors.black.withValues(alpha: 0.05),
-                                blurRadius: 4,
+                    Expanded(
+                      child: slots.isEmpty
+                          ? SizedBox()
+                          : Container(
+                              padding: const EdgeInsets.all(5),
+                              decoration: BoxDecoration(
+                                color: AppColors.white,
+                                borderRadius: BorderRadius.circular(25),
+                                boxShadow: [
+                                  BoxShadow(
+                                    color: Colors.black.withValues(alpha: 0.05),
+                                    blurRadius: 4,
+                                  ),
+                                ],
                               ),
-                            ],
-                          ),
-                          height: 40,
-                          child: AppListView(
-                            state: AppListState(
-                              items: slots,
-                              loadingInitial: false,
-                              loadingMore: false,
-                              hasMore: false,
-                            ),
-                            scrollDirection: Axis.horizontal,
-                            itemBuilder: (context, item, index) {
-                              final s = slots[index];
-                              final selected = s.id == selectedSlotId;
-                              return GestureDetector(
-                                onTap: () {
-                                  if (selectedSlotId == s.id) return;
-                                  setState(() => selectedSlotId = s.id);
-                                  _loadOrders();
-                                },
-                                child: Container(
-                                  padding: const EdgeInsets.symmetric(
-                                    horizontal: 17,
-                                    vertical: 8,
-                                  ),
-                                  decoration: BoxDecoration(
-                                    color: selected
-                                        ? AppColors.primary
-                                        : AppColors.white,
-                                    borderRadius: BorderRadius.circular(25),
-                                  ),
-                                  child: AppText(
-                                    s.title ?? "",
-                                    style: context.textTheme.bodySmall!
-                                        .copyWith(
-                                          fontWeight: FontWeight.bold,
-                                          color: selected
-                                              ? AppColors.white
-                                              : AppColors.text,
-                                        ),
-                                  ),
+                              height: 40,
+                              child: AppListView(
+                                state: AppListState(
+                                  items: slots,
+                                  loadingInitial: false,
+                                  loadingMore: false,
+                                  hasMore: false,
                                 ),
-                              );
-                            },
-                          ),
-                        ),
-                      ),
+                                scrollDirection: Axis.horizontal,
+                                itemBuilder: (context, item, index) {
+                                  final s = slots[index];
+                                  final selected = s.id == selectedSlotId;
+                                  return GestureDetector(
+                                    onTap: () {
+                                      if (selectedSlotId == s.id) return;
+                                      setState(() => selectedSlotId = s.id);
+                                      _loadOrders();
+                                    },
+                                    child: Container(
+                                      padding: const EdgeInsets.symmetric(
+                                        horizontal: 17,
+                                        vertical: 8,
+                                      ),
+                                      decoration: BoxDecoration(
+                                        color: selected
+                                            ? AppColors.primary
+                                            : AppColors.white,
+                                        borderRadius: BorderRadius.circular(25),
+                                      ),
+                                      child: AppText(
+                                        s.title ?? "",
+                                        style: context.textTheme.bodySmall!
+                                            .copyWith(
+                                              fontWeight: FontWeight.bold,
+                                              color: selected
+                                                  ? AppColors.white
+                                                  : AppColors.text,
+                                            ),
+                                      ),
+                                    ),
+                                  );
+                                },
+                              ),
+                            ),
+                    ),
 
                     // Pickup / Delivery toggle chips
                     Container(
