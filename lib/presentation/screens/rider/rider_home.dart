@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:provider/provider.dart';
 import 'package:sanam_laundry/core/index.dart';
 import 'package:sanam_laundry/core/utils/helper.dart';
 import 'package:sanam_laundry/core/widgets/map.dart';
@@ -9,6 +10,7 @@ import 'package:sanam_laundry/data/models/slot.dart';
 import 'package:sanam_laundry/data/rider_repositories/index.dart';
 import 'package:sanam_laundry/presentation/components/job_card.dart';
 import 'package:sanam_laundry/presentation/index.dart';
+import 'package:sanam_laundry/providers/index.dart';
 
 class RiderHome extends StatefulWidget {
   const RiderHome({super.key});
@@ -18,6 +20,7 @@ class RiderHome extends StatefulWidget {
 }
 
 class _RiderHomeState extends State<RiderHome> {
+  late bool isActive;
   final RiderRepository _riderRepository = RiderRepository();
 
   bool showOrders = false;
@@ -111,10 +114,20 @@ class _RiderHomeState extends State<RiderHome> {
     });
   }
 
+  Future<void> changeStatus(bool value) async {
+    final provider = Provider.of<UserProvider>(context, listen: false);
+    final user = await _riderRepository.updateStatus(isActive: value);
+    if (user != null) {
+      await provider.updateUser(user);
+    }
+  }
+
   @override
   void initState() {
     super.initState();
     slotsFuture();
+    final provider = context.read<UserProvider>();
+    isActive = provider.user?.isRiderActive ?? false;
   }
 
   @override
@@ -163,7 +176,7 @@ class _RiderHomeState extends State<RiderHome> {
       safeArea: false,
       padding: EdgeInsets.zero,
       appBar: HomeAppBar(
-        onNotificationTap: () => context.navigate(AppRoutes.notifications),
+        onNotificationTap: () => context.navigate(AppRoutes.riderNotifications),
         containerGap: Dimens.spacingXS,
         iconWidget: Row(
           children: [
@@ -174,8 +187,13 @@ class _RiderHomeState extends State<RiderHome> {
               ),
             ),
             Switch(
-              value: true,
-              onChanged: (value) {},
+              value: isActive,
+              onChanged: (value) {
+                setState(() {
+                  isActive = value;
+                });
+                changeStatus(value);
+              },
               thumbColor: WidgetStatePropertyAll(AppColors.secondary),
               activeThumbColor: AppColors.tertiary,
               trackOutlineColor: WidgetStatePropertyAll(AppColors.primary),
@@ -204,64 +222,66 @@ class _RiderHomeState extends State<RiderHome> {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   // Slots horizontal chips
-                  if (slots.isNotEmpty)
-                    Expanded(
-                      child: Container(
-                        padding: const EdgeInsets.all(5),
-                        decoration: BoxDecoration(
-                          color: AppColors.white,
-                          borderRadius: BorderRadius.circular(25),
-                          boxShadow: [
-                            BoxShadow(
-                              color: Colors.black.withValues(alpha: 0.05),
-                              blurRadius: 4,
+                  Expanded(
+                    child: slots.isEmpty
+                        ? SizedBox()
+                        : Container(
+                            padding: const EdgeInsets.all(5),
+                            decoration: BoxDecoration(
+                              color: AppColors.white,
+                              borderRadius: BorderRadius.circular(25),
+                              boxShadow: [
+                                BoxShadow(
+                                  color: Colors.black.withValues(alpha: 0.05),
+                                  blurRadius: 4,
+                                ),
+                              ],
                             ),
-                          ],
-                        ),
-                        height: 40,
-                        child: AppListView(
-                          state: AppListState(
-                            items: slots,
-                            loadingInitial: false,
-                            loadingMore: false,
-                            hasMore: false,
-                          ),
-                          scrollDirection: Axis.horizontal,
-                          itemBuilder: (context, item, index) {
-                            final s = slots[index];
-                            final selected = s.id == selectedSlotId;
-                            return GestureDetector(
-                              onTap: () {
-                                if (selectedSlotId == s.id) return;
-                                setState(() => selectedSlotId = s.id);
-                                _loadOrders();
-                              },
-                              child: Container(
-                                padding: const EdgeInsets.symmetric(
-                                  horizontal: 17,
-                                  vertical: 8,
-                                ),
-                                decoration: BoxDecoration(
-                                  color: selected
-                                      ? AppColors.primary
-                                      : AppColors.white,
-                                  borderRadius: BorderRadius.circular(25),
-                                ),
-                                child: AppText(
-                                  s.title ?? "",
-                                  style: context.textTheme.bodySmall!.copyWith(
-                                    fontWeight: FontWeight.bold,
-                                    color: selected
-                                        ? AppColors.white
-                                        : AppColors.text,
-                                  ),
-                                ),
+                            height: 40,
+                            child: AppListView(
+                              state: AppListState(
+                                items: slots,
+                                loadingInitial: false,
+                                loadingMore: false,
+                                hasMore: false,
                               ),
-                            );
-                          },
-                        ),
-                      ),
-                    ),
+                              scrollDirection: Axis.horizontal,
+                              itemBuilder: (context, item, index) {
+                                final s = slots[index];
+                                final selected = s.id == selectedSlotId;
+                                return GestureDetector(
+                                  onTap: () {
+                                    if (selectedSlotId == s.id) return;
+                                    setState(() => selectedSlotId = s.id);
+                                    _loadOrders();
+                                  },
+                                  child: Container(
+                                    padding: const EdgeInsets.symmetric(
+                                      horizontal: 17,
+                                      vertical: 8,
+                                    ),
+                                    decoration: BoxDecoration(
+                                      color: selected
+                                          ? AppColors.primary
+                                          : AppColors.white,
+                                      borderRadius: BorderRadius.circular(25),
+                                    ),
+                                    child: AppText(
+                                      s.title ?? "",
+                                      style: context.textTheme.bodySmall!
+                                          .copyWith(
+                                            fontWeight: FontWeight.bold,
+                                            color: selected
+                                                ? AppColors.white
+                                                : AppColors.text,
+                                          ),
+                                    ),
+                                  ),
+                                );
+                              },
+                            ),
+                          ),
+                  ),
 
                   // Pickup / Delivery toggle chips
                   Container(
@@ -379,6 +399,7 @@ class _RiderHomeState extends State<RiderHome> {
                 left: 12,
                 child: FloatingActionButton(
                   mini: true,
+                  heroTag: 'rider_home_toggle_orders',
                   backgroundColor: Colors.white,
                   child: AppIcon(
                     icon: showOrders
