@@ -264,4 +264,17 @@ class RiderRepository {
       onSuccess: (data, _) => OrderModel.fromJson(data),
     );
   }
+
+  Future updateStatus({required bool isActive}) async {
+    return await ApiResponseHandler.handleRequest(
+      () => _apiService.multipartPost(
+        RiderEndpoints.updateUserProfile,
+        data: {"_method": "PATCH", 'is_rider_active': isActive ? 1 : 0},
+      ),
+      onSuccess: (data, _) {
+        final userData = data['user'];
+        return UserModel.fromJson(userData);
+      },
+    );
+  }
 }
