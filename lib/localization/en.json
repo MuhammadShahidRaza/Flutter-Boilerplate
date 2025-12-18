@@ -62,6 +62,8 @@
     "COUNTRY": "Country",
     "SHOW_ORDERS": "Show Orders",
     "HIDE_ORDERS": "Hide Orders",
+    "ACTIVE_STATUS": "Active Status",
+    "UPDATE_STATUS_DESCRIPTION": "Select the status that best describes your current availability and readiness to accept new orders or assignments. This helps us manage and allocate tasks efficiently based on your status.",
     "ENTER_COUNTRY": "Enter Country",
     "ENTER_CURRENT_PASSWORD": "Enter Current Password",
     "ENTER_USER_NAME": "Enter Username",
