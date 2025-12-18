@@ -23,7 +23,6 @@ class MessageBox extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         AppIcon(icon: icon, color: AppColors.primary),
-
         Expanded(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
