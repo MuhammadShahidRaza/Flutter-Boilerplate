@@ -15,7 +15,7 @@ class UserModel {
   final String? customerId;
   final String? profileImage;
   final String? gender;
-  final int? isRiderActive;
+  final bool? isRiderActive;
   final int? status;
   final String? language;
   final String? createdAt;
@@ -60,7 +60,10 @@ class UserModel {
       customerId: json['customer_id'] ?? "",
       profileImage: json['profile_image'],
       gender: json['gender'],
-      isRiderActive: json['is_rider_active'],
+      isRiderActive:
+          json['is_rider_active'] == "1" || json['is_rider_active'] == 1
+          ? true
+          : false,
       status: json['status'],
       language: json['language'] ?? Language.en.name,
       createdAt: json['created_at'],
