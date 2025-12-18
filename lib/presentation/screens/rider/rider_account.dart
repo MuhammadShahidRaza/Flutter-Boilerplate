@@ -28,6 +28,13 @@ class _RiderMyAccountState extends State<RiderMyAccount> {
       //   },
       // ),
       _AccountOption(
+        icon: Icons.table_rows_outlined,
+        title: Common.updateStatus,
+        onTap: () {
+          context.navigate(AppRoutes.updateStatus);
+        },
+      ),
+      _AccountOption(
         icon: Icons.directions_car_outlined,
         title: Common.myJobs,
         onTap: () {
@@ -82,71 +89,71 @@ class _RiderMyAccountState extends State<RiderMyAccount> {
           );
         },
       ),
-      _AccountOption(
-        icon: Icons.delete_outline,
-        title: Common.deleteAccount,
-        onTap: () {
-          AppDialog.show(
-            context,
-            title: Common.deleteAccount,
-            borderColor: AppColors.primary,
-            borderWidth: 5,
-            dismissible: false,
-            borderRadius: Dimens.radiusL,
-            content: AppText(
-              Common.doYouWantToDeleteAccount,
-              maxLines: 3,
-              textAlign: TextAlign.center,
-              style: context.textTheme.bodyLarge?.copyWith(
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-            showTwoPrimaryButtons: true,
-            primaryButtonText: Common.yes,
-            secondaryButtonText: Common.no,
-            onPrimaryPressed: () async {
-              // setState(() {
-              //   isLoading = true;
-              // });
-              context.back();
-              final currentContext = context;
-              final isDeleted = await _authRepository.deleteAccount();
-              if (isDeleted != null) {
-                if (!currentContext.mounted) return;
-                // setState(() {
-                //   isLoading = false;
-                // });
-                clearSession(context);
-                AppDialog.show(
-                  context,
-                  borderColor: AppColors.primary,
-                  borderWidth: 5,
-                  dismissible: false,
-                  borderRadius: Dimens.radiusL,
-                  content: AppText(
-                    Common.yourAccountHasBeenDeleted,
-                    maxLines: 3,
-                    textAlign: TextAlign.center,
-                    style: context.textTheme.bodyLarge?.copyWith(
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                  primaryButtonText: Common.signUpAgain,
-                  onPrimaryPressed: () async {
-                    context.replacePage(AppRoutes.getStarted);
-                  },
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  insetPadding: EdgeInsets.all(Dimens.spacingMLarge),
-                );
-              }
-            },
-            onSecondaryPressed: () => {context.back()},
-            backgroundColor: AppColors.lightWhite,
-            crossAxisAlignment: CrossAxisAlignment.center,
-            insetPadding: EdgeInsets.all(Dimens.spacingMLarge),
-          );
-        },
-      ),
+      // _AccountOption(
+      //   icon: Icons.delete_outline,
+      //   title: Common.deleteAccount,
+      //   onTap: () {
+      //     AppDialog.show(
+      //       context,
+      //       title: Common.deleteAccount,
+      //       borderColor: AppColors.primary,
+      //       borderWidth: 5,
+      //       dismissible: false,
+      //       borderRadius: Dimens.radiusL,
+      //       content: AppText(
+      //         Common.doYouWantToDeleteAccount,
+      //         maxLines: 3,
+      //         textAlign: TextAlign.center,
+      //         style: context.textTheme.bodyLarge?.copyWith(
+      //           fontWeight: FontWeight.bold,
+      //         ),
+      //       ),
+      //       showTwoPrimaryButtons: true,
+      //       primaryButtonText: Common.yes,
+      //       secondaryButtonText: Common.no,
+      //       onPrimaryPressed: () async {
+      //         // setState(() {
+      //         //   isLoading = true;
+      //         // });
+      //         context.back();
+      //         final currentContext = context;
+      //         final isDeleted = await _authRepository.deleteAccount();
+      //         if (isDeleted != null) {
+      //           if (!currentContext.mounted) return;
+      //           // setState(() {
+      //           //   isLoading = false;
+      //           // });
+      //           clearSession(context);
+      //           AppDialog.show(
+      //             context,
+      //             borderColor: AppColors.primary,
+      //             borderWidth: 5,
+      //             dismissible: false,
+      //             borderRadius: Dimens.radiusL,
+      //             content: AppText(
+      //               Common.yourAccountHasBeenDeleted,
+      //               maxLines: 3,
+      //               textAlign: TextAlign.center,
+      //               style: context.textTheme.bodyLarge?.copyWith(
+      //                 fontWeight: FontWeight.bold,
+      //               ),
+      //             ),
+      //             primaryButtonText: Common.signUpAgain,
+      //             onPrimaryPressed: () async {
+      //               context.replacePage(AppRoutes.getStarted);
+      //             },
+      //             crossAxisAlignment: CrossAxisAlignment.center,
+      //             insetPadding: EdgeInsets.all(Dimens.spacingMLarge),
+      //           );
+      //         }
+      //       },
+      //       onSecondaryPressed: () => {context.back()},
+      //       backgroundColor: AppColors.lightWhite,
+      //       crossAxisAlignment: CrossAxisAlignment.center,
+      //       insetPadding: EdgeInsets.all(Dimens.spacingMLarge),
+      //     );
+      //   },
+      // ),
     ];
 
     return AppWrapper(
@@ -157,7 +164,7 @@ class _RiderMyAccountState extends State<RiderMyAccount> {
       child: Stack(
         children: [
           Positioned(
-            bottom: context.w(0.8),
+            bottom: context.w(0.5),
             left: 0,
             right: 0,
             child: IgnorePointer(
@@ -210,7 +217,10 @@ class _RiderMyAccountState extends State<RiderMyAccount> {
                 ),
               ),
               Padding(
-                padding: const EdgeInsets.symmetric(vertical: Dimens.spacingXL),
+                padding: const EdgeInsets.only(
+                  bottom: Dimens.spacingLarge,
+                  top: 90,
+                ),
                 child: AppButton(
                   isLoading: isLoading,
                   title: Common.logout,
@@ -255,7 +265,7 @@ class _RiderMyAccountState extends State<RiderMyAccount> {
 
   Widget _buildHeader(BuildContext context) {
     return SizedBox(
-      height: 270,
+      height: 230,
       child: Stack(
         alignment: Alignment.topCenter,
         children: [
@@ -273,7 +283,7 @@ class _RiderMyAccountState extends State<RiderMyAccount> {
 
           // 🔹 Profile image
           Positioned(
-            top: 110,
+            top: 80,
             child: Consumer<UserProvider>(
               builder: (context, provider, child) {
                 final profileImage =
@@ -293,13 +303,12 @@ class _RiderMyAccountState extends State<RiderMyAccount> {
 
           // 🔹 Name / info below avatar
           Positioned(
-            top: 210, // adjust spacing below avatar
+            top: 180, // adjust spacing below avatar
             child: Consumer<UserProvider>(
               builder: (context, provider, child) {
                 final name = provider.fullName.isNotEmpty
                     ? provider.fullName
                     : Common.guest;
-                final customerId = provider.user?.customerId ?? '-';
                 return Column(
                   spacing: Dimens.spacingS,
                   children: [
