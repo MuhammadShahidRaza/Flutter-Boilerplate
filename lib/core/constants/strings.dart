@@ -18,6 +18,7 @@ class Common {
 
   static const email = "COMMON.EMAIL";
   static const feild = "COMMON.FEILD";
+  static const updateStatusDescription = "COMMON.UPDATE_STATUS_DESCRIPTION";
   static const password = "COMMON.PASSWORD";
   static const forgotPassword = "COMMON.FORGOT_PASSWORD";
   static const resetPassword = "COMMON.RESET_PASSWORD";
@@ -157,6 +158,7 @@ class Common {
   static const additionalNotes = "COMMON.ADDITIONAL_NOTES";
   static const additionalNotesOptional = "COMMON.ADDITIONAL_NOTES_OPTIONAL";
   static const status = "COMMON.STATUS";
+  static const activeStatus = "COMMON.ACTIVE_STATUS";
   static const placeOrder = "COMMON.PLACE_ORDER";
   static const orderPlaced = "COMMON.ORDER_PLACED";
   static const viewMyOrders = "COMMON.VIEW_MY_ORDERS";
