@@ -13,6 +13,7 @@ class AppAssets {
   static const order = "${_imagePath}common/order.png";
   static const temp = "${_imagePath}common/temp.png";
   static const pickerPlaceholder = "${_imagePath}common/picker.png";
+  static const orderModalLocation = "${_imagePath}common/location.png";
 
   // AUTH
   static const onboardingOne = "${_imagePath}auth/onboarding_one.png";
