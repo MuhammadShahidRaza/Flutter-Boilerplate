@@ -10,11 +10,13 @@ class JobCard extends StatelessWidget {
     required this.order,
     required this.type,
     this.tabType,
+    this.onTap,
   });
 
   final OrderModel order;
   final String type;
   final String? tabType;
+  final void Function()? onTap;
 
   @override
   Widget build(BuildContext context) {
@@ -25,9 +27,14 @@ class JobCard extends StatelessWidget {
       clipBehavior: Clip.antiAlias,
       margin: const EdgeInsets.symmetric(vertical: Dimens.spacingS),
       child: InkWell(
-        onTap: () {
-          context.navigate(AppRoutes.jobDetails, extra: order.id.toString());
-        },
+        onTap:
+            onTap ??
+            () {
+              context.navigate(
+                AppRoutes.jobDetails,
+                extra: order.id.toString(),
+              );
+            },
         child: Padding(
           padding: EdgeInsets.all(Dimens.spacingS),
           child: Column(
