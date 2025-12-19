@@ -7,6 +7,7 @@ class MessageBox extends StatelessWidget {
   final String title;
   final String value;
   final int? descriptionMaxLines;
+  final VoidCallback? onTap;
 
   const MessageBox({
     super.key,
@@ -14,37 +15,41 @@ class MessageBox extends StatelessWidget {
     required this.title,
     required this.value,
     this.descriptionMaxLines,
+    this.onTap,
   });
 
   @override
   Widget build(BuildContext context) {
-    return Row(
-      spacing: Dimens.spacingMSmall,
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        AppIcon(icon: icon, color: AppColors.primary),
-        Expanded(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            spacing: Dimens.spacingXS,
-            children: [
-              AppText(
-                title,
-                style: context.textTheme.bodyMedium!.copyWith(
-                  fontWeight: FontWeight.bold,
+    return GestureDetector(
+      onTap: onTap,
+      child: Row(
+        spacing: Dimens.spacingMSmall,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          AppIcon(icon: icon, color: AppColors.primary),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              spacing: Dimens.spacingXS,
+              children: [
+                AppText(
+                  title,
+                  style: context.textTheme.bodyMedium!.copyWith(
+                    fontWeight: FontWeight.bold,
+                  ),
                 ),
-              ),
-              AppText(
-                value,
-                maxLines: descriptionMaxLines,
-                style: context.textTheme.bodySmall!.copyWith(
-                  color: AppColors.textSecondary,
+                AppText(
+                  value,
+                  maxLines: descriptionMaxLines,
+                  style: context.textTheme.bodySmall!.copyWith(
+                    color: AppColors.textSecondary,
+                  ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
-        ),
-      ],
+        ],
+      ),
     );
   }
 }
