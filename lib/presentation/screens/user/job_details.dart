@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:sanam_laundry/core/index.dart';
 import 'package:sanam_laundry/core/utils/helper.dart';
+import 'package:sanam_laundry/core/utils/launcher.dart';
 import 'package:sanam_laundry/core/widgets/message_box.dart';
 import 'package:sanam_laundry/data/models/cart.dart';
 import 'package:sanam_laundry/data/models/order.dart';
@@ -365,7 +366,7 @@ class _JobDetailsState extends State<JobDetails> {
                         AppText(
                           ': ${userDetails?.phone ?? ''}',
                           onTap: () {
-                            // Helper.launchPhoneDialer(userDetails?.phone ?? '');
+                            AppLauncher.openPhone(userDetails?.phone ?? '');
                           },
                         ),
                       ],
