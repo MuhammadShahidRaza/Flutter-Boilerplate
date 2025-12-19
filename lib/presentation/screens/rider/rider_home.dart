@@ -116,7 +116,10 @@ class _RiderHomeState extends State<RiderHome> {
 
   Future<void> changeStatus(bool value) async {
     final provider = Provider.of<UserProvider>(context, listen: false);
-    final user = await _riderRepository.updateStatus(isActive: value);
+    final user = await _riderRepository.updateStatus(
+      isActive: value,
+      location: provider.currentLocation,
+    );
     if (user != null) {
       await provider.updateUser(user);
     }
@@ -385,6 +388,12 @@ class _RiderHomeState extends State<RiderHome> {
                         return JobCard(
                           order: item,
                           type: isPickup ? "pickup" : "delivery",
+                          onTap: () => {
+                            context.navigate(
+                              AppRoutes.riderHomeOrder,
+                              extra: item,
+                            ),
+                          },
                         );
                       },
                     ),
