@@ -196,8 +196,7 @@ class HomeRepository {
 
   Future getOrders(String status) async {
     return await ApiResponseHandler.handleRequest(
-      () =>
-          _apiService.get(RiderEndpoints.getOrders, query: {"status": status}),
+      () => _apiService.get(Endpoints.getOrders, query: {"status": status}),
       onSuccess: (data, _) {
         final orders = Utils.safeList(data?["Booking"]);
         final list = orders.map((e) => OrderModel.fromJson(e)).toList();
