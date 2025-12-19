@@ -5,6 +5,7 @@ import 'package:sanam_laundry/presentation/index.dart';
 import 'package:sanam_laundry/presentation/screens/rider/my_jobs.dart';
 import 'package:sanam_laundry/presentation/screens/rider/rider_account.dart';
 import 'package:sanam_laundry/presentation/screens/rider/rider_home.dart';
+import 'package:sanam_laundry/presentation/screens/rider/rider_home_order.dart';
 import 'package:sanam_laundry/presentation/screens/rider/rider_notification.dart';
 import 'package:sanam_laundry/presentation/screens/rider/update_status.dart';
 import 'package:sanam_laundry/presentation/screens/user/job_details.dart';
@@ -141,6 +142,10 @@ class GoRouterSetup {
       ),
 
       // App stack with persistent tab navigation
+      GoRoute(
+        path: AppRoutes.riderHomeOrder,
+        builder: (context, state) => const RiderHomeOrder(),
+      ),
       GoRoute(
         path: AppRoutes.contactUs,
         builder: (context, state) => const ContactUs(),
