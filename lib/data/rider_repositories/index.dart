@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:sanam_laundry/core/index.dart';
 import 'package:sanam_laundry/core/network/api_response.dart';
 import 'package:sanam_laundry/core/utils/helper.dart';
@@ -265,11 +266,18 @@ class RiderRepository {
     );
   }
 
-  Future updateStatus({required bool isActive}) async {
+  Future updateStatus({required bool isActive, LatLng? location}) async {
     return await ApiResponseHandler.handleRequest(
       () => _apiService.multipartPost(
         RiderEndpoints.updateUserProfile,
-        data: {"_method": "PATCH", 'is_rider_active': isActive ? 1 : 0},
+        data: {
+          "_method": "PATCH",
+          'is_rider_active': isActive ? 1 : 0,
+          if (location != null) ...{
+            'latitude': location.latitude,
+            'longitude': location.longitude,
+          },
+        },
       ),
       onSuccess: (data, _) {
         final userData = data['user'];
