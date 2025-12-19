@@ -3,8 +3,10 @@ import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:geocoding/geocoding.dart';
+import 'package:provider/provider.dart';
 import 'package:sanam_laundry/core/utils/index.dart';
 import 'package:sanam_laundry/core/widgets/icon.dart';
+import 'package:sanam_laundry/providers/index.dart';
 
 class AddressPickerMap extends StatefulWidget {
   /// When an address is selected externally (e.g., via Autocomplete),
@@ -26,6 +28,7 @@ class AddressPickerMap extends StatefulWidget {
   final bool showMarkerOnTap;
   final bool showMapCurrentLocationMarker;
   final double bottomHeight;
+  final Set<Polyline>? polylines;
 
   const AddressPickerMap({
     super.key,
@@ -33,6 +36,7 @@ class AddressPickerMap extends StatefulWidget {
     this.selectedLatLng,
     this.showCurrentLocationButton = true,
     this.showCurrentLocationMarker = true,
+    this.polylines,
     this.showMarkerOnTap = true,
     this.showMapCurrentLocationMarker = false,
     this.children,
@@ -102,6 +106,10 @@ class _AddressPickerMapState extends State<AddressPickerMap> {
       });
     }
 
+    if (mounted) {
+      final provider = context.read<UserProvider>();
+      provider.updateCurrentLocation(_initialLatLng);
+    }
     // _reverseGeocode(_initialLatLng);
   }
 
@@ -172,6 +180,7 @@ class _AddressPickerMapState extends State<AddressPickerMap> {
             target: _initialLatLng,
             zoom: 12,
           ),
+          polylines: widget.polylines ?? {},
           onMapCreated: (controller) => _controller.complete(controller),
           markers: allMarkers,
           onTap: widget.showMarkerOnTap ? _handleTap : null,
