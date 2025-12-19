@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:sanam_laundry/core/utils/helper.dart';
 import 'package:sanam_laundry/data/index.dart';
 
@@ -10,10 +11,18 @@ class UserProvider extends ChangeNotifier {
   UserModel? _user;
   UserRole? _role;
   UserRole? get role => _role;
+  LatLng _currentLocation = LatLng(0, 0);
+  LatLng get currentLocation => _currentLocation;
+
   bool get isRider => _role == UserRole.rider;
 
   void setRole(UserRole role) {
     _role = role;
+    notifyListeners();
+  }
+
+  void updateCurrentLocation(LatLng location) {
+    _currentLocation = location;
     notifyListeners();
   }
 
