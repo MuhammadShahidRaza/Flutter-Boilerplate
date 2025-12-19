@@ -108,15 +108,16 @@ class _ContactUsState extends State<ContactUs> {
                   fieldKey: FieldType.email,
                   controller: emailController,
                 ),
-
-                AppPhoneInput(
-                  title: Common.phoneNumber,
-                  hint: Common.enterPhoneNumber,
-                  controller: phoneController,
-                  enabled: false,
-                  marginBottom: Dimens.spacingM,
-                ),
-
+                if (user?.userRole != null &&
+                    user!.userRole == UserRole.user.name) ...[
+                  AppPhoneInput(
+                    title: Common.phoneNumber,
+                    hint: Common.enterPhoneNumber,
+                    controller: phoneController,
+                    enabled: false,
+                    marginBottom: Dimens.spacingM,
+                  ),
+                ],
                 AppInput(
                   title: Common.description,
                   hint: Common.enterYourMessage,
