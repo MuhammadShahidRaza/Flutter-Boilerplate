@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_polyline_points/flutter_polyline_points.dart';
+import 'package:go_router/go_router.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:provider/provider.dart';
 import 'package:sanam_laundry/core/index.dart';
@@ -125,9 +126,9 @@ class _RiderHomeOrderState extends State<RiderHomeOrder> {
     }
   }
 
-  Future<void> changeStatus(bool value) async {
+  Future<void> updateRiderActiveStatus(bool value) async {
     final provider = Provider.of<UserProvider>(context, listen: false);
-    final user = await _riderRepository.updateStatus(
+    final user = await _riderRepository.updateRiderActiveStatus(
       isActive: value,
       location: provider.currentLocation,
     );
@@ -136,13 +137,31 @@ class _RiderHomeOrderState extends State<RiderHomeOrder> {
     }
   }
 
+  Future<OrderModel?> updateOrderStatus(status) async {
+    final response = await _riderRepository.updateOrderStatus(
+      status: status,
+      id: orderDetails!.id!.toString(),
+    );
+
+    if (response != null) {
+      setState(() => orderDetails = response);
+      return response;
+    }
+    return null;
+  }
+
   @override
   void initState() {
     super.initState();
     final provider = context.read<UserProvider>();
     isActive = provider.user?.isRiderActive ?? false;
-
     _polylinePoints = PolylinePoints(apiKey: Environment.mapKey);
+  }
+
+  void onPressed(status) async {
+    if (!mounted) return;
+    final updatedOrder = await updateOrderStatus(status);
+    context.pop(updatedOrder);
   }
 
   @override
@@ -168,7 +187,7 @@ class _RiderHomeOrderState extends State<RiderHomeOrder> {
                 setState(() {
                   isActive = value;
                 });
-                changeStatus(value);
+                updateRiderActiveStatus(value);
               },
               thumbColor: WidgetStatePropertyAll(AppColors.secondary),
               activeThumbColor: AppColors.tertiary,
@@ -183,7 +202,7 @@ class _RiderHomeOrderState extends State<RiderHomeOrder> {
         showCurrentLocationMarker: false,
         showMapCurrentLocationMarker: false,
         polylines: _polylines,
-        bottomHeight: context.h(0.6),
+        bottomHeight: context.h(0.5),
         markers: _markers.toList(),
         // overlay children stacked on top of map
         children: Stack(
@@ -274,7 +293,7 @@ class _RiderHomeOrderState extends State<RiderHomeOrder> {
                       spacing: Dimens.spacingM,
                       children: [
                         AppButton(
-                          title: orderDetails?.status ?? "",
+                          title: orderDetails?.nextStatus ?? "",
                           onPressed: () {
                             AppDialog.show(
                               context,
@@ -290,7 +309,10 @@ class _RiderHomeOrderState extends State<RiderHomeOrder> {
                                   fontWeight: FontWeight.bold,
                                 ),
                               ),
-                              onPrimaryPressed: () => {context.back()},
+                              onPrimaryPressed: () => {
+                                onPressed(orderDetails?.nextStatus),
+                                context.pop(),
+                              },
                               showTwoPrimaryButtons: true,
                               primaryButtonText: Common.yes,
                               secondaryButtonText: Common.no,
@@ -315,47 +337,51 @@ class _RiderHomeOrderState extends State<RiderHomeOrder> {
                           ),
                         ),
 
-                        AppButton(
-                          title: orderDetails?.status ?? "",
-                          onPressed: () {
-                            AppDialog.show(
-                              context,
-                              borderColor: AppColors.primary,
-                              borderWidth: 5,
-                              dismissible: false,
-                              borderRadius: Dimens.radiusL,
-                              content: AppText(
-                                Common.areYouSureYouWantToUpdateStatus,
-                                maxLines: 3,
-                                textAlign: TextAlign.center,
-                                style: context.textTheme.bodyLarge?.copyWith(
-                                  fontWeight: FontWeight.bold,
+                        if (orderDetails?.nextStatus == "Arrived For Pick-up")
+                          AppButton(
+                            title: Common.unsuccessfullAttempt,
+                            onPressed: () {
+                              AppDialog.show(
+                                context,
+                                borderColor: AppColors.primary,
+                                borderWidth: 5,
+                                dismissible: false,
+                                borderRadius: Dimens.radiusL,
+                                content: AppText(
+                                  Common.areYouSureYouWantToUpdateStatus,
+                                  maxLines: 3,
+                                  textAlign: TextAlign.center,
+                                  style: context.textTheme.bodyLarge?.copyWith(
+                                    fontWeight: FontWeight.bold,
+                                  ),
                                 ),
+                                onPrimaryPressed: () => {
+                                  onPressed("Unsuccessful Attempt"),
+                                  context.pop(),
+                                },
+                                showTwoPrimaryButtons: true,
+                                primaryButtonText: Common.yes,
+                                secondaryButtonText: Common.no,
+                                onSecondaryPressed: () => {context.back()},
+                                backgroundColor: AppColors.lightWhite,
+                                crossAxisAlignment: CrossAxisAlignment.center,
+                                insetPadding: EdgeInsets.all(Dimens.spacingXXL),
+                              );
+                            },
+                            padding: EdgeInsets.zero,
+                            style: ButtonStyle(
+                              minimumSize: WidgetStatePropertyAll(
+                                Size(context.w(0.6), 45),
                               ),
-                              onPrimaryPressed: () => {context.back()},
-                              showTwoPrimaryButtons: true,
-                              primaryButtonText: Common.yes,
-                              secondaryButtonText: Common.no,
-                              onSecondaryPressed: () => {context.back()},
-                              backgroundColor: AppColors.lightWhite,
-                              crossAxisAlignment: CrossAxisAlignment.center,
-                              insetPadding: EdgeInsets.all(Dimens.spacingXXL),
-                            );
-                          },
-                          padding: EdgeInsets.zero,
-                          style: ButtonStyle(
-                            minimumSize: WidgetStatePropertyAll(
-                              Size(context.w(0.6), 45),
-                            ),
-                            shape: WidgetStatePropertyAll(
-                              RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(
-                                  Dimens.radiusXxs,
+                              shape: WidgetStatePropertyAll(
+                                RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(
+                                    Dimens.radiusXxs,
+                                  ),
                                 ),
                               ),
                             ),
                           ),
-                        ),
                       ],
                     ),
                   ],
