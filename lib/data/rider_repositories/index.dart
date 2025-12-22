@@ -11,6 +11,7 @@ import 'package:sanam_laundry/data/models/service.dart';
 import 'package:sanam_laundry/data/models/settings.dart';
 import 'package:sanam_laundry/data/models/slot.dart';
 import 'package:sanam_laundry/data/services/rider_endpoints.dart';
+import 'package:sanam_laundry/presentation/screens/rider/my_jobs.dart';
 
 class RiderRepository {
   final ApiService _apiService = ApiService();
@@ -210,12 +211,13 @@ class RiderRepository {
 
   Future getOrders({type, slotId, status, search}) async {
     final query = {"type": type, "slot_id": slotId};
-    if (status == "completed") {
+    if (status == JobStatus.completed.label) {
       query["completed"] = true;
+    } else if (status == JobStatus.ordersInVehicle.label) {
+      query["order_in_vehicle"] = true;
     } else if (status != null) {
       query["status"] = status;
     }
-
     if (search != null && search.isNotEmpty) {
       query["search"] = search;
     }
@@ -266,7 +268,10 @@ class RiderRepository {
     );
   }
 
-  Future updateStatus({required bool isActive, LatLng? location}) async {
+  Future updateRiderActiveStatus({
+    required bool isActive,
+    LatLng? location,
+  }) async {
     return await ApiResponseHandler.handleRequest(
       () => _apiService.multipartPost(
         RiderEndpoints.updateUserProfile,
@@ -282,6 +287,19 @@ class RiderRepository {
       onSuccess: (data, _) {
         final userData = data['user'];
         return UserModel.fromJson(userData);
+      },
+    );
+  }
+
+  Future updateOrderStatus({required String status, required String id}) async {
+    return await ApiResponseHandler.handleRequest(
+      () => _apiService.multipartPost(
+        "${RiderEndpoints.updateOrder}$id/update-status",
+        data: {"_method": "PATCH", "status": status},
+        config: const ApiRequestConfig(showLoader: true),
+      ),
+      onSuccess: (data, _) {
+        return OrderModel.fromJson(data);
       },
     );
   }
