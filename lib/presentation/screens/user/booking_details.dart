@@ -94,7 +94,7 @@ class _BookingDetailsState extends State<BookingDetails> {
                           ),
                         ),
                         AppText(
-                          ': ${orderDetails?.id}',
+                          ': ${orderDetails?.orderNumber ?? ""}',
                           style: context.textTheme.titleSmall!.copyWith(
                             fontWeight: FontWeight.bold,
                             color: AppColors.primary,
