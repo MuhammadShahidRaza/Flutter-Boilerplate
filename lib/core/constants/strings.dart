@@ -24,6 +24,8 @@ class Common {
   static const resetPassword = "COMMON.RESET_PASSWORD";
   static const delivery = "COMMON.DELIVERY";
   static const pickUp = "COMMON.PICK_UP";
+  static const deliveryOrder = "COMMON.DELIVERY_ORDER";
+  static const pickUpOrder = "COMMON.PICK_UP_ORDER";
   static const todayOrders = "COMMON.TODAY_ORDERS";
   static const todayDelivered = "COMMON.TODAY_DELIVERED";
   static const onlineTime = "COMMON.ONLINE_TIME";
