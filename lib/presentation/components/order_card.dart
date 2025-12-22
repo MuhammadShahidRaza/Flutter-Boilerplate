@@ -62,7 +62,7 @@ class OrderCard extends StatelessWidget {
                               ),
                             ),
                             AppText(
-                              ': ${order.id}',
+                              ': ${order.orderNumber ?? ""}',
                               style: context.textTheme.bodySmall!.copyWith(
                                 fontWeight: FontWeight.bold,
                                 color: AppColors.primary,
