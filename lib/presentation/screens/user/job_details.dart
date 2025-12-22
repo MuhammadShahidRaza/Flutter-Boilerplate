@@ -9,6 +9,7 @@ import 'package:sanam_laundry/data/models/order.dart';
 import 'package:sanam_laundry/data/rider_repositories/index.dart';
 import 'package:sanam_laundry/presentation/components/service_table.dart';
 import 'package:sanam_laundry/presentation/index.dart';
+import 'package:sanam_laundry/presentation/screens/rider/my_jobs.dart';
 
 class JobDetails extends StatefulWidget {
   const JobDetails({super.key});
@@ -39,7 +40,7 @@ class _JobDetailsState extends State<JobDetails> {
     super.didChangeDependencies();
 
     if (!_initialized) {
-      bookingId = context.getExtra<String>() ?? '';
+      bookingId = context.getExtra<Map<String, dynamic>>()?["id"] ?? '';
       _initialized = true;
       _loadOrderDetailsById();
     }
@@ -52,10 +53,31 @@ class _JobDetailsState extends State<JobDetails> {
     return val?.toString() ?? '';
   }
 
+  Future<OrderModel?> updateOrderStatus(status) async {
+    final response = await _riderRepository.updateOrderStatus(
+      status: status,
+      id: orderDetails!.id!.toString(),
+    );
+
+    if (response != null) {
+      setState(() => orderDetails = response);
+      return response;
+    }
+    return null;
+  }
+
+  void onPressed(status) async {
+    if (!mounted) return;
+    await updateOrderStatus(status);
+  }
+
   @override
   Widget build(BuildContext context) {
     final userDetails = orderDetails?.user;
-
+    final isCompleted =
+        context.getExtra<Map<String, dynamic>>()?["tabType"] ==
+        JobStatus.completed.label;
+    final tabType = context.getExtra<Map<String, dynamic>>()?["tabType"] ?? '';
     return AppWrapper(
       showBackButton: true,
       scrollable: true,
@@ -90,7 +112,7 @@ class _JobDetailsState extends State<JobDetails> {
                       ),
                     ),
                     AppText(
-                      ': ${orderDetails?.id}',
+                      ': ${orderDetails?.orderNumber ?? ""}',
                       style: context.textTheme.titleSmall!.copyWith(
                         fontWeight: FontWeight.bold,
                         color: AppColors.primary,
@@ -98,29 +120,31 @@ class _JobDetailsState extends State<JobDetails> {
                     ),
                   ],
                 ),
-                AppButton(
-                  title: Common.completed,
-                  onPressed: () {},
-                  backgroundColor: AppColors.secondary,
-                  padding: EdgeInsets.symmetric(
-                    vertical: Dimens.spacingXS,
-                    horizontal: Dimens.spacingS,
-                  ),
-                  textStyle: context.textTheme.bodySmall!.copyWith(
-                    fontWeight: FontWeight.bold,
-                    color: AppColors.white,
-                  ),
-                  style: ButtonStyle(
-                    minimumSize: WidgetStatePropertyAll(
-                      Size(context.w(0.22), 25),
+
+                if (tabType.isNotEmpty)
+                  AppButton(
+                    title: tabType,
+                    onPressed: () {},
+                    backgroundColor: AppColors.secondary,
+                    padding: EdgeInsets.symmetric(
+                      vertical: Dimens.spacingXS,
+                      horizontal: Dimens.spacingS,
                     ),
-                    shape: WidgetStatePropertyAll(
-                      RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(Dimens.radiusXxs),
+                    textStyle: context.textTheme.bodySmall!.copyWith(
+                      fontWeight: FontWeight.bold,
+                      color: AppColors.white,
+                    ),
+                    style: ButtonStyle(
+                      minimumSize: WidgetStatePropertyAll(
+                        Size(context.w(0.22), 25),
+                      ),
+                      shape: WidgetStatePropertyAll(
+                        RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(Dimens.radiusXxs),
+                        ),
                       ),
                     ),
                   ),
-                ),
 
                 Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -183,6 +207,7 @@ class _JobDetailsState extends State<JobDetails> {
                                   Expanded(
                                     child: ImagePickerBox(
                                       initialImagePath:
+                                          orderDetails?.buildingImage ??
                                           AppAssets.pickerPlaceholder,
                                       borderColor: AppColors.border,
                                       wantBottomSpace: false,
@@ -193,6 +218,7 @@ class _JobDetailsState extends State<JobDetails> {
                                   Expanded(
                                     child: ImagePickerBox(
                                       initialImagePath:
+                                          orderDetails?.appartmentImage ??
                                           AppAssets.pickerPlaceholder,
                                       borderColor: AppColors.border,
                                       wantBottomSpace: false,
@@ -308,71 +334,122 @@ class _JobDetailsState extends State<JobDetails> {
                     ),
                   ],
                 ),
-
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  spacing: Dimens.spacingM,
-                  children: [
-                    AppText(
-                      Common.updateStatus,
-                      style: context.textTheme.titleLarge,
-                    ),
-                    AppButton(
-                      title: orderDetails?.status ?? "",
-                      onPressed: () {
-                        AppDialog.show(
-                          context,
-                          borderColor: AppColors.primary,
-                          borderWidth: 5,
-                          dismissible: false,
-                          borderRadius: Dimens.radiusL,
-                          content: AppText(
-                            Common.areYouSureYouWantToUpdateStatus,
-                            maxLines: 3,
-                            textAlign: TextAlign.center,
-                            style: context.textTheme.bodyLarge?.copyWith(
-                              fontWeight: FontWeight.bold,
+                if (!isCompleted)
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    spacing: Dimens.spacingM,
+                    children: [
+                      AppText(
+                        Common.updateStatus,
+                        style: context.textTheme.titleLarge,
+                      ),
+                      AppButton(
+                        title: orderDetails?.nextStatus ?? "",
+                        onPressed: () {
+                          AppDialog.show(
+                            context,
+                            borderColor: AppColors.primary,
+                            borderWidth: 5,
+                            dismissible: false,
+                            borderRadius: Dimens.radiusL,
+                            content: AppText(
+                              Common.areYouSureYouWantToUpdateStatus,
+                              maxLines: 3,
+                              textAlign: TextAlign.center,
+                              style: context.textTheme.bodyLarge?.copyWith(
+                                fontWeight: FontWeight.bold,
+                              ),
                             ),
+                            onPrimaryPressed: () => {
+                              onPressed(orderDetails?.nextStatus),
+                              context.back(),
+                            },
+                            showTwoPrimaryButtons: true,
+                            primaryButtonText: Common.yes,
+                            secondaryButtonText: Common.no,
+                            onSecondaryPressed: () => {context.back()},
+                            backgroundColor: AppColors.lightWhite,
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            insetPadding: EdgeInsets.all(Dimens.spacingXXL),
+                          );
+                        },
+                        padding: EdgeInsets.zero,
+                        style: ButtonStyle(
+                          minimumSize: WidgetStatePropertyAll(
+                            Size(context.w(0.6), 45),
                           ),
-                          onPrimaryPressed: () => {context.back()},
-                          showTwoPrimaryButtons: true,
-                          primaryButtonText: Common.yes,
-                          secondaryButtonText: Common.no,
-                          onSecondaryPressed: () => {context.back()},
-                          backgroundColor: AppColors.lightWhite,
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          insetPadding: EdgeInsets.all(Dimens.spacingXXL),
-                        );
-                      },
-                      padding: EdgeInsets.zero,
-                      style: ButtonStyle(
-                        minimumSize: WidgetStatePropertyAll(
-                          Size(context.w(0.6), 45),
-                        ),
-                        shape: WidgetStatePropertyAll(
-                          RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(
-                              Dimens.radiusXxs,
+                          shape: WidgetStatePropertyAll(
+                            RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(
+                                Dimens.radiusXxs,
+                              ),
                             ),
                           ),
                         ),
                       ),
-                    ),
 
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        AppText(Common.customerPhone),
-                        AppText(
-                          ': ${userDetails?.phone ?? ''}',
-                          onTap: () {
-                            AppLauncher.openPhone(userDetails?.phone ?? '');
+                      if (orderDetails?.nextStatus == "Arrived For Pick-up")
+                        AppButton(
+                          title: Common.unsuccessfullAttempt,
+                          onPressed: () {
+                            AppDialog.show(
+                              context,
+                              borderColor: AppColors.primary,
+                              borderWidth: 5,
+                              dismissible: false,
+                              borderRadius: Dimens.radiusL,
+                              content: AppText(
+                                Common.areYouSureYouWantToUpdateStatus,
+                                maxLines: 3,
+                                textAlign: TextAlign.center,
+                                style: context.textTheme.bodyLarge?.copyWith(
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                              onPrimaryPressed: () => {
+                                onPressed("Unsuccessful Attempt"),
+                                context.back(),
+                              },
+                              showTwoPrimaryButtons: true,
+                              primaryButtonText: Common.yes,
+                              secondaryButtonText: Common.no,
+                              onSecondaryPressed: () => {context.back()},
+                              backgroundColor: AppColors.lightWhite,
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              insetPadding: EdgeInsets.all(Dimens.spacingXXL),
+                            );
                           },
+                          padding: EdgeInsets.zero,
+                          style: ButtonStyle(
+                            minimumSize: WidgetStatePropertyAll(
+                              Size(context.w(0.6), 45),
+                            ),
+
+                            shape: WidgetStatePropertyAll(
+                              RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(
+                                  Dimens.radiusXxs,
+                                ),
+                              ),
+                            ),
+                          ),
+                          backgroundColor: AppColors.bottomTabText,
                         ),
-                      ],
-                    ),
-                  ],
-                ),
+
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          AppText(Common.customerPhone),
+                          AppText(
+                            ': ${userDetails?.phone ?? ''}',
+                            onTap: () {
+                              AppLauncher.openPhone(userDetails?.phone ?? '');
+                            },
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
               ],
             ),
     );
