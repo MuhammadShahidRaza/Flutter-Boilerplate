@@ -234,6 +234,14 @@ class _OrderDetailsState extends State<OrderDetails> {
               cart.addOrderDetail("delivery_slot_id", selectedDeliverySlotId);
               cart.addOrderDetail("address", selectedAddress?.address ?? "");
               cart.addOrderDetail("city", selectedAddress?.city ?? "");
+              cart.addOrderDetail(
+                "building_image_url",
+                selectedAddress?.buildingImage ?? "",
+              );
+              cart.addOrderDetail(
+                "apartment_image_url",
+                selectedAddress?.apartmentImage ?? "",
+              );
               cart.addOrderDetail("state", selectedAddress?.state ?? "");
               cart.addOrderDetail("latitude", selectedAddress?.latitude ?? "");
               cart.addOrderDetail(
