@@ -88,7 +88,8 @@ class _RiderHomeState extends State<RiderHome> {
                     );
                   },
                   title: Utils.getfullName(e.user),
-                  snippet: "${context.tr(Common.orderId)} ${e.id}",
+                  snippet:
+                      "${context.tr(Common.orderId)} ${e.orderNumber ?? ""}",
                 ),
               );
             }).toList();
@@ -114,9 +115,9 @@ class _RiderHomeState extends State<RiderHome> {
     });
   }
 
-  Future<void> changeStatus(bool value) async {
+  Future<void> changeRiderActiveStatus(bool value) async {
     final provider = Provider.of<UserProvider>(context, listen: false);
-    final user = await _riderRepository.updateStatus(
+    final user = await _riderRepository.updateRiderActiveStatus(
       isActive: value,
       location: provider.currentLocation,
     );
@@ -195,7 +196,7 @@ class _RiderHomeState extends State<RiderHome> {
                 setState(() {
                   isActive = value;
                 });
-                changeStatus(value);
+                changeRiderActiveStatus(value);
               },
               thumbColor: WidgetStatePropertyAll(AppColors.secondary),
               activeThumbColor: AppColors.tertiary,
@@ -388,11 +389,11 @@ class _RiderHomeState extends State<RiderHome> {
                         return JobCard(
                           order: item,
                           type: isPickup ? "pickup" : "delivery",
-                          onTap: () => {
+                          onTap: () {
                             context.navigate(
                               AppRoutes.riderHomeOrder,
                               extra: item,
-                            ),
+                            );
                           },
                         );
                       },
