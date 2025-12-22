@@ -21,7 +21,7 @@ class RiderEndpoints {
   static const String getHomeOrders = "rider/home";
   static const String getOrders = "rider/booking";
   static const String createOrder = "rider/booking/create";
-  static const String updateOrder = "rider//orders/update";
+  static const String updateOrder = "rider/booking/";
 
   //SETTINGS
   static const String notifications = "rider/notification";
