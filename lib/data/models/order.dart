@@ -14,11 +14,15 @@ class OrderModel {
     required this.deliveryDatetime,
     required this.deliverySlotId,
     required this.address,
+    required this.orderNumber,
     required this.city,
     required this.state,
     required this.latitude,
     required this.longitude,
+    required this.appartmentImage,
+    required this.buildingImage,
     required this.status,
+    required this.nextStatus,
     required this.paymentStatus,
     required this.subTotal,
     required this.tax,
@@ -58,10 +62,14 @@ class OrderModel {
   final String? latitude;
   final String? longitude;
   final String status;
+  final String nextStatus;
   final String? paymentStatus;
   final String? subTotal;
   final String? tax;
   final String? deliveryCharges;
+  final String? orderNumber;
+  final String? buildingImage;
+  final String? appartmentImage;
   final String? totalAmount;
   final dynamic paymentMethod;
   final dynamic transactionId;
@@ -95,9 +103,13 @@ class OrderModel {
       address: json["address"],
       city: json["city"],
       state: json["state"],
+      orderNumber: json["order_number"],
       latitude: json["latitude"],
+      buildingImage: json["building_image_url"],
+      appartmentImage: json["apartment_image_url"],
       longitude: json["longitude"],
       status: json["status"],
+      nextStatus: json["next_status"],
       paymentStatus: json["payment_status"],
       subTotal: json["sub_total"] == null ? "0" : json["sub_total"].toString(),
       tax: json["tax"] == null ? "0" : json["tax"].toString(),
