@@ -280,6 +280,8 @@
     "ORDER_DETAILS": "تفاصيل الطلب",
     "ADDITIONAL_INFORMATION": "معلومات إضافية",
     "MY_ADDRESSES": "عناويني",
+    "DELIVERY_ORDER": "طلب توصيل",
+    "PICK_UP_ORDER": "طلب استلام",
     "SUBTOTAL": "المجموع الفرعي",
     "DELIVERY_CHARGES": "رسوم التوصيل",
     "ADD_ONS": "إضافات",
