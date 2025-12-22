@@ -27,7 +27,10 @@ class _UpdateStatusState extends State<UpdateStatus> {
   Future<void> _submit() async {
     final provider = Provider.of<UserProvider>(context, listen: false);
     setState(() => isLoading = true);
-    final user = await _riderRepository.updateStatus(isActive: isActive);
+    final user = await _riderRepository.updateRiderActiveStatus(
+      isActive: isActive,
+      location: provider.currentLocation,
+    );
     if (user != null) {
       await provider.updateUser(user);
       if (!mounted) return;
