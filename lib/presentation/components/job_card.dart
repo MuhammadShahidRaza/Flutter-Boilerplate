@@ -3,6 +3,7 @@ import 'package:sanam_laundry/core/index.dart';
 import 'package:sanam_laundry/core/utils/helper.dart';
 import 'package:sanam_laundry/data/models/order.dart';
 import 'package:sanam_laundry/presentation/index.dart';
+import 'package:sanam_laundry/presentation/screens/rider/index.dart';
 
 class JobCard extends StatelessWidget {
   const JobCard({
@@ -22,6 +23,7 @@ class JobCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final bool isDeliveryType = type == "delivery";
     final userDetails = order.user;
+    final isCompleted = tabType == JobStatus.completed.label;
 
     return Card(
       clipBehavior: Clip.antiAlias,
@@ -32,7 +34,7 @@ class JobCard extends StatelessWidget {
             () {
               context.navigate(
                 AppRoutes.jobDetails,
-                extra: order.id.toString(),
+                extra: {"id": order.id.toString(), "tabType": tabType},
               );
             },
         child: Padding(
@@ -73,7 +75,7 @@ class JobCard extends StatelessWidget {
                               ),
                             ),
                             AppText(
-                              ': ${order.id}',
+                              ': ${order.orderNumber ?? ""}',
                               style: context.textTheme.bodySmall!.copyWith(
                                 fontWeight: FontWeight.bold,
                                 color: AppColors.primary,
@@ -91,33 +93,112 @@ class JobCard extends StatelessWidget {
                           ),
                         ),
 
-                        AppButton(
-                          title: order.status,
-                          onPressed: () {},
-                          backgroundColor: isDeliveryType
-                              ? AppColors.secondary
-                              : AppColors.primary.withValues(alpha: 0.3),
-                          padding: EdgeInsets.symmetric(
-                            vertical: Dimens.spacingXS,
-                            horizontal: Dimens.spacingS,
-                          ),
-                          textStyle: context.textTheme.bodySmall!.copyWith(
-                            fontWeight: FontWeight.bold,
-                            color: AppColors.white,
-                          ),
-                          style: ButtonStyle(
-                            minimumSize: WidgetStatePropertyAll(
-                              Size(context.w(0.22), 30),
+                        if (isCompleted) ...[
+                          AppButton(
+                            title: isCompleted
+                                ? Common.completed
+                                : order.status,
+                            onPressed: () {},
+                            backgroundColor:
+                                //  isDeliveryType
+                                // ?
+                                AppColors.secondary,
+                            // : AppColors.primary.withValues(alpha: 0.3),
+                            padding: EdgeInsets.symmetric(
+                              vertical: Dimens.spacingXS,
+                              horizontal: Dimens.spacingS,
                             ),
-                            shape: WidgetStatePropertyAll(
-                              RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(
-                                  Dimens.radiusXxs,
+                            textStyle: context.textTheme.bodySmall!.copyWith(
+                              fontWeight: FontWeight.bold,
+                              color: AppColors.white,
+                            ),
+                            style: ButtonStyle(
+                              minimumSize: WidgetStatePropertyAll(
+                                Size(context.w(0.22), 30),
+                              ),
+                              shape: WidgetStatePropertyAll(
+                                RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(
+                                    Dimens.radiusXxs,
+                                  ),
                                 ),
                               ),
                             ),
                           ),
-                        ),
+                        ] else ...[
+                          Row(
+                            spacing: Dimens.spacingS,
+                            children: [
+                              Expanded(
+                                child: AppButton(
+                                  title: order.status,
+                                  onPressed: () {},
+                                  backgroundColor:
+                                      //  isDeliveryType
+                                      // ?
+                                      AppColors.secondary,
+                                  // : AppColors.primary.withValues(alpha: 0.3),
+                                  padding: EdgeInsets.symmetric(
+                                    vertical: Dimens.spacingXS,
+                                    horizontal: Dimens.spacingS,
+                                  ),
+                                  textStyle: context.textTheme.bodySmall!
+                                      .copyWith(
+                                        fontWeight: FontWeight.bold,
+                                        color: AppColors.white,
+                                      ),
+                                  style: ButtonStyle(
+                                    minimumSize: WidgetStatePropertyAll(
+                                      Size(context.w(0.22), 30),
+                                    ),
+                                    shape: WidgetStatePropertyAll(
+                                      RoundedRectangleBorder(
+                                        borderRadius: BorderRadius.circular(
+                                          Dimens.radiusXxs,
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              ),
+
+                              Expanded(
+                                child: AppButton(
+                                  title: isDeliveryType
+                                      ? Common.deliveryOrder
+                                      : Common.pickUpOrder,
+                                  onPressed: () {},
+                                  backgroundColor:
+                                      //  isDeliveryType
+                                      // ? AppColors.secondary
+                                      // :
+                                      AppColors.primary.withValues(alpha: 0.3),
+                                  padding: EdgeInsets.symmetric(
+                                    vertical: Dimens.spacingXS,
+                                    horizontal: Dimens.spacingS,
+                                  ),
+                                  textStyle: context.textTheme.bodySmall!
+                                      .copyWith(
+                                        fontWeight: FontWeight.bold,
+                                        color: AppColors.white,
+                                      ),
+                                  style: ButtonStyle(
+                                    minimumSize: WidgetStatePropertyAll(
+                                      Size(context.w(0.22), 30),
+                                    ),
+                                    shape: WidgetStatePropertyAll(
+                                      RoundedRectangleBorder(
+                                        borderRadius: BorderRadius.circular(
+                                          Dimens.radiusXxs,
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ],
                       ],
                     ),
                   ),
