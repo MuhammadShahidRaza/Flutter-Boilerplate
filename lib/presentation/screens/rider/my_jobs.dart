@@ -14,6 +14,15 @@ class MyJobs extends StatefulWidget {
   State<MyJobs> createState() => _MyJobsState();
 }
 
+enum JobStatus {
+  riderAssigned("Rider Assigned"),
+  ordersInVehicle("Orders In Vehicle"),
+  completed("Completed");
+
+  final String label;
+  const JobStatus(this.label);
+}
+
 class _MyJobsState extends State<MyJobs> {
   final RiderRepository _riderRepository = RiderRepository();
   List<OrderModel> orders = [];
@@ -36,9 +45,9 @@ class _MyJobsState extends State<MyJobs> {
 
   Future<void> _loadCategories() async {
     final data = [
-      {"id": "assigned", "title": Common.assigned},
-      {"id": "completed", "title": Common.completed},
-      {"id": "in_vehicle", "title": Common.ordersInVehicle},
+      {"id": JobStatus.riderAssigned.label, "title": Common.assigned},
+      {"id": JobStatus.completed.label, "title": Common.completed},
+      {"id": JobStatus.ordersInVehicle.label, "title": Common.ordersInVehicle},
     ];
 
     setState(() {
@@ -239,7 +248,6 @@ class _MyJobsState extends State<MyJobs> {
                               ),
                               child: AppText(
                                 Common.delivery,
-
                                 style: context.textTheme.bodySmall!.copyWith(
                                   fontWeight: FontWeight.bold,
                                   color: !isPickup
