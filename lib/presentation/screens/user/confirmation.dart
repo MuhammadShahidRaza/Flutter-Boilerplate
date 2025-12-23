@@ -148,7 +148,9 @@ class _ConfirmationState extends State<Confirmation> {
                   : settings.normalDelivery;
 
               final tax = (settings.taxPercentage * totalAmount) / 100;
-              final newTotalAmount = totalAmount + deliveryCharges + tax;
+              // final newTotalAmount = totalAmount + deliveryCharges + tax;
+              final newTotalAmount = totalAmount + deliveryCharges;
+              final newSubTotalAmount = totalAmount - tax;
 
               return Column(
                 spacing: Dimens.spacingM,
@@ -191,7 +193,7 @@ class _ConfirmationState extends State<Confirmation> {
                   _PricingRow(
                     label: Common.subtotal,
                     value:
-                        "${totalAmount.toStringAsFixed(2)} ${settings.currency}",
+                        "${newSubTotalAmount.toStringAsFixed(2)} ${settings.currency}",
                     isBold: true,
                     valueColor: AppColors.primary,
                   ),
@@ -202,12 +204,12 @@ class _ConfirmationState extends State<Confirmation> {
                           "${cart.totalAddonsAmount.toStringAsFixed(2)} ${settings.currency}",
                     ),
                   _PricingRow(
-                    label: Common.deliveryCharges,
-                    value: "$deliveryCharges ${settings.currency}",
-                  ),
-                  _PricingRow(
                     label: Common.tax,
                     value: "${tax.toStringAsFixed(2)} ${settings.currency}",
+                  ),
+                  _PricingRow(
+                    label: Common.deliveryCharges,
+                    value: "$deliveryCharges ${settings.currency}",
                   ),
 
                   Divider(color: AppColors.lightGrey),
