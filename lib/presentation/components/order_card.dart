@@ -148,7 +148,8 @@ class OrderCard extends StatelessWidget {
                     ],
                   ),
 
-                  if (order.paymentStatus == "pending") ...[
+                  if (order.paymentStatus == "pending" ||
+                      order.status == "Awaiting Payment") ...[
                     AppButton(
                       title: Common.payNow,
                       textStyle: context.textTheme.bodySmall!.copyWith(
