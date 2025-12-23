@@ -27,4 +27,9 @@ class Utils {
     final l = Utils.capitalize(user?.lastName);
     return [f, l].where((e) => e.isNotEmpty).join(' ');
   }
+
+  static String removeHtml(String text) {
+    final withoutTags = text.replaceAll(RegExp(r'<[^>]*>'), '');
+    return withoutTags.replaceAll('&nbsp;', ' ').replaceAll('&amp;', '&');
+  }
 }
