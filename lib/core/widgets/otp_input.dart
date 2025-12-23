@@ -48,23 +48,26 @@ class _AppOtpInputState extends State<AppOtpInput> {
 
   @override
   Widget build(BuildContext context) {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-      children: List.generate(widget.length, (index) {
-        return SizedBox(
-          width: 60,
-          child: AppInput(
-            controller: _controllers[index],
-            focusNode: _focusNodes[index],
-            keyboardType: TextInputType.number,
-            textAlign: TextAlign.center,
-            maxLength: 1,
-            style: context.textTheme.titleLarge?.copyWith(letterSpacing: 2),
-            counterText: "",
-            onChanged: (value) => _onChanged(value, index),
-          ),
-        );
-      }),
+    return Directionality(
+      textDirection: TextDirection.ltr,
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+        children: List.generate(widget.length, (index) {
+          return SizedBox(
+            width: 60,
+            child: AppInput(
+              controller: _controllers[index],
+              focusNode: _focusNodes[index],
+              keyboardType: TextInputType.number,
+              textAlign: TextAlign.center,
+              maxLength: 1,
+              style: context.textTheme.titleLarge?.copyWith(letterSpacing: 2),
+              counterText: "",
+              onChanged: (value) => _onChanged(value, index),
+            ),
+          );
+        }),
+      ),
     );
   }
 }
