@@ -28,7 +28,7 @@ class _RiderHomeState extends State<RiderHome> {
 
   // SAMPLE data — replace with provider/api
   final List<SlotModel> slots = [];
-  String selectedSlotId = '1';
+  String selectedSlotId = '';
   bool isPickup = true;
 
   int todayOrders = 0;
@@ -84,7 +84,7 @@ class _RiderHomeState extends State<RiderHome> {
                   onTap: () {
                     context.navigate(
                       AppRoutes.jobDetails,
-                      extra: e.id.toString(),
+                      extra: {"id": e.id.toString()},
                     );
                   },
                   title: Utils.getfullName(e.user),
@@ -180,16 +180,18 @@ class _RiderHomeState extends State<RiderHome> {
       safeArea: false,
       padding: EdgeInsets.zero,
       appBar: HomeAppBar(
+        wantProfileTap: false,
         onNotificationTap: () => context.navigate(AppRoutes.riderNotifications),
         containerGap: Dimens.spacingXS,
         iconWidget: Row(
           children: [
-            AppText(
-              "Active",
-              style: context.textTheme.bodySmall!.copyWith(
-                fontWeight: FontWeight.bold,
+            if (isActive)
+              AppText(
+                Common.active,
+                style: context.textTheme.bodySmall!.copyWith(
+                  fontWeight: FontWeight.bold,
+                ),
               ),
-            ),
             Switch(
               value: isActive,
               onChanged: (value) {
@@ -392,7 +394,10 @@ class _RiderHomeState extends State<RiderHome> {
                           onTap: () {
                             context.navigate(
                               AppRoutes.riderHomeOrder,
-                              extra: item,
+                              extra: {
+                                "item": item,
+                                "onUpdateStatus": _loadOrders,
+                              },
                             );
                           },
                         );

@@ -15,7 +15,7 @@ class RiderMyAccount extends StatefulWidget {
 
 class _RiderMyAccountState extends State<RiderMyAccount> {
   bool isLoading = false;
-  final AuthRepository _authRepository = AuthRepository();
+  final RiderRepository _riderRepository = RiderRepository();
 
   @override
   Widget build(BuildContext context) {
@@ -247,7 +247,7 @@ class _RiderMyAccountState extends State<RiderMyAccount> {
                       onPrimaryPressed: () async {
                         context.replacePage(AppRoutes.getStarted);
                         // await performLogout(context);
-                        _authRepository.logout();
+                        _riderRepository.logout();
                         await clearSession(context);
                       },
                       crossAxisAlignment: CrossAxisAlignment.center,
@@ -265,7 +265,7 @@ class _RiderMyAccountState extends State<RiderMyAccount> {
 
   Widget _buildHeader(BuildContext context) {
     return SizedBox(
-      height: 230,
+      height: 250,
       child: Stack(
         alignment: Alignment.topCenter,
         children: [
@@ -283,19 +283,22 @@ class _RiderMyAccountState extends State<RiderMyAccount> {
 
           // 🔹 Profile image
           Positioned(
-            top: 80,
+            top: 65,
             child: Consumer<UserProvider>(
               builder: (context, provider, child) {
                 final profileImage =
                     provider.user?.profileImage ?? AppAssets.user;
-                return Container(
-                  width: 90,
-                  height: 90,
-                  decoration: BoxDecoration(
-                    shape: BoxShape.circle,
-                    border: Border.all(color: AppColors.primary, width: 3),
-                  ),
-                  child: AppImage(path: profileImage, isCircular: true),
+                return ImagePickerBox(
+                  title: "",
+                  initialImagePath: profileImage,
+                  onImagePicked: (file) async {
+                    final user = await _riderRepository.editProfile(
+                      profileImage: file,
+                    );
+                    if (user != null) {
+                      await provider.updateUser(user);
+                    }
+                  },
                 );
               },
             ),
@@ -303,7 +306,7 @@ class _RiderMyAccountState extends State<RiderMyAccount> {
 
           // 🔹 Name / info below avatar
           Positioned(
-            top: 180, // adjust spacing below avatar
+            top: 205, // adjust spacing below avatar
             child: Consumer<UserProvider>(
               builder: (context, provider, child) {
                 final name = provider.fullName.isNotEmpty

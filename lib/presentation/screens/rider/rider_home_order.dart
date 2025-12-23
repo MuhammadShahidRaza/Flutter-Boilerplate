@@ -35,6 +35,7 @@ class _RiderHomeOrderState extends State<RiderHomeOrder> {
   late final PolylinePoints _polylinePoints;
   Set<Polyline> _polylines = {};
   Set<Marker> _markers = {};
+  VoidCallback? onOrderUpdated;
 
   late final LatLng? user;
 
@@ -117,7 +118,8 @@ class _RiderHomeOrderState extends State<RiderHomeOrder> {
     super.didChangeDependencies();
 
     if (!_initialized) {
-      orderDetails = context.getExtra<OrderModel>() ?? null;
+      orderDetails = context.getExtra()?["item"];
+      onOrderUpdated = context.getExtra()?["onUpdateStatus"];
       _initialized = true;
       _loadOrderDetailsById();
 
@@ -159,9 +161,12 @@ class _RiderHomeOrderState extends State<RiderHomeOrder> {
   }
 
   void onPressed(status) async {
-    if (!mounted) return;
     final updatedOrder = await updateOrderStatus(status);
-    context.pop(updatedOrder);
+    if (updatedOrder != null) {
+      onOrderUpdated?.call();
+    }
+    if (!mounted) return;
+    context.back();
   }
 
   @override
@@ -175,12 +180,13 @@ class _RiderHomeOrderState extends State<RiderHomeOrder> {
         containerGap: Dimens.spacingXS,
         iconWidget: Row(
           children: [
-            AppText(
-              "Active",
-              style: context.textTheme.bodySmall!.copyWith(
-                fontWeight: FontWeight.bold,
+            if (isActive)
+              AppText(
+                Common.active,
+                style: context.textTheme.bodySmall!.copyWith(
+                  fontWeight: FontWeight.bold,
+                ),
               ),
-            ),
             Switch(
               value: isActive,
               onChanged: (value) {
@@ -310,8 +316,8 @@ class _RiderHomeOrderState extends State<RiderHomeOrder> {
                                 ),
                               ),
                               onPrimaryPressed: () => {
-                                onPressed(orderDetails?.nextStatus),
                                 context.pop(),
+                                onPressed(orderDetails?.nextStatus),
                               },
                               showTwoPrimaryButtons: true,
                               primaryButtonText: Common.yes,
@@ -356,8 +362,8 @@ class _RiderHomeOrderState extends State<RiderHomeOrder> {
                                   ),
                                 ),
                                 onPrimaryPressed: () => {
-                                  onPressed("Unsuccessful Attempt"),
                                   context.pop(),
+                                  onPressed("Unsuccessful Attempt"),
                                 },
                                 showTwoPrimaryButtons: true,
                                 primaryButtonText: Common.yes,
@@ -368,6 +374,7 @@ class _RiderHomeOrderState extends State<RiderHomeOrder> {
                                 insetPadding: EdgeInsets.all(Dimens.spacingXXL),
                               );
                             },
+                            backgroundColor: AppColors.bottomTabText,
                             padding: EdgeInsets.zero,
                             style: ButtonStyle(
                               minimumSize: WidgetStatePropertyAll(
