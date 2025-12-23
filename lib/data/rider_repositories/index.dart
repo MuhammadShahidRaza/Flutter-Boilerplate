@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:sanam_laundry/core/index.dart';
 import 'package:sanam_laundry/core/network/api_response.dart';
 import 'package:sanam_laundry/core/utils/helper.dart';
@@ -12,6 +13,7 @@ import 'package:sanam_laundry/data/models/settings.dart';
 import 'package:sanam_laundry/data/models/slot.dart';
 import 'package:sanam_laundry/data/services/rider_endpoints.dart';
 import 'package:sanam_laundry/presentation/screens/rider/my_jobs.dart';
+import 'package:sanam_laundry/providers/index.dart';
 
 class RiderRepository {
   final ApiService _apiService = ApiService();
@@ -195,6 +197,36 @@ class RiderRepository {
   //   );
   // }
 
+  /// 🔹 EDIT PROFILE
+  Future editProfile({XFile? profileImage}) async {
+    return await ApiResponseHandler.handleRequest(
+      () => _apiService.multipartPost(
+        RiderEndpoints.updateUserProfile,
+        data: {
+          "_method": "PATCH",
+          ...(profileImage != null ? {'profile_image': profileImage} : {}),
+        },
+      ),
+      onSuccess: (data, _) {
+        final userData = data['user'];
+        return UserModel.fromJson(userData);
+      },
+    );
+  }
+
+  Future<void> logout() async {
+    await ApiResponseHandler.handleRequest(
+      () => _apiService.post(
+        RiderEndpoints.logout,
+        data: {"udid": "132323"},
+        config: const ApiRequestConfig(showErrorToast: false),
+      ),
+      onSuccess: (data, statusCode) async {
+        await AuthProvider().logout();
+      },
+    );
+  }
+
   Future placeOrder({required Map<String, dynamic> payload}) async {
     debugPrint(payload.toString());
     return await ApiResponseHandler.handleRequest(
@@ -216,7 +248,7 @@ class RiderRepository {
     } else if (status == JobStatus.ordersInVehicle.label) {
       query["order_in_vehicle"] = true;
     } else if (status != null) {
-      query["status"] = status;
+      // query["status"] = status;
     }
     if (search != null && search.isNotEmpty) {
       query["search"] = search;
