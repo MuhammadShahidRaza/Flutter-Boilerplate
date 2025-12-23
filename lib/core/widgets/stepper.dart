@@ -4,7 +4,7 @@ import 'package:sanam_laundry/presentation/index.dart';
 
 class HorizontalStepper extends StatelessWidget {
   final int currentStep;
-  final List<String> steps;
+  final List<dynamic> steps;
 
   const HorizontalStepper({
     super.key,
