@@ -11,7 +11,11 @@ class Common {
   static const hideOrders = "COMMON.HIDE_ORDERS";
   static const showOrders = "COMMON.SHOW_ORDERS";
   static const pickedUp = "COMMON.PICKED_UP";
+  static const taxIncluded = "COMMON.TAX_INCLUDED";
   static const arrived = "COMMON.ARRIVED";
+  static const active = "COMMON.ACTIVE";
+  static const searchJobsByOrderId = "COMMON.SEARCH_JOB_BY_ORDER_ID";
+
   static const unsuccessfullAttempt = "COMMON.UNSUCCESSFULL_ATTEMPT";
   static const areYouSureYouWantToUpdateStatus =
       "COMMON.ARE_YOU_SURE_YOU_WANT_TO_UPDATE_STATUS";
