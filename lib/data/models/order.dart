@@ -37,6 +37,7 @@ class OrderModel {
     required this.ironingId,
     required this.starchId,
     required this.clothesReturnedId,
+    required this.statusList,
     // required this.ironingLevel,
     // required this.starchLevel,
     // required this.clothesReturned,
@@ -78,6 +79,7 @@ class OrderModel {
   final DateTime? createdAt;
   final DateTime? updatedAt;
   final dynamic ironingId;
+  final dynamic statusList;
   final dynamic starchId;
   final dynamic clothesReturnedId;
   // final dynamic ironingLevel;
@@ -108,8 +110,8 @@ class OrderModel {
       buildingImage: json["building_image_url"],
       appartmentImage: json["apartment_image_url"],
       longitude: json["longitude"],
-      status: json["status"],
-      nextStatus: json["next_status"],
+      status: json["status"] ?? "",
+      nextStatus: json["next_status"] ?? "",
       paymentStatus: json["payment_status"],
       subTotal: json["sub_total"] == null ? "0" : json["sub_total"].toString(),
       tax: json["tax"] == null ? "0" : json["tax"].toString(),
@@ -122,12 +124,21 @@ class OrderModel {
       paymentMethod: json["payment_method"],
       transactionId: json["transaction_id"],
       transactionReference: json["transaction_reference"],
-      specialInstructions: json["special_instructions"],
+      specialInstructions: json["special_instructions"] ?? "",
       createdAt: DateTime.tryParse(json["created_at"] ?? ""),
       updatedAt: DateTime.tryParse(json["updated_at"] ?? ""),
       ironingId: json["ironing_id"],
       starchId: json["starch_id"],
       clothesReturnedId: json["clothes_returned_id"],
+      statusList: json["status_list"] != null
+          ? json["status_list"]
+                .replaceAll("[", "")
+                .replaceAll("]", "")
+                .replaceAll("'", "")
+                .split(",")
+                .map((e) => e.trim())
+                .toList()
+          : [],
 
       // ironingLevel: json["ironing_level"] == null
       //     ? null
