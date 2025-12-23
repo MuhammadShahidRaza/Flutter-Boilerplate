@@ -115,15 +115,15 @@ class _LoginState extends State<Login> {
               obscureText: true,
             ),
 
-            AppCheckbox(
-              value: rememberMe,
-              onChanged: (value) {
-                setState(() {
-                  rememberMe = value;
-                });
-              },
-              label: Common.rememberMe,
-            ),
+            // AppCheckbox(
+            //   value: rememberMe,
+            //   onChanged: (value) {
+            //     setState(() {
+            //       rememberMe = value;
+            //     });
+            //   },
+            //   label: Common.rememberMe,
+            // ),
           ] else ...[
             AppPhoneInput(
               title: Common.phoneNumber,
