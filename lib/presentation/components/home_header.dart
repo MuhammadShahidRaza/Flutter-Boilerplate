@@ -10,6 +10,7 @@ class HomeAppBar extends StatelessWidget implements PreferredSizeWidget {
   final VoidCallback? onNotificationTap;
   final Widget? iconWidget;
   final double containerGap;
+  final bool wantProfileTap;
 
   const HomeAppBar({
     super.key,
@@ -18,6 +19,7 @@ class HomeAppBar extends StatelessWidget implements PreferredSizeWidget {
     this.containerGap = Dimens.spacingMSmall,
     this.iconWidget,
     this.onNotificationTap,
+    this.wantProfileTap = true,
   });
 
   @override
@@ -25,6 +27,7 @@ class HomeAppBar extends StatelessWidget implements PreferredSizeWidget {
     final theme = Theme.of(context);
 
     void onProfileTap() {
+      if (!wantProfileTap) return;
       context.navigate(AppRoutes.editProfile);
     }
 
