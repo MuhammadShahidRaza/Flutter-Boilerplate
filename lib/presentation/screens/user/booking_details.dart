@@ -57,6 +57,9 @@ class _BookingDetailsState extends State<BookingDetails> {
         ? orderDetails!.bookingDetail.first.service
         : null;
 
+    int currentIndex =
+        orderDetails?.statusList.indexOf(orderDetails?.status ?? '') ?? 0;
+
     return AppWrapper(
       showBackButton: true,
       scrollable: true,
@@ -142,14 +145,8 @@ class _BookingDetailsState extends State<BookingDetails> {
                   ],
                 ),
                 HorizontalStepper(
-                  currentStep: 0,
-                  steps: const [
-                    Common.orderReceived,
-                    Common.processing,
-                    Common.orderReadyAwaitingPayment,
-                    Common.outForDelivery,
-                    Common.delivered,
-                  ],
+                  currentStep: currentIndex,
+                  steps: orderDetails?.statusList ?? [],
                 ),
 
                 BookingDetailsComp(
@@ -195,7 +192,8 @@ class _BookingDetailsState extends State<BookingDetails> {
                 // Pricing Summary
                 _PricingRow(
                   label: Common.subtotal,
-                  value: "${orderDetails?.subTotal ?? ''} SAR",
+                  value:
+                      "${(double.parse(orderDetails?.subTotal ?? "0") - double.parse(orderDetails?.tax ?? "0")).toStringAsFixed(2)} SAR",
                   isBold: true,
                   valueColor: AppColors.primary,
                 ),

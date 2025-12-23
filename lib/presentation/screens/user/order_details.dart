@@ -131,11 +131,12 @@ class _OrderDetailsState extends State<OrderDetails> {
               });
             },
           ),
-          AppText(
-            Common.noteAdditionalChargesExpress,
-            textAlign: TextAlign.center,
-            color: AppColors.secondary,
-          ),
+          if (deliveryType == DeliveryType.express)
+            AppText(
+              Common.noteAdditionalChargesExpress,
+              textAlign: TextAlign.center,
+              color: AppColors.secondary,
+            ),
           Divider(color: AppColors.border),
 
           // Row(

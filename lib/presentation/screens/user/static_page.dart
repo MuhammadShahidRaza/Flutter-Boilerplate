@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:sanam_laundry/core/index.dart';
+import 'package:sanam_laundry/core/utils/helper.dart';
 import 'package:sanam_laundry/data/index.dart';
 import 'package:sanam_laundry/presentation/index.dart';
 
@@ -47,7 +48,7 @@ class _StaticPageState extends State<StaticPage> {
       child: loading
           ? const Center(child: CircularProgressIndicator.adaptive())
           : AppText(
-              pageData?.description ?? Common.noDataAvailable,
+              Utils.removeHtml(pageData?.description ?? ''),
               overflow: TextOverflow.visible,
             ),
     );

@@ -22,6 +22,7 @@ class _JobDetailsState extends State<JobDetails> {
   bool _initialized = false;
   late String bookingId;
   final RiderRepository _riderRepository = RiderRepository();
+  VoidCallback? onOrderUpdated;
 
   OrderModel? orderDetails;
 
@@ -41,6 +42,7 @@ class _JobDetailsState extends State<JobDetails> {
 
     if (!_initialized) {
       bookingId = context.getExtra<Map<String, dynamic>>()?["id"] ?? '';
+      onOrderUpdated = context.getExtra()?["onUpdateStatus"];
       _initialized = true;
       _loadOrderDetailsById();
     }
@@ -67,8 +69,12 @@ class _JobDetailsState extends State<JobDetails> {
   }
 
   void onPressed(status) async {
+    final updatedOrder = await updateOrderStatus(status);
+    if (updatedOrder != null) {
+      onOrderUpdated?.call();
+    }
     if (!mounted) return;
-    await updateOrderStatus(status);
+    context.back();
   }
 
   @override
@@ -181,6 +187,11 @@ class _JobDetailsState extends State<JobDetails> {
                       children: [
                         Expanded(
                           child: MessageBox(
+                            onTap: () {
+                              AppLauncher.openLink(
+                                'https://www.google.com/maps/search/?api=1&query=${orderDetails?.latitude},${orderDetails?.longitude}',
+                              );
+                            },
                             icon: Icons.location_on_outlined,
                             title: Common.locationLabel,
                             value: Utils.capitalize(

@@ -270,14 +270,14 @@ class _MyAddressState extends State<MyAddress> {
                                   required double lat,
                                   required double lng,
                                 }) {
-                                  // If you want map taps to populate fields, uncomment:
-                                  // setState(() {
-                                  //   landFullAddressController.text = fullAddress;
-                                  //   cityController.text = city;
-                                  //   stateController.text = state;
-                                  //   selectedLatitude = lat;
-                                  //   selectedLongitude = lng;
-                                  // });
+                                  setState(() {
+                                    landFullAddressController.text =
+                                        fullAddress;
+                                    cityController.text = city;
+                                    stateController.text = state;
+                                    selectedLatitude = lat;
+                                    selectedLongitude = lng;
+                                  });
                                 },
                           ),
                         ),
