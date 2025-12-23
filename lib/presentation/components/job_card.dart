@@ -108,6 +108,7 @@ class JobCard extends StatelessWidget {
                               vertical: Dimens.spacingXS,
                               horizontal: Dimens.spacingS,
                             ),
+                            isEnabled: false,
                             textStyle: context.textTheme.bodySmall!.copyWith(
                               fontWeight: FontWeight.bold,
                               color: AppColors.white,
@@ -138,6 +139,7 @@ class JobCard extends StatelessWidget {
                                       // ?
                                       AppColors.secondary,
                                   // : AppColors.primary.withValues(alpha: 0.3),
+                                  isEnabled: false,
                                   padding: EdgeInsets.symmetric(
                                     vertical: Dimens.spacingXS,
                                     horizontal: Dimens.spacingS,
@@ -172,7 +174,7 @@ class JobCard extends StatelessWidget {
                                       //  isDeliveryType
                                       // ? AppColors.secondary
                                       // :
-                                      AppColors.primary.withValues(alpha: 0.3),
+                                      AppColors.primary.withValues(alpha: 0.5),
                                   padding: EdgeInsets.symmetric(
                                     vertical: Dimens.spacingXS,
                                     horizontal: Dimens.spacingS,
@@ -182,6 +184,7 @@ class JobCard extends StatelessWidget {
                                         fontWeight: FontWeight.bold,
                                         color: AppColors.white,
                                       ),
+                                  isEnabled: false,
                                   style: ButtonStyle(
                                     minimumSize: WidgetStatePropertyAll(
                                       Size(context.w(0.22), 30),
