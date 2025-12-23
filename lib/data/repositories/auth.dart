@@ -139,8 +139,8 @@ class AuthRepository {
 
   /// 🔹 EDIT PROFILE
   Future editProfile({
-    required String firstName,
-    required String lastName,
+    String? firstName,
+    String? lastName,
     String? gender,
     XFile? profileImage,
   }) async {
@@ -149,8 +149,8 @@ class AuthRepository {
         Endpoints.updateUserProfile,
         data: {
           "_method": "PATCH",
-          'first_name': firstName,
-          'last_name': lastName,
+          ...(firstName != null ? {'first_name': firstName} : {}),
+          ...(lastName != null ? {'last_name': lastName} : {}),
           ...(gender != null ? {'gender': gender} : {}),
           ...(profileImage != null ? {'profile_image': profileImage} : {}),
         },
