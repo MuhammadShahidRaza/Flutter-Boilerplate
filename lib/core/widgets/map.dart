@@ -110,7 +110,7 @@ class _AddressPickerMapState extends State<AddressPickerMap> {
       final provider = context.read<UserProvider>();
       provider.updateCurrentLocation(_initialLatLng);
     }
-    // _reverseGeocode(_initialLatLng);
+    _reverseGeocode(_initialLatLng);
   }
 
   /// Step 2: Animate camera
@@ -121,34 +121,56 @@ class _AddressPickerMapState extends State<AddressPickerMap> {
     );
   }
 
+  Timer? _geoDebounce;
+  bool _isGeocoding = false;
+
+  String extractCity(Placemark p) {
+    return p.locality ?? p.subAdministrativeArea ?? p.administrativeArea ?? "";
+  }
+
+  String extractState(Placemark p) {
+    return p.administrativeArea ?? p.subAdministrativeArea ?? "";
+  }
+
   /// Step 3: Reverse geocode → convert lat/lng → address
-  // Future<void> _reverseGeocode(LatLng pos) async {
-  //   try {
-  //     List<Placemark> placemarks = await placemarkFromCoordinates(
-  //       pos.latitude,
-  //       pos.longitude,
-  //     );
+  void _reverseGeocode(LatLng pos) {
+    _geoDebounce?.cancel();
 
-  //     if (placemarks.isEmpty) return;
+    _geoDebounce = Timer(const Duration(milliseconds: 600), () async {
+      if (_isGeocoding) return;
+      _isGeocoding = true;
 
-  //     final p = placemarks.first;
+      try {
+        final placemarks = await placemarkFromCoordinates(
+          pos.latitude,
+          pos.longitude,
+        );
 
-  //     widget.onAddressSelected(
-  //       fullAddress: formatAddress(p),
-  //       city: p.locality ?? "",
-  //       state: p.administrativeArea ?? "",
-  //       lat: pos.latitude,
-  //       lng: pos.longitude,
-  //     );
-  //   } catch (_) {}
-  // }
+        if (placemarks.isEmpty) return;
+
+        final p = placemarks.first;
+
+        widget.onAddressSelected?.call(
+          fullAddress: formatAddress(p),
+          city: extractCity(p),
+          state: extractState(p),
+          lat: pos.latitude,
+          lng: pos.longitude,
+        );
+      } catch (e) {
+        debugPrint("Reverse geocode error: $e");
+      } finally {
+        _isGeocoding = false;
+      }
+    });
+  }
 
   /// Step 4: When user taps map
   Future<void> _handleTap(LatLng pos) async {
     setState(() {
       marker = Marker(markerId: const MarkerId("selected"), position: pos);
     });
-    // _reverseGeocode(pos);
+    _reverseGeocode(pos);
   }
 
   /// Permission check
