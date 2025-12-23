@@ -156,7 +156,14 @@ class _SignUpState extends State<SignUp> {
 
           AppCheckbox(
             value: _agreedTerms,
-            onChanged: (bool val) {},
+            onChanged: (bool val) async {
+              final agreed = await AppTermsDialog.show(
+                context,
+                agreed: _agreedTerms,
+                termsData: termsData,
+              );
+              setState(() => _agreedTerms = agreed != null ? true : false);
+            },
             label: Common.termOfUseAndPrivacy,
             onTapLabel: () async {
               final agreed = await AppTermsDialog.show(
