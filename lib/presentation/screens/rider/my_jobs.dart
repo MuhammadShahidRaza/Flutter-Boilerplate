@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:sanam_laundry/core/index.dart';
 import 'package:sanam_laundry/data/index.dart';
@@ -92,6 +94,22 @@ class _MyJobsState extends State<MyJobs> {
     });
   }
 
+  Timer? _debounce;
+
+  void _onSearchChanged(String value) {
+    if (_debounce?.isActive ?? false) _debounce!.cancel();
+    _debounce = Timer(const Duration(milliseconds: 500), () {
+      _loadOrders(); // call your API with the updated searchController.text
+    });
+  }
+
+  @override
+  void dispose() {
+    _debounce?.cancel();
+    searchController.dispose();
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
     return AppWrapper(
@@ -109,13 +127,14 @@ class _MyJobsState extends State<MyJobs> {
               children: [
                 AppInput(
                   controller: searchController,
-                  hint: "Search Job By Order ID",
+                  hint: Common.searchJobsByOrderId,
                   suffixIcon: AppIcon(
                     icon: Icons.search,
                     color: AppColors.primary,
                   ),
                   onChanged: (value) {
-                    // Implement search functionality if needed
+                    if (value.isEmpty) _loadOrders();
+                    _onSearchChanged(value);
                   },
                 ),
                 Row(
@@ -290,6 +309,16 @@ class _MyJobsState extends State<MyJobs> {
                     itemBuilder: (context, index) {
                       final order = orders[index];
                       return JobCard(
+                        onTap: () {
+                          context.navigate(
+                            AppRoutes.jobDetails,
+                            extra: {
+                              "id": order.id.toString(),
+                              "tabType": selectedCategoryId,
+                              "onUpdateStatus": _loadOrders,
+                            },
+                          );
+                        },
                         order: order,
                         type: isPickup ? "pickup" : "delivery",
                         tabType: selectedCategoryId,
