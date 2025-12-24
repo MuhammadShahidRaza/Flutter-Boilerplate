@@ -93,4 +93,28 @@ class UserModel {
       'token': token,
     };
   }
+
+  UserModel copyWith({bool? isRiderActive}) {
+    return UserModel(
+      id: id,
+      firstName: firstName,
+      lastName: lastName,
+      email: email,
+      phone: phone,
+      providerId: providerId,
+      provider: provider,
+      countryCode: countryCode,
+      bio: bio,
+      userType: userType,
+      userRole: userRole,
+      customerId: customerId,
+      profileImage: profileImage,
+      gender: gender,
+      isRiderActive: isRiderActive ?? this.isRiderActive,
+      status: status,
+      language: language,
+      createdAt: createdAt,
+      token: token,
+    );
+  }
 }
