@@ -45,21 +45,27 @@ class ServicesProvider extends ChangeNotifier {
     return []; // return empty until fetch completes
   }
 
-  Future<void> fetchCategories() async {
-    if (_categories.isNotEmpty) return;
+  Future<void> fetchCategories({bool forceRefresh = false}) async {
+    if (!forceRefresh && _categories.isNotEmpty) return;
+
     _loading = true;
     notifyListeners();
 
-    final list = await _repo.getCategories();
+    // Clear old data if refreshing
+    if (forceRefresh) {
+      _categories.clear();
+      notifyListeners();
+    }
 
+    final list = await _repo.getCategories();
     _categories = list ?? [];
     _loading = false;
     notifyListeners();
 
+    // Fetch services for each category
     for (var cat in list ?? []) {
-      fetchServicesByCategoryId(cat.id);
+      fetchServicesByCategoryId(cat.id, force: forceRefresh);
     }
-    notifyListeners();
   }
 
   Future<void> fetchSettings() async {

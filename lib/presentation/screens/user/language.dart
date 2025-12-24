@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:sanam_laundry/core/index.dart';
 import 'package:sanam_laundry/presentation/index.dart';
-import 'package:sanam_laundry/providers/app.dart';
+import 'package:sanam_laundry/providers/index.dart';
 
 class ChangeLanguage extends StatefulWidget {
   const ChangeLanguage({super.key});
@@ -92,7 +92,12 @@ class _ChangeLanguageState extends State<ChangeLanguage> {
                     context.replacePage(AppRoutes.onboarding);
                     return;
                   }
-                  context.back();
+                  Future.delayed(Duration(milliseconds: 300), () {
+                    context.read<ServicesProvider>().fetchCategories(
+                      forceRefresh: true,
+                    );
+                    context.back();
+                  });
                 },
               ),
             ],
