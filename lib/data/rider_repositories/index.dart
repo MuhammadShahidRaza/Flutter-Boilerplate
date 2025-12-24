@@ -1,3 +1,4 @@
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:image_picker/image_picker.dart';
@@ -215,10 +216,11 @@ class RiderRepository {
   }
 
   Future<void> logout() async {
+    final token = await FirebaseMessaging.instance.getToken();
     await ApiResponseHandler.handleRequest(
       () => _apiService.post(
         RiderEndpoints.logout,
-        data: {"udid": "132323"},
+        data: {"udid": token ?? ""},
         config: const ApiRequestConfig(showErrorToast: false),
       ),
       onSuccess: (data, statusCode) async {
