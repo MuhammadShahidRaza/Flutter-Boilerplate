@@ -106,9 +106,8 @@ class NotificationService {
     final RemoteNotification? notification = message.notification;
     final AndroidNotification? android = notification?.android;
 
-    final String title =
-        notification?.title ?? (message.data['title'] ?? 'Notification');
-    final String body = notification?.body ?? (message.data['body'] ?? '');
+    final title = message.notification?.title ?? message.data['title'] ?? '';
+    final body = message.notification?.body ?? message.data['body'] ?? '';
 
     final String payload = jsonEncode({
       'messageId': message.messageId,
