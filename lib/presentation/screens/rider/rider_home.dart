@@ -20,9 +20,8 @@ class RiderHome extends StatefulWidget {
 }
 
 class _RiderHomeState extends State<RiderHome> {
-  late bool isActive;
   final RiderRepository _riderRepository = RiderRepository();
-
+  bool _updatingStatus = false;
   bool showOrders = false;
   final ScrollController mapScrollController = ScrollController();
 
@@ -34,6 +33,8 @@ class _RiderHomeState extends State<RiderHome> {
   int todayOrders = 0;
   int todayDelivered = 0;
   String onlineTime = "0h";
+
+  bool _isInitialized = false;
 
   List<Marker> nearbyMarkers = [];
   // Future<BitmapDescriptor> getPrimaryMarker() async {
@@ -97,7 +98,9 @@ class _RiderHomeState extends State<RiderHome> {
       orders = data["orders"] ?? [];
       todayOrders = data["info"]?['today_orders_count'] ?? 0;
       todayDelivered = data["info"]?['total_delivery_count'] ?? 0;
-      onlineTime = "${data["info"]?['today_online_time'] ?? "0"}h";
+      // onlineTime = "${data["info"]?['today_online_time'] ?? "0"}h";
+      onlineTime =
+          "${(double.tryParse(data["info"]?['today_online_time']?.toString() ?? "0") ?? 0).toStringAsFixed(1)}h";
     });
   }
 
@@ -117,26 +120,38 @@ class _RiderHomeState extends State<RiderHome> {
 
   Future<void> changeRiderActiveStatus(bool value) async {
     final provider = Provider.of<UserProvider>(context, listen: false);
-    final user = await _riderRepository.updateRiderActiveStatus(
+    await provider.updateRiderActiveStatus(
+      location: provider.currentLocation,
+      isActive: value,
+    );
+    await _riderRepository.updateRiderActiveStatus(
       isActive: value,
       location: provider.currentLocation,
     );
-    if (user != null) {
-      await provider.updateUser(user);
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+
+    // Load orders every time the screen becomes visible
+    if (!_isInitialized) {
+      _isInitialized = true;
+      slotsFuture();
+    } else {
+      // Reload orders when coming back to this screen
+
+      final authProvider = context.read<AuthProvider>();
+      if (authProvider.isLoggedIn) {
+        _loadOrders();
+      }
     }
   }
 
   @override
-  void initState() {
-    super.initState();
-    slotsFuture();
-    final provider = context.read<UserProvider>();
-    isActive = provider.user?.isRiderActive ?? false;
-  }
-
-  @override
   Widget build(BuildContext context) {
-    // Small chip button
+    final isActive = context.watch<UserProvider>().user?.isRiderActive ?? false;
+
     Widget statBox(BuildContext c, String label, String value) {
       return Expanded(
         child: Container(
@@ -194,12 +209,16 @@ class _RiderHomeState extends State<RiderHome> {
               ),
             Switch(
               value: isActive,
-              onChanged: (value) {
-                setState(() {
-                  isActive = value;
-                });
-                changeRiderActiveStatus(value);
-              },
+
+              onChanged: _updatingStatus
+                  ? null
+                  : (value) async {
+                      setState(() => _updatingStatus = true);
+                      await changeRiderActiveStatus(value);
+                      if (mounted) {
+                        setState(() => _updatingStatus = false);
+                      }
+                    },
               thumbColor: WidgetStatePropertyAll(AppColors.secondary),
               activeThumbColor: AppColors.tertiary,
               trackOutlineColor: WidgetStatePropertyAll(AppColors.primary),
@@ -396,7 +415,7 @@ class _RiderHomeState extends State<RiderHome> {
                               AppRoutes.riderHomeOrder,
                               extra: {
                                 "item": item,
-                                "onUpdateStatus": _loadOrders,
+                                // "onUpdateStatus": _loadOrders,
                               },
                             );
                           },

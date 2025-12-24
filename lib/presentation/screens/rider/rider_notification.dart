@@ -127,7 +127,7 @@ class _RiderNotificationScreenState extends State<RiderNotificationScreen> {
                     ),
 
                     // Notifications for that date
-                    ...items.map((n) => _NotificationTile(notification: n)),
+                    ...items.map((n) => NotificationTile(notification: n)),
 
                     SizedBox(height: 12),
                   ],
@@ -138,10 +138,10 @@ class _RiderNotificationScreenState extends State<RiderNotificationScreen> {
   }
 }
 
-class _NotificationTile extends StatelessWidget {
+class NotificationTile extends StatelessWidget {
   final NotificationModel notification;
 
-  const _NotificationTile({required this.notification});
+  const NotificationTile({super.key, required this.notification});
 
   @override
   Widget build(BuildContext context) {
@@ -151,10 +151,30 @@ class _NotificationTile extends StatelessWidget {
     // agar date bhi chahiye:
     // final formattedTime = DateFormat('dd MMM, hh:mm a').format(time);
 
+    final isOfBooking =
+        notification.type == 'rider-assigned-for-delivery' ||
+        notification.type == 'new-booking-assigned';
+
     return Card(
       elevation: 0,
+
       margin: EdgeInsets.only(bottom: 10),
       child: ListTile(
+        onTap: () => {
+          if (notification.objectableType != null &&
+              notification.objectableId != null)
+            if (isOfBooking)
+              {
+                context.navigate(
+                  AppRoutes.jobDetails,
+                  extra: {
+                    "id": notification.objectableId?.toString(),
+                    // "tabType": selectedCategoryId,
+                    // "onUpdateStatus": _loadOrders,
+                  },
+                ),
+              },
+        },
         leading: AppImage(
           path: notification.user?.profileImage ?? AppAssets.logo,
           width: 50,
