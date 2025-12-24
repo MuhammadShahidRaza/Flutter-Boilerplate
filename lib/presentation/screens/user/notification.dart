@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:sanam_laundry/core/index.dart';
 import 'package:sanam_laundry/data/models/notification.dart';
 import 'package:sanam_laundry/data/repositories/home.dart';
@@ -143,23 +144,55 @@ class _NotificationTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final formattedTime = DateFormat(
+      'hh:mm a',
+    ).format(notification.createdAt ?? DateTime.now());
+    // agar date bhi chahiye:
+    // final formattedTime = DateFormat('dd MMM, hh:mm a').format(time);
+
+    final isOfBooking =
+        notification.type == 'rider-assigned-for-delivery' ||
+        notification.type == 'booking-status-updated';
+
     return Card(
       elevation: 0,
+
       margin: EdgeInsets.only(bottom: 10),
       child: ListTile(
+        onTap: () => {
+          if (notification.type != null && notification.objectableId != null)
+            if (isOfBooking)
+              {
+                {
+                  context.navigate(
+                    AppRoutes.bookingDetails,
+                    extra: notification.objectableId?.toString(),
+                  ),
+                },
+              },
+        },
         leading: AppImage(
-          path: AppAssets.user,
+          path: notification.user?.profileImage ?? AppAssets.logo,
           width: 50,
           height: 50,
+          isCircular: true,
           borderRadius: 50,
         ),
         contentPadding: EdgeInsets.zero,
-        title: AppText(notification.title ?? ""),
-        subtitle: AppText(notification.body ?? ""),
-        trailing: AppText(
-          "${notification.createdAt?.hour}:${notification.createdAt?.minute.toString().padLeft(2, '0')}",
-          style: TextStyle(color: Colors.grey),
+        title: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            AppText(
+              notification.title ?? "",
+              style: context.textTheme.bodyMedium!.copyWith(
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+            AppText(formattedTime, style: TextStyle(color: Colors.grey)),
+          ],
         ),
+        subtitle: AppText(notification.body ?? "", maxLines: 5),
       ),
     );
   }
