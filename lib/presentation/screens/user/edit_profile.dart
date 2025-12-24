@@ -117,6 +117,9 @@ class _EditProfileState extends State<EditProfile> {
                         title: Common.firstName,
                         hint: Common.enterFirstName,
                         fieldKey: FieldType.name,
+                        maxLength: 15,
+                        counterText: "",
+
                         controller: firstNameController,
                       ),
                     ),
@@ -125,6 +128,8 @@ class _EditProfileState extends State<EditProfile> {
                         title: Common.lastName,
                         hint: Common.enterLastName,
                         fieldKey: FieldType.name,
+                        maxLength: 15,
+                        counterText: "",
                         controller: lastNameController,
                       ),
                     ),
