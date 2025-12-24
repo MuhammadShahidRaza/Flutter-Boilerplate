@@ -53,6 +53,31 @@ class UserProvider extends ChangeNotifier {
     notifyListeners();
   }
 
+  // Future<void> updateRiderActiveStatus({
+  //   required LatLng location,
+  //   required bool isActive,
+  // }) async {
+
+  //   if (_user == null || _role != UserRole.rider) return;
+  //   _user = _user!.isRiderActive(isRiderActive: isActive, lastKnownLocation: location);
+  //   notifyListeners();
+  // }
+
+  Future<void> updateRiderActiveStatus({
+    required LatLng location,
+    required bool isActive,
+  }) async {
+    if (_user == null || _role != UserRole.rider) return;
+
+    // update local location
+    _currentLocation = location;
+
+    // update only required fields
+    _user = _user!.copyWith(isRiderActive: isActive);
+
+    notifyListeners();
+  }
+
   /// Clear user-related state (use on logout)
   void clear() async {
     _user = null;
