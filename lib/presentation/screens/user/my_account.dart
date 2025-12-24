@@ -45,7 +45,7 @@ class _MyAccountState extends State<MyAccount> {
         icon: Icons.credit_card,
         title: Common.payment,
         onTap: () {
-          // context.navigate(AppRoutes.payment);
+          context.navigate(AppRoutes.payment);
         },
       ),
       _AccountOption(
