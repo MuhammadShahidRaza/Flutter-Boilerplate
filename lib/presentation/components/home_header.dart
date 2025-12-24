@@ -72,7 +72,7 @@ class HomeAppBar extends StatelessWidget implements PreferredSizeWidget {
                     spacing: Dimens.spacingS,
                     children: [
                       ConstrainedBox(
-                        constraints: BoxConstraints(maxWidth: 125),
+                        constraints: BoxConstraints(maxWidth: context.w(0.3)),
                         child: Consumer<UserProvider>(
                           builder: (context, provider, child) {
                             final name = provider.fullName.isNotEmpty == true
