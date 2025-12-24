@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:provider/provider.dart';
 import 'package:sanam_laundry/core/index.dart';
 import 'package:sanam_laundry/core/utils/helper.dart';
 import 'package:sanam_laundry/core/utils/launcher.dart';
@@ -10,6 +11,7 @@ import 'package:sanam_laundry/data/rider_repositories/index.dart';
 import 'package:sanam_laundry/presentation/components/service_table.dart';
 import 'package:sanam_laundry/presentation/index.dart';
 import 'package:sanam_laundry/presentation/screens/rider/my_jobs.dart';
+import 'package:sanam_laundry/providers/index.dart';
 
 class JobDetails extends StatefulWidget {
   const JobDetails({super.key});
@@ -69,6 +71,12 @@ class _JobDetailsState extends State<JobDetails> {
   }
 
   void onPressed(status) async {
+    if (context.read<UserProvider>().user?.isRiderActive == false) {
+      AppToast.showToast(
+        "You are currently inactive. Please go active to proceed.",
+      );
+      return;
+    }
     final updatedOrder = await updateOrderStatus(status);
     if (updatedOrder != null) {
       onOrderUpdated?.call();

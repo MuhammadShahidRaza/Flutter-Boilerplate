@@ -24,11 +24,15 @@ class _UpdateStatusState extends State<UpdateStatus> {
     isActive = provider.user?.isRiderActive ?? false;
   }
 
-  Future<void> _submit() async {
+  Future<void> _submit(bool value) async {
     final provider = Provider.of<UserProvider>(context, listen: false);
     setState(() => isLoading = true);
+    await provider.updateRiderActiveStatus(
+      location: provider.currentLocation,
+      isActive: value,
+    );
     final user = await _riderRepository.updateRiderActiveStatus(
-      isActive: isActive,
+      isActive: value,
       location: provider.currentLocation,
     );
     if (user != null) {
@@ -114,7 +118,7 @@ class _UpdateStatusState extends State<UpdateStatus> {
                 title: Common.save,
                 isLoading: isLoading,
                 onPressed: () {
-                  _submit();
+                  _submit(isActive);
                 },
               ),
             ],
