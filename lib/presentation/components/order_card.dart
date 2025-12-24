@@ -148,15 +148,28 @@ class OrderCard extends StatelessWidget {
                     ],
                   ),
 
-                  if (order.paymentStatus == "pending" ||
-                      order.status == "Awaiting Payment") ...[
+                  if (!isCompleted) ...[
                     AppButton(
-                      title: Common.payNow,
+                      title: order.status == "Awaiting Payment"
+                          ? Common.payNow
+                          : order.paymentStatus == "completed"
+                          ? Common.paid
+                          : Common.payNow,
                       textStyle: context.textTheme.bodySmall!.copyWith(
                         fontWeight: FontWeight.bold,
                         color: AppColors.white,
                       ),
-                      onPressed: () {},
+                      onPressed: () {
+                        if (order.status == "Awaiting Payment") {
+                          context.navigate(
+                            AppRoutes.payment,
+                            extra: {'orderId': order.id.toString()},
+                          );
+                        }
+                      },
+                      backgroundColor: order.status == "Awaiting Payment"
+                          ? AppColors.primary
+                          : AppColors.gray,
                       style: ButtonStyle(
                         minimumSize: WidgetStatePropertyAll(
                           Size(context.w(0.1), 36),
