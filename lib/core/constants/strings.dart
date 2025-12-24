@@ -12,7 +12,10 @@ class Common {
   static const showOrders = "COMMON.SHOW_ORDERS";
   static const pickedUp = "COMMON.PICKED_UP";
   static const taxIncluded = "COMMON.TAX_INCLUDED";
+  static const paid = "COMMON.PAID";
   static const arrived = "COMMON.ARRIVED";
+  static const pickUpLocation = "COMMON.PICK_UP_LOCATION";
+  static const destination = "COMMON.DESTINATION";
   static const active = "COMMON.ACTIVE";
   static const searchJobsByOrderId = "COMMON.SEARCH_JOB_BY_ORDER_ID";
 
