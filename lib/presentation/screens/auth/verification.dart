@@ -51,13 +51,14 @@ class _VerificationState extends State<Verification> {
 
   Future<void> _submit() async {
     if (!_isOtpComplete) return;
+    final token = await FirebaseMessaging.instance.getToken();
     setState(() => loading = true);
     final user = await _authRepository.verifyOtp(
       phone: context.getParam<String>('phone') ?? '',
       otp: _otpCode,
-      deviceToken: await FirebaseMessaging.instance.getToken() ?? '',
+      deviceToken: token ?? '',
       // device_type:Testing Tool
-      // udid:123456789
+      // udid: token ?? '',
       // device_brand:Postman
       // device_os:Linux
       // app_version:1.0.0

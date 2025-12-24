@@ -1,5 +1,8 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_polyline_points/flutter_polyline_points.dart';
+import 'package:geocoding/geocoding.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:provider/provider.dart';
@@ -22,8 +25,8 @@ class RiderHomeOrder extends StatefulWidget {
 }
 
 class _RiderHomeOrderState extends State<RiderHomeOrder> {
-  late bool isActive;
   final RiderRepository _riderRepository = RiderRepository();
+  bool _updatingStatus = false;
 
   bool showOrders = false;
   final ScrollController mapScrollController = ScrollController();
@@ -37,7 +40,7 @@ class _RiderHomeOrderState extends State<RiderHomeOrder> {
   Set<Marker> _markers = {};
   VoidCallback? onOrderUpdated;
 
-  late final LatLng? user;
+  LatLng? user;
 
   LatLng get pickupLatLng => LatLng(user?.latitude ?? 0, user?.longitude ?? 0);
 
@@ -113,6 +116,28 @@ class _RiderHomeOrderState extends State<RiderHomeOrder> {
     }
   }
 
+  String pickUpLocationAddress = '';
+
+  /// Step 3: Reverse geocode → convert lat/lng → address
+  void _reverseGeocode(LatLng pos) async {
+    try {
+      final placemarks = await placemarkFromCoordinates(
+        pos.latitude,
+        pos.longitude,
+      );
+
+      if (placemarks.isEmpty) return;
+
+      final p = placemarks.first;
+
+      setState(() {
+        pickUpLocationAddress = formatAddress(p);
+      });
+    } catch (e) {
+      debugPrint("Reverse geocode error: $e");
+    }
+  }
+
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
@@ -124,19 +149,21 @@ class _RiderHomeOrderState extends State<RiderHomeOrder> {
       _loadOrderDetailsById();
 
       final authUser = context.read<UserProvider>();
+      _reverseGeocode(authUser.currentLocation);
       user = authUser.currentLocation;
     }
   }
 
   Future<void> updateRiderActiveStatus(bool value) async {
     final provider = Provider.of<UserProvider>(context, listen: false);
-    final user = await _riderRepository.updateRiderActiveStatus(
+    await provider.updateRiderActiveStatus(
+      location: provider.currentLocation,
+      isActive: value,
+    );
+    await _riderRepository.updateRiderActiveStatus(
       isActive: value,
       location: provider.currentLocation,
     );
-    if (user != null) {
-      await provider.updateUser(user);
-    }
   }
 
   Future<OrderModel?> updateOrderStatus(status) async {
@@ -155,12 +182,16 @@ class _RiderHomeOrderState extends State<RiderHomeOrder> {
   @override
   void initState() {
     super.initState();
-    final provider = context.read<UserProvider>();
-    isActive = provider.user?.isRiderActive ?? false;
     _polylinePoints = PolylinePoints(apiKey: Environment.mapKey);
   }
 
   void onPressed(status) async {
+    if (context.read<UserProvider>().user?.isRiderActive == false) {
+      AppToast.showToast(
+        "You are currently inactive. Please go active to proceed.",
+      );
+      return;
+    }
     final updatedOrder = await updateOrderStatus(status);
     if (updatedOrder != null) {
       onOrderUpdated?.call();
@@ -171,9 +202,11 @@ class _RiderHomeOrderState extends State<RiderHomeOrder> {
 
   @override
   Widget build(BuildContext context) {
-    // Small chip button
+    final isActive = context.watch<UserProvider>().user?.isRiderActive ?? false;
+    final hasTwoButtons = orderDetails?.nextStatus == "Arrived For Pick-up";
+    final height = context.h(hasTwoButtons ? 0.55 : 0.47);
     return AppWrapper(
-      safeArea: false,
+      safeArea: Platform.isAndroid ? true : false,
       padding: EdgeInsets.zero,
       appBar: HomeAppBar(
         onNotificationTap: () => context.navigate(AppRoutes.riderNotifications),
@@ -189,12 +222,16 @@ class _RiderHomeOrderState extends State<RiderHomeOrder> {
               ),
             Switch(
               value: isActive,
-              onChanged: (value) {
-                setState(() {
-                  isActive = value;
-                });
-                updateRiderActiveStatus(value);
-              },
+
+              onChanged: _updatingStatus
+                  ? null
+                  : (value) async {
+                      setState(() => _updatingStatus = true);
+                      await updateRiderActiveStatus(value);
+                      if (mounted) {
+                        setState(() => _updatingStatus = false);
+                      }
+                    },
               thumbColor: WidgetStatePropertyAll(AppColors.secondary),
               activeThumbColor: AppColors.tertiary,
               trackOutlineColor: WidgetStatePropertyAll(AppColors.primary),
@@ -208,7 +245,7 @@ class _RiderHomeOrderState extends State<RiderHomeOrder> {
         showCurrentLocationMarker: false,
         showMapCurrentLocationMarker: false,
         polylines: _polylines,
-        bottomHeight: context.h(0.5),
+        bottomHeight: height,
         markers: _markers.toList(),
         // overlay children stacked on top of map
         children: Stack(
@@ -219,7 +256,7 @@ class _RiderHomeOrderState extends State<RiderHomeOrder> {
               right: 0,
               bottom: 0,
               child: Container(
-                height: context.h(0.45),
+                height: height,
                 padding: const EdgeInsets.only(
                   left: 25,
                   right: 25,
@@ -283,17 +320,50 @@ class _RiderHomeOrderState extends State<RiderHomeOrder> {
 
                     Expanded(
                       child: MessageBox(
-                        onTap: () {
-                          AppLauncher.openLink(
-                            'https://www.google.com/maps/search/?api=1&query=${orderDetails?.latitude},${orderDetails?.longitude}',
-                          );
-                        },
-                        icon: Icons.location_on_outlined,
-                        title: "Destination",
-                        value: orderDetails?.address ?? 'N/A',
+                        icon: Icons.numbers,
+                        title: Common.orderId,
+                        value: orderDetails?.orderNumber ?? 'N/A',
                         descriptionMaxLines: 3,
                       ),
                     ),
+
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        if (pickUpLocationAddress.isNotEmpty)
+                          Expanded(
+                            child: MessageBox(
+                              onTap: () {
+                                if (user?.latitude != null &&
+                                    user?.longitude != null) {
+                                  AppLauncher.openLink(
+                                    'https://www.google.com/maps/search/?api=1&query=${user?.latitude},${user?.longitude}',
+                                  );
+                                }
+                              },
+                              icon: Icons.location_on_outlined,
+                              title: Common.pickUpLocation,
+                              value: pickUpLocationAddress,
+                              descriptionMaxLines: 3,
+                            ),
+                          ),
+                        Expanded(
+                          child: MessageBox(
+                            onTap: () {
+                              AppLauncher.openLink(
+                                'https://www.google.com/maps/search/?api=1&query=${orderDetails?.latitude},${orderDetails?.longitude}',
+                              );
+                            },
+                            icon: Icons.location_on_outlined,
+                            title: Common.destination,
+                            value: orderDetails?.address ?? 'N/A',
+                            descriptionMaxLines: 3,
+                          ),
+                        ),
+                      ],
+                    ),
+
                     Column(
                       crossAxisAlignment: CrossAxisAlignment.center,
                       spacing: Dimens.spacingM,
@@ -396,7 +466,7 @@ class _RiderHomeOrderState extends State<RiderHomeOrder> {
               ),
             ),
             Positioned(
-              bottom: context.h(0.33),
+              bottom: hasTwoButtons ? context.h(0.42) : context.h(0.35),
               left: context.w(0.25),
 
               child: AppImage(
