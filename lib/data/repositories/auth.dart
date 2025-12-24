@@ -1,3 +1,4 @@
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:sanam_laundry/core/index.dart';
 import 'package:sanam_laundry/core/network/api_response.dart';
@@ -84,10 +85,12 @@ class AuthRepository {
   }
 
   Future<void> logout() async {
+    final token = await FirebaseMessaging.instance.getToken();
+
     await ApiResponseHandler.handleRequest(
       () => _apiService.post(
         Endpoints.logout,
-        data: {"udid": "132323"},
+        data: {"udid": token ?? ""},
         config: const ApiRequestConfig(showErrorToast: false),
       ),
       onSuccess: (data, statusCode) async {
@@ -110,7 +113,7 @@ class AuthRepository {
           'otp': otp,
           // device_type:Testing Tool
           "device_token": deviceToken,
-          // udid:123456789
+          "udid": deviceToken,
           // device_brand:Postman
           // device_os:Linux
           // app_version:1.0.0
