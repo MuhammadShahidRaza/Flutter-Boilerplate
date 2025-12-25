@@ -5,6 +5,7 @@ import 'package:flutter_polyline_points/flutter_polyline_points.dart';
 import 'package:geocoding/geocoding.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
 import 'package:sanam_laundry/core/index.dart';
 import 'package:sanam_laundry/core/utils/helper.dart';
@@ -27,6 +28,7 @@ class RiderHomeOrder extends StatefulWidget {
 class _RiderHomeOrderState extends State<RiderHomeOrder> {
   final RiderRepository _riderRepository = RiderRepository();
   bool _updatingStatus = false;
+  XFile? imageFile;
 
   bool showOrders = false;
   final ScrollController mapScrollController = ScrollController();
@@ -192,19 +194,61 @@ class _RiderHomeOrderState extends State<RiderHomeOrder> {
       );
       return;
     }
+
+    if (status == "Order Delivered" && imageFile == null) {
+      AppToast.showToast(
+        "Please upload an image before marking the order as delivered.",
+      );
+      return;
+    }
+
     final updatedOrder = await updateOrderStatus(status);
     if (updatedOrder != null) {
-      onOrderUpdated?.call();
+      if (status == "Order Delivered") {
+        if (!mounted) return;
+        AppDialog.show(
+          context,
+          title: Common.jobDone,
+          imagePath: AppAssets.allSet,
+          borderColor: AppColors.primary,
+          borderWidth: 4,
+          dismissible: false,
+          borderRadius: Dimens.radiusL,
+          imageSize: 150,
+          content: AppText(
+            maxLines: 3,
+            textAlign: TextAlign.center,
+            Auth.soonYouWillRecieve,
+          ),
+          primaryButtonText: Common.okay,
+          onPrimaryPressed: () => {
+            onOrderUpdated?.call(),
+            if (mounted) context.back(),
+            if (mounted) context.back(),
+          },
+          backgroundColor: AppColors.lightWhite,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          insetPadding: EdgeInsets.all(Dimens.spacingXXL),
+        );
+      } else {
+        onOrderUpdated?.call();
+        if (!mounted) return;
+        context.back();
+      }
     }
-    if (!mounted) return;
-    context.back();
   }
 
   @override
   Widget build(BuildContext context) {
     final isActive = context.watch<UserProvider>().user?.isRiderActive ?? false;
     final hasTwoButtons = orderDetails?.nextStatus == "Arrived For Pick-up";
-    final height = context.h(hasTwoButtons ? 0.55 : 0.47);
+    final height = context.h(
+      hasTwoButtons
+          ? 0.55
+          : orderDetails?.nextStatus == "Order Delivered"
+          ? 0.77
+          : 0.47,
+    );
     return AppWrapper(
       safeArea: Platform.isAndroid ? true : false,
       padding: EdgeInsets.zero,
@@ -368,6 +412,15 @@ class _RiderHomeOrderState extends State<RiderHomeOrder> {
                       crossAxisAlignment: CrossAxisAlignment.center,
                       spacing: Dimens.spacingM,
                       children: [
+                        if (orderDetails?.nextStatus == "Order Delivered")
+                          ImagePickerBox(
+                            initialImagePath: AppAssets.pickerPlaceholder,
+                            title: Common.uploadDeliveryImage,
+                            onImagePicked: (file) {
+                              setState(() => imageFile = file);
+                            },
+                          ),
+
                         AppButton(
                           title: orderDetails?.nextStatus ?? "",
                           onPressed: () {
@@ -413,7 +466,8 @@ class _RiderHomeOrderState extends State<RiderHomeOrder> {
                           ),
                         ),
 
-                        if (orderDetails?.nextStatus == "Arrived For Pick-up")
+                        if (hasTwoButtons ||
+                            orderDetails?.nextStatus == "Order Delivered")
                           AppButton(
                             title: Common.unsuccessfullAttempt,
                             onPressed: () {
@@ -466,7 +520,11 @@ class _RiderHomeOrderState extends State<RiderHomeOrder> {
               ),
             ),
             Positioned(
-              bottom: hasTwoButtons ? context.h(0.42) : context.h(0.35),
+              bottom: hasTwoButtons
+                  ? context.h(0.42)
+                  : orderDetails?.nextStatus == "Order Delivered"
+                  ? context.h(0.65)
+                  : context.h(0.35),
               left: context.w(0.25),
 
               child: AppImage(
