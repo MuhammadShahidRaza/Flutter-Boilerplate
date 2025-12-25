@@ -114,6 +114,7 @@ class _MyJobsState extends State<MyJobs> {
   Widget build(BuildContext context) {
     return AppWrapper(
       safeArea: false,
+      resizeToAvoidBottomInset: false,
       heading: Common.myJobs,
       // showBackButton: true,
       padding: EdgeInsets.zero,
@@ -303,27 +304,32 @@ class _MyJobsState extends State<MyJobs> {
                 ? const Center(child: CircularProgressIndicator.adaptive())
                 : orders.isEmpty
                 ? const Center(child: AppText(Common.noDataAvailable))
-                : ListView.builder(
-                    padding: const EdgeInsets.symmetric(horizontal: 16),
-                    itemCount: orders.length,
-                    itemBuilder: (context, index) {
-                      final order = orders[index];
-                      return JobCard(
-                        onTap: () {
-                          context.navigate(
-                            AppRoutes.jobDetails,
-                            extra: {
-                              "id": order.id.toString(),
-                              "tabType": selectedCategoryId,
-                              "onUpdateStatus": _loadOrders,
-                            },
-                          );
-                        },
-                        order: order,
-                        type: isPickup ? "pickup" : "delivery",
-                        tabType: selectedCategoryId,
-                      );
+                : RefreshIndicator(
+                    onRefresh: () async {
+                      _loadOrders();
                     },
+                    child: ListView.builder(
+                      padding: const EdgeInsets.symmetric(horizontal: 16),
+                      itemCount: orders.length,
+                      itemBuilder: (context, index) {
+                        final order = orders[index];
+                        return JobCard(
+                          onTap: () {
+                            context.navigate(
+                              AppRoutes.jobDetails,
+                              extra: {
+                                "id": order.id.toString(),
+                                "tabType": selectedCategoryId,
+                                "onUpdateStatus": _loadOrders,
+                              },
+                            );
+                          },
+                          order: order,
+                          type: isPickup ? "pickup" : "delivery",
+                          tabType: selectedCategoryId,
+                        );
+                      },
+                    ),
                   ),
           ),
         ],
