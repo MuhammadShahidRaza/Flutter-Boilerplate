@@ -78,6 +78,18 @@ class UserProvider extends ChangeNotifier {
     notifyListeners();
   }
 
+  Future<void> updateNotificationCount({bool clear = false}) async {
+    if (_user == null) return;
+    // update only required fields
+    _user = _user!.copyWith(
+      unreadNotificationCount: (clear
+          ? 0
+          : (_user!.unreadNotificationCount ?? 0) + 1),
+    );
+
+    notifyListeners();
+  }
+
   /// Clear user-related state (use on logout)
   void clear() async {
     _user = null;
