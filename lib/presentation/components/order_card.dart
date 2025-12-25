@@ -163,7 +163,10 @@ class OrderCard extends StatelessWidget {
                         if (order.status == "Awaiting Payment") {
                           context.navigate(
                             AppRoutes.payment,
-                            extra: {'orderId': order.id.toString()},
+                            extra: {
+                              'orderId': order.id.toString(),
+                              'amount': double.parse(order.totalAmount ?? '0'),
+                            },
                           );
                         }
                       },
