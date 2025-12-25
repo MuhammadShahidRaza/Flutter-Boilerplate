@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:sanam_laundry/core/index.dart';
@@ -27,6 +28,7 @@ class _JobDetailsState extends State<JobDetails> {
   VoidCallback? onOrderUpdated;
 
   OrderModel? orderDetails;
+  XFile? imageFile;
 
   Future<void> _loadOrderDetailsById() async {
     if (bookingId.isEmpty) return;
@@ -61,6 +63,7 @@ class _JobDetailsState extends State<JobDetails> {
     final response = await _riderRepository.updateOrderStatus(
       status: status,
       id: orderDetails!.id!.toString(),
+      image: imageFile,
     );
 
     if (response != null) {
@@ -77,12 +80,48 @@ class _JobDetailsState extends State<JobDetails> {
       );
       return;
     }
+
+    if (status == "Order Delivered" && imageFile == null) {
+      AppToast.showToast(
+        "Please upload an image before marking the order as delivered.",
+      );
+      return;
+    }
+
     final updatedOrder = await updateOrderStatus(status);
     if (updatedOrder != null) {
-      onOrderUpdated?.call();
+      if (status == "Order Delivered") {
+        if (!mounted) return;
+        AppDialog.show(
+          context,
+          title: Common.jobDone,
+          imagePath: AppAssets.allSet,
+          borderColor: AppColors.primary,
+          borderWidth: 4,
+          dismissible: false,
+          borderRadius: Dimens.radiusL,
+          imageSize: 150,
+          content: AppText(
+            maxLines: 3,
+            textAlign: TextAlign.center,
+            Auth.soonYouWillRecieve,
+          ),
+          primaryButtonText: Common.okay,
+          onPrimaryPressed: () => {
+            onOrderUpdated?.call(),
+            if (mounted) context.back(),
+            if (mounted) context.back(),
+          },
+          backgroundColor: AppColors.lightWhite,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          insetPadding: EdgeInsets.all(Dimens.spacingXXL),
+        );
+      } else {
+        onOrderUpdated?.call();
+        if (!mounted) return;
+        context.back();
+      }
     }
-    if (!mounted) return;
-    context.back();
   }
 
   @override
@@ -353,6 +392,16 @@ class _JobDetailsState extends State<JobDetails> {
                     ),
                   ],
                 ),
+
+                if (orderDetails?.nextStatus == "Order Delivered" &&
+                    !isCompleted)
+                  ImagePickerBox(
+                    initialImagePath: AppAssets.pickerPlaceholder,
+                    title: Common.uploadDeliveryImage,
+                    onImagePicked: (file) {
+                      setState(() => imageFile = file);
+                    },
+                  ),
                 if (!isCompleted)
                   Column(
                     crossAxisAlignment: CrossAxisAlignment.center,
@@ -407,7 +456,8 @@ class _JobDetailsState extends State<JobDetails> {
                         ),
                       ),
 
-                      if (orderDetails?.nextStatus == "Arrived For Pick-up")
+                      if (orderDetails?.nextStatus == "Arrived For Pick-up" ||
+                          orderDetails?.nextStatus == "Order Delivered")
                         AppButton(
                           title: Common.unsuccessfullAttempt,
                           onPressed: () {
