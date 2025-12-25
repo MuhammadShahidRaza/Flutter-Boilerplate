@@ -2,6 +2,9 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
+import 'package:provider/provider.dart';
+import 'package:sanam_laundry/core/index.dart';
+import 'package:sanam_laundry/providers/index.dart';
 
 class NotificationService {
   NotificationService._();
@@ -91,6 +94,11 @@ class NotificationService {
 
   Future<void> _onForegroundMessage(RemoteMessage message) async {
     debugPrint('Foreground FCM: ${message.messageId}');
+    final context = GoRouterSetup.navigatorKey.currentContext;
+
+    if (context != null) {
+      context.read<UserProvider>().updateNotificationCount();
+    }
     await _showLocalNotificationFromRemoteMessage(message);
   }
 
