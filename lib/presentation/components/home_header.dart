@@ -104,15 +104,58 @@ class HomeAppBar extends StatelessWidget implements PreferredSizeWidget {
             iconWidget ?? SizedBox.shrink(),
 
             // 🔔 Notification icon
-            AppIcon(
-              icon: Icons.notifications_none_rounded,
-              borderWidth: 1,
-              color: AppColors.bottomTabText,
-              padding: EdgeInsets.all(5),
-              onTap: onNotificationTap,
-              borderRadius: Dimens.radiusXL,
-              backgroundColor: AppColors.lightWhite,
-              borderColor: AppColors.primary,
+            Stack(
+              clipBehavior: Clip.none,
+              children: [
+                AppIcon(
+                  icon: Icons.notifications_none_rounded,
+                  borderWidth: 1,
+                  color: AppColors.bottomTabText,
+                  padding: const EdgeInsets.all(5),
+                  onTap: onNotificationTap,
+                  borderRadius: Dimens.radiusXL,
+                  backgroundColor: AppColors.lightWhite,
+                  borderColor: AppColors.primary,
+                ),
+
+                /// Notification Badge
+                Positioned(
+                  top: -5,
+                  right: -5,
+                  child: Consumer<UserProvider>(
+                    builder: (context, provider, child) {
+                      final int count =
+                          provider.user?.unreadNotificationCount ?? 0;
+                      if (count == 0) return const SizedBox.shrink();
+
+                      return Container(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 6,
+                          vertical: 2,
+                        ),
+                        decoration: const BoxDecoration(
+                          color: AppColors.primary,
+                          shape: BoxShape.circle,
+                        ),
+                        constraints: const BoxConstraints(
+                          minWidth: 18,
+                          minHeight: 18,
+                        ),
+                        child: Center(
+                          child: AppText(
+                            count > 99 ? '99+' : count.toString(),
+                            style: context.textTheme.labelSmall?.copyWith(
+                              color: AppColors.white,
+                              fontWeight: FontWeight.bold,
+                              fontSize: 11,
+                            ),
+                          ),
+                        ),
+                      );
+                    },
+                  ),
+                ),
+              ],
             ),
           ],
         ),
