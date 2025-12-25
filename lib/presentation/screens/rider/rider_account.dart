@@ -34,13 +34,13 @@ class _RiderMyAccountState extends State<RiderMyAccount> {
           context.navigate(AppRoutes.updateStatus);
         },
       ),
-      _AccountOption(
-        icon: Icons.directions_car_outlined,
-        title: Common.myJobs,
-        onTap: () {
-          context.replacePage(AppRoutes.myJobs);
-        },
-      ),
+      // _AccountOption(
+      //   icon: Icons.directions_car_outlined,
+      //   title: Common.myJobs,
+      //   onTap: () {
+      //     context.replacePage(AppRoutes.myJobs);
+      //   },
+      // ),
       // _AccountOption(
       //   icon: Icons.location_on_outlined,
       //   title: Common.myAddress,
