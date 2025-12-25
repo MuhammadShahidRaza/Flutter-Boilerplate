@@ -325,11 +325,19 @@ class RiderRepository {
     );
   }
 
-  Future updateOrderStatus({required String status, required String id}) async {
+  Future updateOrderStatus({
+    required String status,
+    required String id,
+    XFile? image,
+  }) async {
     return await ApiResponseHandler.handleRequest(
       () => _apiService.multipartPost(
         "${RiderEndpoints.updateOrder}$id/update-status",
-        data: {"_method": "PATCH", "status": status},
+        data: {
+          "_method": "PATCH",
+          "status": status,
+          ...(image != null ? {'media': image} : {}),
+        },
         config: const ApiRequestConfig(showLoader: true),
       ),
       onSuccess: (data, _) {
