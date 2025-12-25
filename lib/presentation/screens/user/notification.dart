@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:provider/provider.dart';
 import 'package:sanam_laundry/core/index.dart';
 import 'package:sanam_laundry/data/models/notification.dart';
 import 'package:sanam_laundry/data/repositories/home.dart';
 import 'package:sanam_laundry/presentation/index.dart';
+import 'package:sanam_laundry/providers/index.dart';
 
 Map<String, List<NotificationModel>> groupByDate(
   List<NotificationModel> notifications,
@@ -12,7 +14,7 @@ Map<String, List<NotificationModel>> groupByDate(
 
   for (var n in notifications) {
     final dateKey = formatDate(
-      n.createdAt ?? DateTime.now(),
+      (n.createdAt ?? DateTime.now()).toLocal(),
     ); // e.g. "Today", "Yesterday", "22 Jan 2025"
 
     if (!grouped.containsKey(dateKey)) {
@@ -25,22 +27,25 @@ Map<String, List<NotificationModel>> groupByDate(
 }
 
 String formatDate(DateTime date) {
+  final localDate = date.toLocal();
   final now = DateTime.now();
 
-  if (date.day == now.day && date.month == now.month && date.year == now.year) {
+  if (localDate.day == now.day &&
+      localDate.month == now.month &&
+      localDate.year == now.year) {
     return "Today";
   }
 
   final yesterday = now.subtract(Duration(days: 1));
 
-  if (date.day == yesterday.day &&
-      date.month == yesterday.month &&
-      date.year == yesterday.year) {
+  if (localDate.day == yesterday.day &&
+      localDate.month == yesterday.month &&
+      localDate.year == yesterday.year) {
     return "Yesterday";
   }
 
   // Default — format normal date
-  return "${date.day} ${_monthName(date.month)} ${date.year}";
+  return "${localDate.day} ${_monthName(localDate.month)} ${localDate.year}";
 }
 
 String _monthName(int month) {
@@ -80,6 +85,7 @@ class _NotificationScreenState extends State<NotificationScreen> {
         notifications.clear();
         notifications.addAll(response);
       });
+      context.read<UserProvider>().updateNotificationCount(clear: true);
     }
   }
 
@@ -144,9 +150,8 @@ class _NotificationTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final formattedTime = DateFormat(
-      'hh:mm a',
-    ).format(notification.createdAt ?? DateTime.now());
+    final dateTime = (notification.createdAt ?? DateTime.now()).toLocal();
+    final formattedTime = DateFormat('hh:mm a').format(dateTime);
     // agar date bhi chahiye:
     // final formattedTime = DateFormat('dd MMM, hh:mm a').format(time);
 

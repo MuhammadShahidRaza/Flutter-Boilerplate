@@ -16,7 +16,7 @@ class _OrdersState extends State<Orders> {
   final HomeRepository _homeRepository = HomeRepository();
   List<OrderModel> orders = [];
 
-  Future<void> _loadOrders(status) async {
+  Future<void> _loadOrders(String status) async {
     setState(() {
       loadingOrders = true;
       orders = [];
@@ -167,13 +167,18 @@ class _OrdersState extends State<Orders> {
                 ? const Center(child: CircularProgressIndicator.adaptive())
                 : orders.isEmpty
                 ? const Center(child: AppText(Common.noDataAvailable))
-                : ListView.builder(
-                    padding: const EdgeInsets.symmetric(horizontal: 16),
-                    itemCount: orders.length,
-                    itemBuilder: (context, index) {
-                      final order = orders[index];
-                      return OrderCard(order: order);
+                : RefreshIndicator(
+                    onRefresh: () async {
+                      _loadOrders(selectedCategoryId!);
                     },
+                    child: ListView.builder(
+                      padding: const EdgeInsets.symmetric(horizontal: 16),
+                      itemCount: orders.length,
+                      itemBuilder: (context, index) {
+                        final order = orders[index];
+                        return OrderCard(order: order);
+                      },
+                    ),
                   ),
           ),
         ],
