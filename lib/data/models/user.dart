@@ -17,6 +17,7 @@ class UserModel {
   final String? gender;
   final bool? isRiderActive;
   final int? status;
+  final int? unreadNotificationCount;
   final String? language;
   final String? createdAt;
   final String? token;
@@ -33,6 +34,7 @@ class UserModel {
     this.bio,
     required this.userType,
     this.userRole,
+    this.unreadNotificationCount,
     this.customerId,
     this.profileImage,
     this.gender,
@@ -56,7 +58,7 @@ class UserModel {
       bio: json['bio'],
       userType: json['user_type'] ?? "",
       userRole: json['user_role'],
-
+      unreadNotificationCount: json['unread_activities_count'] ?? 0,
       customerId: json['customer_id'] ?? "",
       profileImage: json['profile_image'],
       gender: json['gender'],
@@ -94,7 +96,7 @@ class UserModel {
     };
   }
 
-  UserModel copyWith({bool? isRiderActive}) {
+  UserModel copyWith({bool? isRiderActive, int? unreadNotificationCount}) {
     return UserModel(
       id: id,
       firstName: firstName,
@@ -111,6 +113,8 @@ class UserModel {
       profileImage: profileImage,
       gender: gender,
       isRiderActive: isRiderActive ?? this.isRiderActive,
+      unreadNotificationCount:
+          unreadNotificationCount ?? this.unreadNotificationCount,
       status: status,
       language: language,
       createdAt: createdAt,
