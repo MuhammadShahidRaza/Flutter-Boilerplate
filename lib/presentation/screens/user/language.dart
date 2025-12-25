@@ -93,9 +93,11 @@ class _ChangeLanguageState extends State<ChangeLanguage> {
                     return;
                   }
                   Future.delayed(Duration(milliseconds: 300), () {
-                    context.read<ServicesProvider>().fetchCategories(
-                      forceRefresh: true,
-                    );
+                    if (context.read<UserProvider>().isRider == false) {
+                      context.read<ServicesProvider>().fetchCategories(
+                        forceRefresh: true,
+                      );
+                    }
                     context.back();
                   });
                 },
