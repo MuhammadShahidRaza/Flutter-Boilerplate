@@ -11,9 +11,11 @@ class Common {
   static const hideOrders = "COMMON.HIDE_ORDERS";
   static const showOrders = "COMMON.SHOW_ORDERS";
   static const pickedUp = "COMMON.PICKED_UP";
+  static const uploadDeliveryImage = "COMMON.UPLOAD_DELIVERY_IMAGE";
   static const taxIncluded = "COMMON.TAX_INCLUDED";
   static const paid = "COMMON.PAID";
   static const arrived = "COMMON.ARRIVED";
+  static const okay = "COMMON.OKAY";
   static const pickUpLocation = "COMMON.PICK_UP_LOCATION";
   static const destination = "COMMON.DESTINATION";
   static const active = "COMMON.ACTIVE";
