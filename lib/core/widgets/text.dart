@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:sanam_laundry/core/extensions/localization.dart';
 import 'package:sanam_laundry/core/extensions/theme.dart';
-import 'package:sanam_laundry/data/index.dart';
 
 class AppText extends StatelessWidget {
   final String text;
