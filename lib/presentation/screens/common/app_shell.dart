@@ -15,24 +15,31 @@ class AppShell extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return AppWrapper(
-      useScaffold: false,
-      safeArea: false,
-      padding: EdgeInsets.zero,
-      child: Column(
-        children: [
-          Expanded(child: navigationShell),
-          AppBottomNavigation(
-            items: getBottomNavItems(context, isRider),
-            currentIndex: navigationShell.currentIndex,
-            onItemSelected: (index) {
-              navigationShell.goBranch(
-                index,
-                initialLocation: navigationShell.currentIndex == index,
-              );
-            },
-          ),
-        ],
+    return PopScope(
+      canPop: false,
+      onPopInvokedWithResult: (didPop, result) async {
+        if (didPop) return;
+        await AppBackHandler.handleBack(context, shell: navigationShell);
+      },
+      child: AppWrapper(
+        useScaffold: false,
+        safeArea: false,
+        padding: EdgeInsets.zero,
+        child: Column(
+          children: [
+            Expanded(child: navigationShell),
+            AppBottomNavigation(
+              items: getBottomNavItems(context, isRider),
+              currentIndex: navigationShell.currentIndex,
+              onItemSelected: (index) {
+                navigationShell.goBranch(
+                  index,
+                  initialLocation: navigationShell.currentIndex == index,
+                );
+              },
+            ),
+          ],
+        ),
       ),
     );
   }
