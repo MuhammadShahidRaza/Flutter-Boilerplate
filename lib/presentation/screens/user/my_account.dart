@@ -27,13 +27,13 @@ class _MyAccountState extends State<MyAccount> {
           context.navigate(AppRoutes.editProfile);
         },
       ),
-      _AccountOption(
-        icon: Icons.list,
-        title: Common.myOrders,
-        onTap: () {
-          context.replacePage(AppRoutes.orders);
-        },
-      ),
+      // _AccountOption(
+      //   icon: Icons.list,
+      //   title: Common.myOrders,
+      //   onTap: () {
+      //     context.replacePage(AppRoutes.orders);
+      //   },
+      // ),
       _AccountOption(
         icon: Icons.location_on_outlined,
         title: Common.myAddress,
