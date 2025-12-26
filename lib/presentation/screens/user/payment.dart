@@ -1,10 +1,12 @@
-import 'dart:convert';
+import 'dart:io' show Platform;
 import 'package:flutter/material.dart';
-import 'package:go_router/go_router.dart';
-import 'package:http/http.dart' as http;
 import 'package:sanam_laundry/core/index.dart';
+import 'package:sanam_laundry/core/utils/helper.dart';
+import 'package:sanam_laundry/data/index.dart';
+import 'package:sanam_laundry/data/models/order.dart';
+import 'package:sanam_laundry/data/repositories/home.dart';
 import 'package:sanam_laundry/presentation/index.dart';
-import 'package:webview_flutter/webview_flutter.dart';
+import 'package:myfatoorah_flutter/myfatoorah_flutter.dart';
 
 class Payment extends StatefulWidget {
   const Payment({super.key});
@@ -14,67 +16,131 @@ class Payment extends StatefulWidget {
 }
 
 class _PaymentState extends State<Payment> {
+  final HomeRepository _homeRepository = HomeRepository();
   bool isLoading = false;
   bool isProcessing = false;
   List<PaymentMethod> paymentMethods = [];
   PaymentMethod? selectedPaymentMethod;
-  String? orderId;
+  OrderModel? order;
   double invoiceValue = 0.0;
+  late final bool isTestMode;
+  late final String currency;
 
-  // Replace with your MyFatoorah API key
-  final String apiKey =
-      'SK_KWT_jLoDR4tjTCIfqhhgqo6R7E4ZRDIxkegzCeyyS6f5eu9aKmtatDiKgWSknj1YD751';
-  final String apiBase = 'https://apitest.myfatoorah.com/v2';
-  // For production, use:
-  // final String apiBase = 'https://api.myfatoorah.com/v2';
+  String _lastInvoiceId = '';
+  // MyFatoorah API key
+  final String apiKey = Environment.myFatoorahApiKey;
+  @override
+  void initState() {
+    super.initState();
+    isTestMode = Environment.myFatoorahTestMode.toLowerCase() == 'true';
+    // currency = isTestMode
+    //     ? MFCurrencyISO.KUWAIT_KWD
+    //     : MFCurrencyISO.SAUDIARABIA_SAR;
+    currency = MFCurrencyISO.SAUDIARABIA_SAR;
+  }
 
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
     final extra = context.getExtra();
     if (extra != null) {
-      orderId = extra['orderId'] as String?;
-      invoiceValue = (extra['amount'] as num?)?.toDouble() ?? 115.0;
+      order = extra['order'] as OrderModel?;
+      invoiceValue = (extra['amount'] as num?)?.toDouble() ?? 0.0;
     }
-    if (paymentMethods.isEmpty) {
-      _loadPaymentMethods();
+    _initMyFatoorahSdk().then((_) {
+      if (paymentMethods.isEmpty) {
+        _initiatePaymentSdk();
+      }
+    });
+  }
+
+  Future<void> _initMyFatoorahSdk() async {
+    try {
+      await MFSDK.init(
+        apiKey,
+        isTestMode ? MFCountry.KUWAIT : MFCountry.SAUDIARABIA,
+        isTestMode ? MFEnvironment.TEST : MFEnvironment.LIVE,
+      );
+    } catch (e) {
+      _showError('SDK init error: ${e.toString()}');
     }
   }
 
-  Future<void> _loadPaymentMethods() async {
+  Future<void> _initiatePaymentSdk() async {
     setState(() => isLoading = true);
-
     try {
-      final response = await http.post(
-        Uri.parse('$apiBase/InitiatePayment'),
-        headers: {
-          'Authorization': 'Bearer $apiKey',
-          'Content-Type': 'application/json',
-        },
-        body: jsonEncode({"InvoiceAmount": invoiceValue, "CurrencyIso": "KWD"}),
+      final request = MFInitiatePaymentRequest(
+        invoiceAmount: invoiceValue,
+        currencyIso: currency,
       );
+      final response = await MFSDK.initiatePayment(request, MFLanguage.ENGLISH);
 
-      if (response.statusCode == 200) {
-        final data = jsonDecode(response.body);
+      final methods = response.paymentMethods;
+      if (methods != null) {
+        final mapped = methods.map<PaymentMethod>((m) {
+          final id = m.paymentMethodId ?? 0;
+          final en = m.paymentMethodEn ?? '';
+          final ar = m.paymentMethodAr ?? '';
+          final img = m.imageUrl ?? '';
+          final sc = (m.serviceCharge ?? 0.0).toDouble();
+          final ta = (m.totalAmount ?? invoiceValue).toDouble();
+          final cur = m.currencyIso ?? (isTestMode ? 'KWD' : 'SAR');
+          return PaymentMethod(
+            paymentMethodId: id,
+            paymentMethodEn: en,
+            paymentMethodAr: ar,
+            imageUrl: img,
+            serviceCharge: sc,
+            totalAmount: ta,
+            currencyIso: cur,
+            isTestMode: isTestMode,
+          );
+        }).toList();
 
-        if (data['IsSuccess'] == true && data['Data'] != null) {
-          final List<dynamic> methodsData = data['Data']['PaymentMethods'];
+        // Filter platform-specific wallets: hide Google Pay on iOS, Apple Pay on Android
+        final filtered = mapped.where((m) {
+          final name = m.paymentMethodEn.toLowerCase();
+          if (Platform.isIOS && name.contains('google')) return false;
+          if (Platform.isAndroid && name.contains('apple')) return false;
+          return true;
+        }).toList();
 
-          setState(() {
-            paymentMethods = methodsData
-                .map((method) => PaymentMethod.fromJson(method))
-                .toList();
-          });
-        } else {
-          _showError(data['Message'] ?? 'Failed to load payment methods');
-        }
+        filtered.sort((a, b) {
+          if (a.paymentMethodEn == 'VISA/MASTER') return -1;
+          if (b.paymentMethodEn == 'VISA/MASTER') return 1;
+          return 0;
+        });
+
+        setState(() {
+          paymentMethods = filtered;
+          selectedPaymentMethod = filtered.isNotEmpty ? filtered.first : null;
+        });
       } else {
-        _showError('Failed to connect to payment gateway');
+        _showError('No payment methods returned by SDK');
       }
     } catch (e) {
-      _showError('Error: ${e.toString()}');
+      _showError('Initiate payment error: ${e.toString()}');
     } finally {
       setState(() => isLoading = false);
+    }
+  }
+
+  String _sanitizeEmail(String? email) {
+    final e = (email ?? '').trim();
+    if (e.isEmpty || !e.contains('@')) return 'customer@example.com';
+    return e;
+  }
+
+  String _sanitizeMobile(String? mobile) {
+    final digits = (mobile ?? '').replaceAll(RegExp(r'\D'), '');
+    if (isTestMode) {
+      // Kuwait uses local 8-digit format (no country code)
+      if (digits.length == 8) return digits;
+      return '51234567';
+    } else {
+      // Saudi uses local 9-digit format (no country code)
+      if (digits.length == 9) return digits;
+      return '512345678';
     }
   }
 
@@ -85,96 +151,96 @@ class _PaymentState extends State<Payment> {
     }
 
     setState(() => isProcessing = true);
+    final isArabic = await AuthService.loadLanguage() == 'ar';
 
     try {
-      final response = await http.post(
-        Uri.parse('$apiBase/ExecutePayment'),
-        headers: {
-          'Authorization': 'Bearer $apiKey',
-          'Content-Type': 'application/json',
+      final execReq = MFExecutePaymentRequest(
+        invoiceValue: invoiceValue,
+        paymentMethodId: selectedPaymentMethod!.paymentMethodId,
+        displayCurrencyIso: currency,
+        customerName: Utils.getfullName(order?.user),
+        customerEmail: _sanitizeEmail(order?.user?.email),
+        customerMobile: _sanitizeMobile(order?.user?.phone),
+        customerReference: order?.id.toString() ?? '',
+        language: isArabic ? MFLanguage.ARABIC : MFLanguage.ENGLISH,
+      );
+      final statusResponse = await MFSDK.executePayment(
+        execReq,
+        isArabic ? MFLanguage.ARABIC : MFLanguage.ENGLISH,
+        (String invoiceId) {
+          _lastInvoiceId = invoiceId;
         },
-        body: jsonEncode({
-          "PaymentMethodId": selectedPaymentMethod!.paymentMethodId,
-          "InvoiceValue": invoiceValue,
-          "CustomerName": "John Doe",
-          "CustomerEmail": "customer@example.com",
-          "CustomerMobile": "96512345678",
-          "CallBackUrl": "https://your-app.com/payment/callback",
-          "ErrorUrl": "https://your-app.com/payment/error",
-          "Language": "en",
-          "CustomerReference": orderId ?? "",
-          "DisplayCurrencyIso": "KWD",
-          "MobileCountryCode": "+965",
-        }),
       );
 
-      if (response.statusCode == 200) {
-        final data = jsonDecode(response.body);
-
-        if (data['IsSuccess'] == true) {
-          final paymentUrl = data['Data']['PaymentURL'];
-
-          if (paymentUrl != null && mounted) {
-            setState(() => isProcessing = false);
-
-            // Navigate to WebView for payment
-            final result = await Navigator.push(
-              context,
-              MaterialPageRoute(
-                builder: (context) => PaymentWebView(
-                  paymentUrl: paymentUrl,
-                  onPaymentComplete: (status) {
-                    Navigator.of(context).pop(status);
-                  },
-                ),
-              ),
-            );
-
-            if (result != null && mounted) {
-              _handlePaymentResult(result as String);
-            }
-          }
-        } else {
-          _showError(data['Message'] ?? 'Payment initiation failed');
-        }
+      final invoiceStatus = (statusResponse.invoiceStatus)
+          ?.toString()
+          .toLowerCase();
+      if (invoiceStatus == 'paid') {
+        _handlePaymentResult('success');
       } else {
-        _showError('Failed to process payment');
+        _handlePaymentResult('failed');
       }
     } catch (e) {
-      _showError('Error: ${e.toString()}');
-    } finally {
-      if (mounted) {
-        setState(() => isProcessing = false);
+      final msg = (e is MFError && e.message != null)
+          ? e.message
+          : e.toString();
+      debugPrint('MyFatoorah execute error: $msg');
+
+      if (msg == 'User clicked cancel button') {
+        return;
       }
+      _showError('Payment error: $msg');
+    } finally {
+      if (mounted) setState(() => isProcessing = false);
     }
   }
 
-  void _handlePaymentResult(String status) {
+  void _handlePaymentResult(String status) async {
+    if (!mounted) return;
     if (status == 'success') {
+      final payload = {
+        "_method": "PATCH",
+        "payment_method": selectedPaymentMethod?.paymentMethodEn ?? '',
+        "transaction_id": _lastInvoiceId,
+        "booking_id": order?.id.toString() ?? '',
+      };
+      final response = await _homeRepository.updatePayment(payload: payload);
+      if (response == true) {
+        if (!mounted) return;
+        AppDialog.show(
+          context,
+          title: Common.paymentSuccessful,
+          imagePath: AppAssets.allSet,
+          borderColor: AppColors.primary,
+          borderWidth: 4,
+          dismissible: false,
+          borderRadius: Dimens.radiusL,
+          imageSize: 150,
+          content: AppText(
+            Common.yourPaymentProcessedSuccessfully,
+            maxLines: 3,
+            textAlign: TextAlign.center,
+          ),
+          primaryButtonText: Common.okay,
+          onPrimaryPressed: () => {if (mounted) context.back()},
+          backgroundColor: AppColors.lightWhite,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          insetPadding: EdgeInsets.all(Dimens.spacingXXL),
+        );
+      } else {
+        _showError(Common.failedToUpdatePaymentStatus);
+      }
+    } else {
       AppDialog.show(
         context,
-        title: 'Payment Successful',
+        title: Common.paymentFailed,
         content: AppText(
-          'Your payment has been processed successfully.',
+          Common.yourPaymentCouldNotBeProcessedPleaseTryAgain,
           textAlign: TextAlign.center,
+          maxLines: 3,
         ),
-        primaryButtonText: 'Done',
-        onPrimaryPressed: () {
-          context.go(AppRoutes.orders);
-        },
-      );
-    } else if (status == 'failed') {
-      AppDialog.show(
-        context,
-        title: 'Payment Failed',
-        content: AppText(
-          'Your payment could not be processed. Please try again.',
-          textAlign: TextAlign.center,
-        ),
-        primaryButtonText: 'Try Again',
-        onPrimaryPressed: () {
-          context.pop();
-        },
+        primaryButtonText: Common.tryAgain,
+        onPrimaryPressed: () => {context.back(), _executePayment()},
       );
     }
   }
@@ -187,23 +253,12 @@ class _PaymentState extends State<Payment> {
   @override
   Widget build(BuildContext context) {
     return AppWrapper(
-      appBar: AppBar(
-        title: AppText(
-          'Select Payment Method',
-          style: context.textTheme.titleLarge?.copyWith(
-            fontWeight: FontWeight.bold,
-          ),
-        ),
-        leading: IconButton(
-          icon: Icon(Icons.arrow_back),
-          onPressed: () => context.back(),
-        ),
-      ),
+      heading: Common.payment,
+      showBackButton: true,
       child: isLoading
-          ? Center(child: CircularProgressIndicator())
+          ? const Center(child: CircularProgressIndicator())
           : Column(
               children: [
-                // Amount Display
                 Container(
                   width: double.infinity,
                   padding: EdgeInsets.all(Dimens.spacingLarge),
@@ -213,14 +268,22 @@ class _PaymentState extends State<Payment> {
                     borderRadius: BorderRadius.circular(Dimens.radiusM),
                   ),
                   child: Column(
+                    spacing: Dimens.spacingXS,
                     children: [
                       AppText(
-                        'Total Amount',
+                        Common.totalAmount,
                         style: context.textTheme.bodyMedium,
                       ),
-                      SizedBox(height: Dimens.spacingXS),
+                      if (order != null)
+                        AppText(
+                          '${context.tr(Common.orderId)} #: ${order?.orderNumber ?? ''}',
+                          style: context.textTheme.bodySmall?.copyWith(
+                            fontWeight: FontWeight.bold,
+                            color: AppColors.primary,
+                          ),
+                        ),
                       AppText(
-                        '${invoiceValue.toStringAsFixed(3)} KWD',
+                        '${invoiceValue.toStringAsFixed(2)} $currency',
                         style: context.textTheme.headlineMedium?.copyWith(
                           fontWeight: FontWeight.bold,
                           color: AppColors.primary,
@@ -229,11 +292,9 @@ class _PaymentState extends State<Payment> {
                     ],
                   ),
                 ),
-
-                // Payment Methods List
                 Expanded(
                   child: paymentMethods.isEmpty
-                      ? Center(child: AppText('No payment methods available'))
+                      ? const Center(child: AppText(Common.noDataAvailable))
                       : ListView.builder(
                           padding: EdgeInsets.all(Dimens.spacingM),
                           itemCount: paymentMethods.length,
@@ -242,13 +303,10 @@ class _PaymentState extends State<Payment> {
                             final isSelected =
                                 selectedPaymentMethod?.paymentMethodId ==
                                 method.paymentMethodId;
-
                             return GestureDetector(
-                              onTap: () {
-                                setState(() {
-                                  selectedPaymentMethod = method;
-                                });
-                              },
+                              onTap: () => setState(
+                                () => selectedPaymentMethod = method,
+                              ),
                               child: Container(
                                 margin: EdgeInsets.only(
                                   bottom: Dimens.spacingM,
@@ -269,8 +327,8 @@ class _PaymentState extends State<Payment> {
                                   ),
                                 ),
                                 child: Row(
+                                  spacing: Dimens.spacingM,
                                   children: [
-                                    // Payment Method Icon
                                     Container(
                                       width: 60,
                                       height: 40,
@@ -302,9 +360,6 @@ class _PaymentState extends State<Payment> {
                                               color: AppColors.primary,
                                             ),
                                     ),
-                                    SizedBox(width: Dimens.spacingM),
-
-                                    // Payment Method Details
                                     Expanded(
                                       child: Column(
                                         crossAxisAlignment:
@@ -319,8 +374,10 @@ class _PaymentState extends State<Payment> {
                                           ),
                                           if (method.serviceCharge > 0)
                                             AppText(
-                                              'Service charge: ${method.serviceCharge.toStringAsFixed(3)} KWD',
-                                              style: context.textTheme.bodySmall
+                                              'Service charge: ${method.serviceCharge.toStringAsFixed(2)} ${method.currencyIso}',
+                                              style: context
+                                                  .textTheme
+                                                  .labelSmall
                                                   ?.copyWith(
                                                     color: AppColors.gray,
                                                   ),
@@ -328,8 +385,6 @@ class _PaymentState extends State<Payment> {
                                         ],
                                       ),
                                     ),
-
-                                    // Selection Indicator
                                     if (isSelected)
                                       Icon(
                                         Icons.check_circle,
@@ -343,29 +398,13 @@ class _PaymentState extends State<Payment> {
                           },
                         ),
                 ),
-
-                // Pay Button
-                Container(
-                  padding: EdgeInsets.all(Dimens.spacingM),
-                  decoration: BoxDecoration(
-                    color: AppColors.white,
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.black.withValues(alpha: 0.1),
-                        blurRadius: 10,
-                        offset: Offset(0, -5),
-                      ),
-                    ],
-                  ),
-                  child: AppButton(
-                    title: isProcessing ? 'Processing...' : 'Pay Now',
-                    onPressed: isProcessing || selectedPaymentMethod == null
-                        ? null
-                        : _executePayment,
-                    backgroundColor: selectedPaymentMethod == null
-                        ? AppColors.gray
-                        : AppColors.primary,
-                  ),
+                AppButton(
+                  isEnabled: order?.id != null,
+                  title: Common.payNow,
+                  isLoading: isProcessing,
+                  onPressed: isProcessing || selectedPaymentMethod == null
+                      ? null
+                      : _executePayment,
                 ),
               ],
             ),
@@ -381,6 +420,7 @@ class PaymentMethod {
   final double serviceCharge;
   final double totalAmount;
   final String currencyIso;
+  final bool isTestMode;
 
   PaymentMethod({
     required this.paymentMethodId,
@@ -390,6 +430,7 @@ class PaymentMethod {
     required this.serviceCharge,
     required this.totalAmount,
     required this.currencyIso,
+    required this.isTestMode,
   });
 
   factory PaymentMethod.fromJson(Map<String, dynamic> json) {
@@ -400,96 +441,10 @@ class PaymentMethod {
       imageUrl: json['ImageUrl'] ?? '',
       serviceCharge: (json['ServiceCharge'] ?? 0.0).toDouble(),
       totalAmount: (json['TotalAmount'] ?? 0.0).toDouble(),
-      currencyIso: json['CurrencyIso'] ?? 'KWD',
+      currencyIso: json['CurrencyIso'] ?? (json['isTestMode'] ? 'KWD' : 'SAR'),
+      isTestMode: json['isTestMode'] ?? false,
     );
   }
 }
 
-class PaymentWebView extends StatefulWidget {
-  final String paymentUrl;
-  final Function(String status) onPaymentComplete;
-
-  const PaymentWebView({
-    super.key,
-    required this.paymentUrl,
-    required this.onPaymentComplete,
-  });
-
-  @override
-  State<PaymentWebView> createState() => _PaymentWebViewState();
-}
-
-class _PaymentWebViewState extends State<PaymentWebView> {
-  late WebViewController controller;
-  bool isLoading = true;
-  bool _hasCompleted = false;
-
-  @override
-  void initState() {
-    super.initState();
-    controller = WebViewController()
-      ..setJavaScriptMode(JavaScriptMode.unrestricted)
-      ..setNavigationDelegate(
-        NavigationDelegate(
-          onPageStarted: (url) {
-            if (mounted) {
-              setState(() => isLoading = true);
-            }
-          },
-          onPageFinished: (url) {
-            if (mounted) {
-              setState(() => isLoading = false);
-            }
-          },
-          onNavigationRequest: (request) {
-            if (_hasCompleted) return NavigationDecision.prevent;
-
-            final url = request.url.toLowerCase();
-
-            // Check for success callback
-            if (url.contains('payment/callback') || url.contains('success')) {
-              _hasCompleted = true;
-              widget.onPaymentComplete('success');
-              return NavigationDecision.prevent;
-            }
-
-            // Check for error/failure callback
-            if (url.contains('payment/error') ||
-                url.contains('failed') ||
-                url.contains('cancel')) {
-              _hasCompleted = true;
-              widget.onPaymentComplete('failed');
-              return NavigationDecision.prevent;
-            }
-
-            return NavigationDecision.navigate;
-          },
-        ),
-      )
-      ..loadRequest(Uri.parse(widget.paymentUrl));
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: AppText('Complete Payment'),
-        leading: IconButton(
-          icon: Icon(Icons.close),
-          onPressed: () {
-            if (!_hasCompleted) {
-              _hasCompleted = true;
-              widget.onPaymentComplete('cancelled');
-            }
-          },
-        ),
-      ),
-      body: Stack(
-        children: [
-          WebViewWidget(controller: controller),
-          if (isLoading) Center(child: CircularProgressIndicator()),
-        ],
-      ),
-    );
-  }
-}
+// Legacy WebView-based payment flow removed. SDK-only implementation is used.
