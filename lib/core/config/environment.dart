@@ -12,4 +12,7 @@ class Environment {
   static String get baseUrl => dotenv.env['API_BASE_URL'] ?? '';
   static bool get enableLogs => kDebugMode ? true : false;
   static String get mapKey => dotenv.env['MAP_API_KEY'] ?? '';
+  static String get myFatoorahTestMode =>
+      dotenv.env['MY_FATOORAH_TEST_MODE'] ?? 'true';
+  static String get myFatoorahApiKey => dotenv.env['MY_FATOORAH_API_KEY'] ?? '';
 }
