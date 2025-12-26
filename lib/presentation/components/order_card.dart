@@ -164,7 +164,7 @@ class OrderCard extends StatelessWidget {
                           context.navigate(
                             AppRoutes.payment,
                             extra: {
-                              'orderId': order.id.toString(),
+                              'order': order,
                               'amount': double.parse(order.totalAmount ?? '0'),
                             },
                           );
