@@ -10,7 +10,6 @@ import 'package:sanam_laundry/data/models/service.dart';
 import 'package:sanam_laundry/data/models/settings.dart';
 import 'package:sanam_laundry/data/models/slot.dart';
 import 'package:sanam_laundry/data/services/endpoints.dart';
-import 'package:sanam_laundry/data/services/rider_endpoints.dart';
 
 class HomeRepository {
   final ApiService _apiService = ApiService();
@@ -181,7 +180,6 @@ class HomeRepository {
   // }
 
   Future placeOrder({required Map<String, dynamic> payload}) async {
-    debugPrint(payload.toString());
     return await ApiResponseHandler.handleRequest(
       () => _apiService.multipartPost(
         Endpoints.createOrder,
@@ -191,6 +189,19 @@ class HomeRepository {
       // onSuccess: (data, _) {
       //   return OrderModel.fromJson(data);
       // },
+    );
+  }
+
+  Future<bool?> updatePayment({required Map<String, dynamic> payload}) async {
+    return await ApiResponseHandler.handleRequest(
+      () => _apiService.post(
+        "${Endpoints.updatePayment}${payload["booking_id"]}/update/payment",
+        data: payload,
+        config: const ApiRequestConfig(showLoader: true),
+      ),
+      onSuccess: (data, _) {
+        return true;
+      },
     );
   }
 
