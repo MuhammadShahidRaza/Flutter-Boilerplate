@@ -20,7 +20,8 @@ class Endpoints {
   // Orders
   static const String getOrders = "user/booking";
   static const String createOrder = "user/booking/create";
-  static const String updateOrder = "user//orders/update";
+  static const String updateOrder = "user/orders/update";
+  static const String updatePayment = "user/booking/";
 
   //SETTINGS
   static const String notifications = "user/notification";
