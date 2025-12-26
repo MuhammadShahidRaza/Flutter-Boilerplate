@@ -7,9 +7,22 @@ class Common {
   static const viewPicture = "COMMON.VIEW_PICTURE";
   static const submittedToShop = "COMMON.SUBMITTED_TO_SHOP";
   static const onTheWayForPickup = "COMMON.ON_THE_WAY_FOR_PICKUP";
+  static const totalAmount = "COMMON.TOTAL_AMOUNT";
   static const customerPhone = "COMMON.CUSTOMER_PHONE";
   static const hideOrders = "COMMON.HIDE_ORDERS";
+  static const paymentSuccessful = "COMMON.PAYMENT_SUCCESSFUL";
+  static const yourPaymentProcessedSuccessfully =
+      "COMMON.YOUR_PAYMENT_PROCESSED_SUCCESSFULLY";
+  static const failedToUpdatePaymentStatus =
+      "COMMON.FAILED_TO_UPDATE_PAYMENT_STATUS";
+  static const paymentFailed = "COMMON.PAYMENT_FAILED";
+  static const yourPaymentCouldNotBeProcessedPleaseTryAgain =
+      "COMMON.YOUR_PAYMENT_COULD_NOT_BE_PROCESSED_PLEASE_TRY_AGAIN";
   static const showOrders = "COMMON.SHOW_ORDERS";
+  static const exitApp = "COMMON.EXIT_APP";
+  static const exitAppConfirmation = "COMMON.EXIT_APP_CONFIRMATION";
+  static const cancel = "COMMON.CANCEL";
+  static const exit = "COMMON.EXIT";
   static const pickedUp = "COMMON.PICKED_UP";
   static const uploadDeliveryImage = "COMMON.UPLOAD_DELIVERY_IMAGE";
   static const taxIncluded = "COMMON.TAX_INCLUDED";
@@ -220,7 +233,6 @@ class Common {
       "COMMON.UPLOAD_BUILDING_APARTMENT_INSTRUCTION";
   static const normal48Hours = "COMMON.NORMAL_48_HOURS";
   static const express24Hours = "COMMON.EXPRESS_24_HOURS";
-  static const cancel = "COMMON.CANCEL";
   static const days = "COMMON.DAYS";
   static const submit = "COMMON.SUBMIT";
   static const update = "COMMON.UPDATE";
