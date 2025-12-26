@@ -18,14 +18,21 @@ class MyApp extends StatelessWidget {
       darkTheme: AppTheme.darkTheme,
       themeMode: ThemeMode.light,
       locale: locale,
-      // locale: Locale('ar'),
       supportedLocales: AppLocalizationSetup().supportedLocales,
       localizationsDelegates: AppLocalizationSetup.localizationsDelegates,
       localeResolutionCallback: AppLocalizationSetup.resolveLocale,
       builder: (context, child) {
-        final Widget content = child ?? const SizedBox.shrink();
+        final content = child ?? const SizedBox.shrink();
         return MediaQuery.withNoTextScaling(
-          child: AppLoaderOverlay(child: content),
+          child: PopScope(
+            canPop: false,
+            onPopInvokedWithResult: (didPop, result) async {
+              if (didPop) return; // inner navigator handled it
+              // Delegate to shared handler (auth screens only handled here)
+              await AppBackHandler.handleBack(context);
+            },
+            child: AppLoaderOverlay(child: content),
+          ),
         );
       },
     );
