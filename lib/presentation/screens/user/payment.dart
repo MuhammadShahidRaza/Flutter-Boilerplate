@@ -181,6 +181,7 @@ class _PaymentState extends State<Payment> {
         _handlePaymentResult('failed');
       }
     } catch (e) {
+      setState(() => isProcessing = false);
       final msg = (e is MFError && e.message != null)
           ? e.message
           : e.toString();
@@ -222,7 +223,9 @@ class _PaymentState extends State<Payment> {
             textAlign: TextAlign.center,
           ),
           primaryButtonText: Common.okay,
-          onPrimaryPressed: () => {if (mounted) context.back()},
+          onPrimaryPressed: () => {
+            if (mounted) {context.replacePage(AppRoutes.orders)},
+          },
           backgroundColor: AppColors.lightWhite,
           crossAxisAlignment: CrossAxisAlignment.center,
           insetPadding: EdgeInsets.all(Dimens.spacingXXL),
