@@ -170,7 +170,9 @@ class OrderCard extends StatelessWidget {
                           );
                         }
                       },
-                      backgroundColor: order.status == "Awaiting Payment"
+                      backgroundColor:
+                          order.status == "Awaiting Payment" ||
+                              order.paymentStatus == "completed"
                           ? AppColors.primary
                           : AppColors.gray,
                       style: ButtonStyle(
