@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:go_router/go_router.dart';
@@ -18,27 +19,32 @@ class AppBackHandler {
   }
 
   static Future<bool> confirmExit(BuildContext ctx) async {
-    final result = await showDialog<bool>(
-      context: ctx,
-      barrierDismissible: false,
-      builder: (dCtx) => AlertDialog(
-        title: const AppText(Common.exitApp),
-        content: const AppText(Common.exitAppConfirmation),
-        actions: [
-          AppButton(
-            type: AppButtonType.text,
-            onPressed: () => Navigator.of(dCtx).pop(false),
-            title: Common.cancel,
-          ),
-          AppButton(
-            type: AppButtonType.text,
-            onPressed: () => Navigator.of(dCtx).pop(true),
-            title: Common.exit,
-          ),
-        ],
+    final completer = Completer<bool>();
+
+    AppDialog.show(
+      ctx,
+      title: Common.exitApp,
+      content: AppText(
+        Common.exitAppConfirmation,
+        textAlign: TextAlign.center,
+        style: ctx.textTheme.bodyLarge,
+        maxLines: 3,
       ),
+      dismissible: false,
+      secondaryButtonText: Common.cancel,
+      primaryButtonText: Common.exit,
+      showTwoPrimaryButtons: true,
+      onSecondaryPressed: () {
+        if (!completer.isCompleted) completer.complete(false);
+        Navigator.of(ctx).pop();
+      },
+      onPrimaryPressed: () {
+        if (!completer.isCompleted) completer.complete(true);
+        Navigator.of(ctx).pop();
+      },
     );
-    return result ?? false;
+
+    return completer.future;
   }
 
   /// Handle back press across the app.
@@ -61,9 +67,11 @@ class AppBackHandler {
         return;
       }
 
-      final isAndroid = _isAndroid(context);
-      final ok = await confirmExit(context);
-      if (ok && isAndroid) SystemNavigator.pop();
+      // Show exit confirmation only on Android; iOS has no system back.
+      if (_isAndroid(context)) {
+        final ok = await confirmExit(context);
+        if (ok) SystemNavigator.pop();
+      }
       return;
     }
 
@@ -78,8 +86,10 @@ class AppBackHandler {
       return;
     }
 
-    final isAndroid = _isAndroid(context);
-    final ok = await confirmExit(context);
-    if (ok && isAndroid) SystemNavigator.pop();
+    // At app root on auth screens: only Android should ask to exit.
+    if (_isAndroid(context)) {
+      final ok = await confirmExit(context);
+      if (ok) SystemNavigator.pop();
+    }
   }
 }
