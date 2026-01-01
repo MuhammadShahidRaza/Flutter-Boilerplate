@@ -209,7 +209,6 @@ class _RiderHomeState extends State<RiderHome> {
               ),
             Switch(
               value: isActive,
-
               onChanged: _updatingStatus
                   ? null
                   : (value) async {
@@ -229,8 +228,8 @@ class _RiderHomeState extends State<RiderHome> {
       ),
       child: AddressPickerMap(
         showMarkerOnTap: false,
-        showCurrentLocationMarker: false,
-        showMapCurrentLocationMarker: true,
+        showCurrentLocationMarker: true,
+        showMapCurrentLocationMarker: false,
         bottomHeight: 90,
         markers: [...nearbyMarkers],
         // overlay children stacked on top of map
