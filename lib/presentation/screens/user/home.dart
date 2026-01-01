@@ -56,7 +56,7 @@ class _HomeState extends State<Home> {
       child: Column(
         spacing: Dimens.spacingS,
         children: [
-          if (list.isNotEmpty) SliderList(list: list),
+          SliderList(list: list),
           AppText(Common.categories, fontSize: 20, fontWeight: FontWeight.bold),
           Consumer<ServicesProvider>(
             builder: (context, serviceProvider, _) {
