@@ -9,6 +9,8 @@ class Common {
   static const onTheWayForPickup = "COMMON.ON_THE_WAY_FOR_PICKUP";
   static const totalAmount = "COMMON.TOTAL_AMOUNT";
   static const customerPhone = "COMMON.CUSTOMER_PHONE";
+  static const currentLocation = "COMMON.CURRENT_LOCATION";
+  static const customerLocation = "COMMON.CUSTOMER_LOCATION";
   static const hideOrders = "COMMON.HIDE_ORDERS";
   static const paymentSuccessful = "COMMON.PAYMENT_SUCCESSFUL";
   static const yourPaymentProcessedSuccessfully =
