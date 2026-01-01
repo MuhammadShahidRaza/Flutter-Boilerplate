@@ -176,7 +176,12 @@ class _OrdersState extends State<Orders> {
                       itemCount: orders.length,
                       itemBuilder: (context, index) {
                         final order = orders[index];
-                        return OrderCard(order: order);
+                        return OrderCard(
+                          order: order,
+                          loadOrders: () {
+                            _loadOrders(selectedCategoryId!);
+                          },
+                        );
                       },
                     ),
                   ),
