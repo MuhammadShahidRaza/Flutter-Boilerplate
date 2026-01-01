@@ -19,20 +19,19 @@ class AppLauncher {
       },
     );
 
-    await _launch(uri);
+    await _launch(uri, mode: LaunchMode.platformDefault);
   }
 
   /// Open phone dialer
   static Future<void> openPhone(String phone) async {
-    final Uri uri = Uri(scheme: 'tel', path: phone);
-
-    await _launch(uri);
+    final Uri uri = Uri(scheme: 'tel', path: phone.trim());
+    await _launch(uri, mode: LaunchMode.platformDefault);
   }
 
   /// Open external link (https, http)
   static Future<void> openLink(String url) async {
     final Uri uri = Uri.parse(url);
-    await _launch(uri);
+    await _launch(uri, mode: LaunchMode.externalApplication);
   }
 
   /// Open WhatsApp (optional but useful)
@@ -41,17 +40,17 @@ class AppLauncher {
       'https://wa.me/$phone${message != null ? '?text=${Uri.encodeComponent(message)}' : ''}',
     );
 
-    await _launch(uri);
+    await _launch(uri, mode: LaunchMode.externalApplication);
   }
 
   /// Internal launcher
-  static Future<void> _launch(Uri uri) async {
+  static Future<void> _launch(Uri uri, {LaunchMode? mode}) async {
     try {
       if (!await canLaunchUrl(uri)) {
         debugPrint('Could not launch: $uri');
         return;
       }
-      await launchUrl(uri, mode: LaunchMode.externalApplication);
+      await launchUrl(uri, mode: mode ?? LaunchMode.platformDefault);
     } catch (e) {
       debugPrint('Launch error: $e');
     }
