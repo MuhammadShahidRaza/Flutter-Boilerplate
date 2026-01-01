@@ -15,7 +15,7 @@ class Payment extends StatefulWidget {
   State<Payment> createState() => _PaymentState();
 }
 
-class _PaymentState extends State<Payment> {
+class _PaymentState extends State<Payment> with WidgetsBindingObserver {
   final HomeRepository _homeRepository = HomeRepository();
   bool isLoading = false;
   bool isProcessing = false;
@@ -29,14 +29,38 @@ class _PaymentState extends State<Payment> {
   String _lastInvoiceId = '';
   // MyFatoorah API key
   final String apiKey = Environment.myFatoorahApiKey;
+
   @override
   void initState() {
     super.initState();
+    WidgetsBinding.instance.addObserver(this);
     isTestMode = Environment.myFatoorahTestMode.toLowerCase() == 'true';
     // currency = isTestMode
     //     ? MFCurrencyISO.KUWAIT_KWD
     //     : MFCurrencyISO.SAUDIARABIA_SAR;
     currency = MFCurrencyISO.SAUDIARABIA_SAR;
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    // MyFatoorah opens a native Activity; in some cases the Future callback
+    // may not return (e.g., user presses back). Ensure we don't keep showing
+    // a stuck loader when the user returns.
+    if (state == AppLifecycleState.resumed) {
+      if (!mounted) return;
+      if (isProcessing || isLoading) {
+        setState(() {
+          isProcessing = false;
+          isLoading = false;
+        });
+      }
+    }
+  }
+
+  @override
+  void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
+    super.dispose();
   }
 
   @override
@@ -61,6 +85,7 @@ class _PaymentState extends State<Payment> {
         isTestMode ? MFCountry.KUWAIT : MFCountry.SAUDIARABIA,
         isTestMode ? MFEnvironment.TEST : MFEnvironment.LIVE,
       );
+      await MFSDK.setUpActionBar(isShowToolBar: false);
     } catch (e) {
       _showError('SDK init error: ${e.toString()}');
     }
@@ -205,9 +230,11 @@ class _PaymentState extends State<Payment> {
         "transaction_id": _lastInvoiceId,
         "booking_id": order?.id.toString() ?? '',
       };
+      final loadOrders = context.getExtra()?['loadOrders'] as void Function()?;
       final response = await _homeRepository.updatePayment(payload: payload);
       if (response == true) {
         if (!mounted) return;
+        loadOrders?.call();
         AppDialog.show(
           context,
           title: Common.paymentSuccessful,

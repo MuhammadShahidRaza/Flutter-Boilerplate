@@ -58,9 +58,21 @@ class _ServicesState extends State<Services> {
           Expanded(
             child: Consumer<ServicesProvider>(
               builder: (context, serviceProvider, _) {
+                final categories = serviceProvider.categories;
                 final services = serviceProvider.servicesForCategory(
-                  selectedCategoryId!,
+                  selectedCategoryId ?? "",
                 );
+
+                // ✅ Auto-select first category once categories are loaded
+                if (categories.isNotEmpty && selectedCategoryId == null) {
+                  WidgetsBinding.instance.addPostFrameCallback((_) {
+                    if (!mounted) return;
+                    setState(() {
+                      selectedCategoryId = categories.first.id;
+                    });
+                  });
+                }
+
                 return AppListView<ServiceItemModel>(
                   state: AppListState<ServiceItemModel>(
                     items: services,
