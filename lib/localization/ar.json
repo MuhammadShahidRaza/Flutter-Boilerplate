@@ -271,6 +271,8 @@
     "HIDE_ORDERS": "إخفاء الطلبات",
     "PAID": "مدفوع",
     "EXIT_APP": "خروج من التطبيق",
+    "CURRENT_LOCATION": "الموقع الحالي",
+    "CUSTOMER_LOCATION": "موقع العميل",
     "TOTAL_AMOUNT": "المبلغ الإجمالي",
     "EXIT_APP_CONFIRMATION": "هل أنت متأكد أنك تريد الخروج من التطبيق؟",
     "EXIT": "خروج",
