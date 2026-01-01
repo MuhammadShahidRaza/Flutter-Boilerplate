@@ -9,6 +9,7 @@ import 'package:sanam_laundry/data/index.dart';
 import 'package:sanam_laundry/data/models/address.dart';
 import 'package:sanam_laundry/data/models/notification.dart';
 import 'package:sanam_laundry/data/models/order.dart';
+import 'package:sanam_laundry/data/models/paginated.dart';
 import 'package:sanam_laundry/data/models/service.dart';
 import 'package:sanam_laundry/data/models/settings.dart';
 import 'package:sanam_laundry/data/models/slot.dart';
@@ -243,8 +244,14 @@ class RiderRepository {
     );
   }
 
-  Future getOrders({type, slotId, status, search}) async {
-    final query = {"type": type, "slot_id": slotId};
+  Future<PaginatedResult<OrderModel>?> getOrders({
+    type,
+    slotId,
+    status,
+    search,
+    int page = 1,
+  }) async {
+    final query = {"type": type, "slot_id": slotId, "page": page};
     if (status == JobStatus.completed.label) {
       query["completed"] = true;
     } else if (status == JobStatus.ordersInVehicle.label) {
@@ -255,12 +262,17 @@ class RiderRepository {
     if (search != null && search.isNotEmpty) {
       query["search"] = search;
     }
-    return await ApiResponseHandler.handleRequest(
+    return await ApiResponseHandler.handleRequest<PaginatedResult<OrderModel>>(
       () => _apiService.get(RiderEndpoints.getOrders, query: query),
       onSuccess: (data, _) {
-        final orders = Utils.safeList(data["bookings"]);
-        final list = orders.map((e) => OrderModel.fromJson(e)).toList();
-        return list;
+        return PaginatedResult<OrderModel>.fromJson(
+          data,
+          itemsKey: 'bookings',
+          itemsParser: (raw) {
+            final bookings = Utils.safeList(raw);
+            return bookings.map((e) => OrderModel.fromJson(e)).toList();
+          },
+        );
       },
     );
   }
@@ -279,18 +291,26 @@ class RiderRepository {
     );
   }
 
-  Future getNotifications() async {
-    return await ApiResponseHandler.handleRequest(
+  Future<PaginatedResult<NotificationModel>?> getNotifications({
+    int page = 1,
+  }) async {
+    return await ApiResponseHandler.handleRequest<
+      PaginatedResult<NotificationModel>
+    >(
       () => _apiService.get(
         RiderEndpoints.notifications,
-        config: ApiRequestConfig(showLoader: true),
+        query: {"page": page},
+        // config: ApiRequestConfig(showLoader: page == 1),
       ),
       onSuccess: (data, _) {
-        final notifications = Utils.safeList(data?["notify"]);
-        final list = notifications
-            .map((e) => NotificationModel.fromJson(e))
-            .toList();
-        return list;
+        return PaginatedResult<NotificationModel>.fromJson(
+          data,
+          itemsKey: 'notify',
+          itemsParser: (raw) {
+            final list = Utils.safeList(raw);
+            return list.map((e) => NotificationModel.fromJson(e)).toList();
+          },
+        );
       },
     );
   }
