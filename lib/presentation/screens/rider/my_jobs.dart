@@ -33,6 +33,10 @@ class _MyJobsState extends State<MyJobs> {
   final List<SlotModel> slots = [];
   String selectedSlotId = '1';
 
+  int _currentPage = 1;
+  bool _hasMore = true;
+  bool _loadingMore = false;
+
   List<CategoryModel> categories = [];
   String? selectedCategoryId;
   bool loadingCategories = true;
@@ -61,22 +65,50 @@ class _MyJobsState extends State<MyJobs> {
     _loadOrders();
   }
 
-  Future<void> _loadOrders() async {
-    setState(() {
-      loadingOrders = true;
-      orders = [];
-    });
+  Future<void> _loadOrders({bool reset = true}) async {
+    if (reset) {
+      setState(() {
+        loadingOrders = true;
+        orders = [];
+        _currentPage = 1;
+        _hasMore = true;
+        _loadingMore = false;
+      });
+    } else {
+      if (loadingOrders || _loadingMore || !_hasMore) return;
+      setState(() => _loadingMore = true);
+    }
 
-    final data = await _riderRepository.getOrders(
+    final pageToLoad = reset ? 1 : (_currentPage + 1);
+    final result = await _riderRepository.getOrders(
       type: isPickup ? "pickup" : "delivery",
       slotId: selectedSlotId,
       status: selectedCategoryId,
       search: searchController.text.trim(),
+      page: pageToLoad,
     );
+
     if (!mounted) return;
+
+    if (result == null) {
+      setState(() {
+        loadingOrders = false;
+        _loadingMore = false;
+        _hasMore = false;
+      });
+      return;
+    }
+
     setState(() {
-      orders = data ?? [];
-      loadingOrders = false;
+      _currentPage = result.currentPage;
+      _hasMore = result.hasMore;
+      if (reset) {
+        orders = result.items;
+        loadingOrders = false;
+      } else {
+        orders.addAll(result.items);
+        _loadingMore = false;
+      }
     });
   }
 
@@ -134,7 +166,7 @@ class _MyJobsState extends State<MyJobs> {
                     color: AppColors.primary,
                   ),
                   onChanged: (value) {
-                    if (value.isEmpty) _loadOrders();
+                    if (value.isEmpty) _loadOrders(reset: true);
                     _onSearchChanged(value);
                   },
                 ),
@@ -175,7 +207,7 @@ class _MyJobsState extends State<MyJobs> {
                                     onTap: () {
                                       if (selectedSlotId == s.id) return;
                                       setState(() => selectedSlotId = s.id);
-                                      _loadOrders();
+                                      _loadOrders(reset: true);
                                     },
                                     child: Container(
                                       padding: const EdgeInsets.symmetric(
@@ -225,7 +257,7 @@ class _MyJobsState extends State<MyJobs> {
                             onTap: () {
                               if (isPickup) return;
                               setState(() => isPickup = true);
-                              _loadOrders();
+                              _loadOrders(reset: true);
                             },
                             child: Container(
                               padding: const EdgeInsets.symmetric(
@@ -253,7 +285,7 @@ class _MyJobsState extends State<MyJobs> {
                             onTap: () {
                               if (!isPickup) return;
                               setState(() => isPickup = false);
-                              _loadOrders();
+                              _loadOrders(reset: true);
                             },
                             child: Container(
                               padding: const EdgeInsets.symmetric(
@@ -293,44 +325,47 @@ class _MyJobsState extends State<MyJobs> {
             onTap: (id) {
               if (selectedCategoryId != id) {
                 setState(() => selectedCategoryId = id);
-                _loadOrders();
+                _loadOrders(reset: true);
               }
             },
           ),
 
           // 🔹 Orders List
           Expanded(
-            child: loadingOrders
-                ? const Center(child: CircularProgressIndicator.adaptive())
-                : orders.isEmpty
-                ? const Center(child: AppText(Common.noDataAvailable))
-                : RefreshIndicator(
-                    onRefresh: () async {
-                      _loadOrders();
-                    },
-                    child: ListView.builder(
-                      padding: const EdgeInsets.symmetric(horizontal: 16),
-                      itemCount: orders.length,
-                      itemBuilder: (context, index) {
-                        final order = orders[index];
-                        return JobCard(
-                          onTap: () {
-                            context.navigate(
-                              AppRoutes.jobDetails,
-                              extra: {
-                                "id": order.id.toString(),
-                                "tabType": selectedCategoryId,
-                                "onUpdateStatus": _loadOrders,
-                              },
-                            );
-                          },
-                          order: order,
-                          type: isPickup ? "pickup" : "delivery",
-                          tabType: selectedCategoryId,
-                        );
+            child: AppListView<OrderModel>(
+              state: AppListState<OrderModel>(
+                items: orders,
+                loadingInitial: loadingOrders,
+                loadingMore: _loadingMore,
+                hasMore: _hasMore,
+              ),
+              emptyWidget: Center(
+                child: AppText(
+                  Common.noDataAvailable,
+                  style: context.textTheme.bodyMedium,
+                ),
+              ),
+              padding: const EdgeInsets.symmetric(horizontal: Dimens.spacingM),
+              onRefresh: () => _loadOrders(reset: true),
+              onLoadMore: () => _loadOrders(reset: false),
+              itemBuilder: (context, order, index) {
+                return JobCard(
+                  onTap: () {
+                    context.navigate(
+                      AppRoutes.jobDetails,
+                      extra: {
+                        "id": order.id.toString(),
+                        "tabType": selectedCategoryId,
+                        "onUpdateStatus": () => _loadOrders(reset: true),
                       },
-                    ),
-                  ),
+                    );
+                  },
+                  order: order,
+                  type: isPickup ? "pickup" : "delivery",
+                  tabType: selectedCategoryId,
+                );
+              },
+            ),
           ),
         ],
       ),
