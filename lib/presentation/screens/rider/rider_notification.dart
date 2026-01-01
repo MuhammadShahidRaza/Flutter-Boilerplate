@@ -79,13 +79,58 @@ class _RiderNotificationScreenState extends State<RiderNotificationScreen> {
   final RiderRepository _riderRepository = RiderRepository();
   final List<NotificationModel> notifications = [];
 
-  Future<void> fetchNotifications() async {
-    final response = await _riderRepository.getNotifications();
-    if (response != null) {
+  final ScrollController _scrollController = ScrollController();
+  int _currentPage = 1;
+  bool _hasMore = true;
+  bool _loadingInitial = true;
+  bool _loadingMore = false;
+
+  void _onScroll() {
+    if (!_hasMore || _loadingMore || _loadingInitial) return;
+    if (!_scrollController.hasClients) return;
+
+    final position = _scrollController.position;
+    if (position.pixels >= position.maxScrollExtent - 120) {
+      fetchNotifications(reset: false);
+    }
+  }
+
+  Future<void> fetchNotifications({bool reset = true}) async {
+    if (reset) {
       setState(() {
+        _loadingInitial = true;
+        _loadingMore = false;
+        _hasMore = true;
+        _currentPage = 1;
         notifications.clear();
-        notifications.addAll(response);
       });
+    } else {
+      if (_loadingMore || !_hasMore) return;
+      setState(() => _loadingMore = true);
+    }
+
+    final pageToLoad = reset ? 1 : (_currentPage + 1);
+    final result = await _riderRepository.getNotifications(page: pageToLoad);
+    if (!mounted) return;
+
+    if (result == null) {
+      setState(() {
+        _loadingInitial = false;
+        _loadingMore = false;
+        _hasMore = false;
+      });
+      return;
+    }
+
+    setState(() {
+      _currentPage = result.currentPage;
+      _hasMore = result.hasMore;
+      notifications.addAll(result.items);
+      _loadingInitial = false;
+      _loadingMore = false;
+    });
+
+    if (reset) {
       context.read<UserProvider>().updateNotificationCount(clear: true);
     }
   }
@@ -93,7 +138,15 @@ class _RiderNotificationScreenState extends State<RiderNotificationScreen> {
   @override
   void initState() {
     super.initState();
+    _scrollController.addListener(_onScroll);
     fetchNotifications();
+  }
+
+  @override
+  void dispose() {
+    _scrollController.removeListener(_onScroll);
+    _scrollController.dispose();
+    super.dispose();
   }
 
   @override
@@ -104,41 +157,56 @@ class _RiderNotificationScreenState extends State<RiderNotificationScreen> {
     return AppWrapper(
       heading: Common.notifications,
       showBackButton: true,
-      child: dateKeys.isEmpty
+      child: _loadingInitial
+          ? const Center(child: CircularProgressIndicator.adaptive())
+          : dateKeys.isEmpty
           ? Center(
               child: AppText(
                 Common.noNotificationsAvailable,
                 style: context.textTheme.bodyMedium,
               ),
             )
-          : ListView.builder(
-              itemCount: dateKeys.length,
-              itemBuilder: (context, index) {
-                final date = dateKeys[index];
-                final items = grouped[date]!;
+          : RefreshIndicator(
+              onRefresh: () => fetchNotifications(reset: true),
+              child: ListView.builder(
+                controller: _scrollController,
+                itemCount: dateKeys.length + (_loadingMore ? 1 : 0),
+                itemBuilder: (context, index) {
+                  if (index >= dateKeys.length) {
+                    return const Padding(
+                      padding: EdgeInsets.symmetric(vertical: 16),
+                      child: Center(
+                        child: CircularProgressIndicator.adaptive(),
+                      ),
+                    );
+                  }
 
-                return Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    // Date header
-                    Padding(
-                      padding: const EdgeInsets.symmetric(vertical: 8.0),
-                      child: Text(
-                        date,
-                        style: TextStyle(
-                          fontSize: 18,
-                          fontWeight: FontWeight.bold,
+                  final date = dateKeys[index];
+                  final items = grouped[date]!;
+
+                  return Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      // Date header
+                      Padding(
+                        padding: const EdgeInsets.symmetric(vertical: 8.0),
+                        child: Text(
+                          date,
+                          style: const TextStyle(
+                            fontSize: 18,
+                            fontWeight: FontWeight.bold,
+                          ),
                         ),
                       ),
-                    ),
 
-                    // Notifications for that date
-                    ...items.map((n) => NotificationTile(notification: n)),
+                      // Notifications for that date
+                      ...items.map((n) => NotificationTile(notification: n)),
 
-                    SizedBox(height: 12),
-                  ],
-                );
-              },
+                      const SizedBox(height: 12),
+                    ],
+                  );
+                },
+              ),
             ),
     );
   }
