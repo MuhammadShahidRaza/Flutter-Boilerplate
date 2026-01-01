@@ -52,7 +52,7 @@ class _AddressPickerMapState extends State<AddressPickerMap> {
   final Completer<GoogleMapController> _controller = Completer();
   Marker? marker;
   final Set<Marker> allMarkers = {};
-
+  bool _isLoading = false;
   LatLng _initialLatLng = const LatLng(23.8859, 45.0792);
   LatLng? _lastAppliedExternalSelection;
 
@@ -82,6 +82,9 @@ class _AddressPickerMapState extends State<AddressPickerMap> {
 
   /// Step 1: Get user current location
   Future<void> _setCurrentLocation({bool showToast = false}) async {
+    setState(() {
+      _isLoading = true;
+    });
     bool permission = await _checkPermission();
     if (!permission) {
       if (showToast) {
@@ -111,6 +114,9 @@ class _AddressPickerMapState extends State<AddressPickerMap> {
       provider.updateCurrentLocation(_initialLatLng);
     }
     _reverseGeocode(_initialLatLng);
+    setState(() {
+      _isLoading = false;
+    });
   }
 
   /// Step 2: Animate camera
@@ -219,8 +225,16 @@ class _AddressPickerMapState extends State<AddressPickerMap> {
             child: FloatingActionButton(
               mini: true,
               backgroundColor: Colors.white,
-              child: AppIcon(icon: Icons.my_location, color: Colors.blue),
-              onPressed: () => _setCurrentLocation(showToast: true),
+              onPressed: _isLoading
+                  ? null
+                  : () => _setCurrentLocation(showToast: true),
+              child: _isLoading
+                  ? SizedBox(
+                      width: 20,
+                      height: 20,
+                      child: CircularProgressIndicator.adaptive(strokeWidth: 1),
+                    )
+                  : AppIcon(icon: Icons.my_location, color: Colors.blue),
             ),
           ),
       ],
