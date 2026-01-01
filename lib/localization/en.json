@@ -67,6 +67,8 @@
     "DESTINATION": "Destination",
     "TOTAL_AMOUNT": "Total Amount",
     "OKAY": "Okay",
+    "CURRENT_LOCATION": "Current Location",
+    "CUSTOMER_LOCATION": "Customer Location",
     "PAYMENT_SUCCESSFUL": "Payment Successful",
     "YOUR_PAYMENT_PROCESSED_SUCCESSFULLY": "Your payment has been processed successfully.",
     "FAILED_TO_UPDATE_PAYMENT_STATUS": "Failed to update payment status.",
