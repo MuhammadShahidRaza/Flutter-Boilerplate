@@ -4,9 +4,10 @@ import 'package:sanam_laundry/data/models/order.dart';
 import 'package:sanam_laundry/presentation/index.dart';
 
 class OrderCard extends StatelessWidget {
-  const OrderCard({super.key, required this.order});
+  const OrderCard({super.key, required this.order, this.loadOrders});
 
   final OrderModel order;
+  final VoidCallback? loadOrders;
 
   @override
   Widget build(BuildContext context) {
@@ -166,6 +167,7 @@ class OrderCard extends StatelessWidget {
                             extra: {
                               'order': order,
                               'amount': double.parse(order.totalAmount ?? '0'),
+                              "loadOrders": loadOrders,
                             },
                           );
                         }
