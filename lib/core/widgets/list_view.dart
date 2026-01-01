@@ -17,6 +17,7 @@ class AppListView<T> extends StatelessWidget {
   final Widget? separatorBuilderWidget;
   final String? emptyMessageDesciption;
   final String? emptyMessageTitle;
+  final EdgeInsets? emptyWidgetPadding;
 
   const AppListView({
     super.key,
@@ -31,6 +32,7 @@ class AppListView<T> extends StatelessWidget {
     this.scrollDirection = Axis.vertical,
     this.shrinkWrap,
     this.separatorBuilderWidget,
+    this.emptyWidgetPadding,
     this.emptyMessageDesciption,
     this.emptyMessageTitle,
   });
@@ -65,6 +67,7 @@ class AppListView<T> extends StatelessWidget {
             value:
                 emptyMessageDesciption ??
                 "There is no data available to display at the moment.",
+            padding: emptyWidgetPadding,
           );
     }
 
@@ -89,6 +92,12 @@ class AppListView<T> extends StatelessWidget {
 
           itemCount: state.items.length + (state.loadingMore ? 1 : 0),
           itemBuilder: (context, index) {
+            if (index >= state.items.length) {
+              return const Padding(
+                padding: EdgeInsets.symmetric(vertical: 16),
+                child: Center(child: CircularProgressIndicator.adaptive()),
+              );
+            }
             final item = state.items[index];
             return itemBuilder(context, item, index);
           },
