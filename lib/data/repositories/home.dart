@@ -1,4 +1,3 @@
-import 'package:flutter/material.dart';
 import 'package:sanam_laundry/core/index.dart';
 import 'package:sanam_laundry/core/network/api_response.dart';
 import 'package:sanam_laundry/core/utils/helper.dart';
@@ -6,6 +5,7 @@ import 'package:sanam_laundry/data/index.dart';
 import 'package:sanam_laundry/data/models/address.dart';
 import 'package:sanam_laundry/data/models/notification.dart';
 import 'package:sanam_laundry/data/models/order.dart';
+import 'package:sanam_laundry/data/models/paginated.dart';
 import 'package:sanam_laundry/data/models/service.dart';
 import 'package:sanam_laundry/data/models/settings.dart';
 import 'package:sanam_laundry/data/models/slot.dart';
@@ -216,18 +216,26 @@ class HomeRepository {
     );
   }
 
-  Future getNotifications() async {
-    return await ApiResponseHandler.handleRequest(
+  Future<PaginatedResult<NotificationModel>?> getNotifications({
+    int page = 1,
+  }) async {
+    return await ApiResponseHandler.handleRequest<
+      PaginatedResult<NotificationModel>
+    >(
       () => _apiService.get(
         Endpoints.notifications,
-        config: ApiRequestConfig(showLoader: true),
+        query: {"page": page},
+        config: ApiRequestConfig(showLoader: page == 1),
       ),
       onSuccess: (data, _) {
-        final notifications = Utils.safeList(data?["notify"]);
-        final list = notifications
-            .map((e) => NotificationModel.fromJson(e))
-            .toList();
-        return list;
+        return PaginatedResult<NotificationModel>.fromJson(
+          data,
+          itemsKey: 'notify',
+          itemsParser: (raw) {
+            final list = Utils.safeList(raw);
+            return list.map((e) => NotificationModel.fromJson(e)).toList();
+          },
+        );
       },
     );
   }
