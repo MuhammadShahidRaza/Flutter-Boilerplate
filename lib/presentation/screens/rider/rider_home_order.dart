@@ -30,10 +30,8 @@ class _RiderHomeOrderState extends State<RiderHomeOrder> {
   bool _updatingStatus = false;
   XFile? imageFile;
 
-  bool showOrders = false;
   final ScrollController mapScrollController = ScrollController();
 
-  bool isPickup = true;
   bool _initialized = false;
 
   OrderModel? orderDetails;
@@ -87,8 +85,8 @@ class _RiderHomeOrderState extends State<RiderHomeOrder> {
           position: pickupLatLng,
           icon: BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueBlue),
           infoWindow: InfoWindow(
-            title: 'Pickup Location',
-            snippet: "Sanam Driver",
+            title: 'Rider Location',
+            snippet: "Sanam laundry Driver",
           ),
         ),
         Marker(
@@ -96,7 +94,7 @@ class _RiderHomeOrderState extends State<RiderHomeOrder> {
           position: dropLatLng,
           icon: BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueBlue),
           infoWindow: InfoWindow(
-            title: 'Drop-off Location',
+            title: 'Customer Location',
             snippet: Utils.getfullName(orderDetails!.user),
           ),
         ),
@@ -387,7 +385,7 @@ class _RiderHomeOrderState extends State<RiderHomeOrder> {
                                 }
                               },
                               icon: Icons.location_on_outlined,
-                              title: Common.pickUpLocation,
+                              title: Common.currentLocation,
                               value: pickUpLocationAddress,
                               descriptionMaxLines: 3,
                             ),
@@ -400,7 +398,7 @@ class _RiderHomeOrderState extends State<RiderHomeOrder> {
                               );
                             },
                             icon: Icons.location_on_outlined,
-                            title: Common.destination,
+                            title: Common.customerLocation,
                             value: orderDetails?.address ?? 'N/A',
                             descriptionMaxLines: 3,
                           ),
