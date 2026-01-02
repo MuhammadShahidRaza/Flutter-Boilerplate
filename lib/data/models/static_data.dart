@@ -10,10 +10,15 @@ class StaticPageModel {
   });
 
   factory StaticPageModel.fromJson(Map<String, dynamic> json) {
+    final dynamic payload = json['data'];
+    final Map<String, dynamic> resolved = payload is Map
+        ? Map<String, dynamic>.from(payload)
+        : json;
+
     return StaticPageModel(
-      id: json['id'] ?? 0,
-      name: json['name'] ?? '',
-      description: json['description'] ?? '',
+      id: resolved['id'] ?? 0,
+      name: resolved['name'] ?? '',
+      description: resolved['description'] ?? '',
     );
   }
 }
