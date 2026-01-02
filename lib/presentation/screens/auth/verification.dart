@@ -105,7 +105,7 @@ class _VerificationState extends State<Verification> {
           crossAxisAlignment: CrossAxisAlignment.center,
           insetPadding: EdgeInsets.all(Dimens.spacingXXL),
         );
-        Future.delayed(const Duration(seconds: 3), () {
+        Future.delayed(const Duration(seconds: 1), () {
           if (!mounted) return;
           context.replacePage(AppRoutes.home);
         });
