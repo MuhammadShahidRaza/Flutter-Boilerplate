@@ -25,7 +25,7 @@ class SlotModel {
       if (iso == null) return null;
       final dt = DateTime.tryParse(iso);
       if (dt == null) return null;
-      return DateFormat('h:mm a').format(dt.toLocal());
+      return DateFormat('h:mm a').format(dt);
     }
 
     return SlotModel(
