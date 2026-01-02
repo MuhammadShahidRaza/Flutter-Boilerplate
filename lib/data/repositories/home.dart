@@ -225,7 +225,7 @@ class HomeRepository {
       () => _apiService.get(
         Endpoints.notifications,
         query: {"page": page},
-        config: ApiRequestConfig(showLoader: page == 1),
+        // config: ApiRequestConfig(showLoader: page == 1),
       ),
       onSuccess: (data, _) {
         return PaginatedResult<NotificationModel>.fromJson(
