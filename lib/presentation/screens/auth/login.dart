@@ -1,3 +1,4 @@
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -56,10 +57,13 @@ class _LoginState extends State<Login> {
   }
 
   Future<void> _submitRider() async {
+    final token = await FirebaseMessaging.instance.getToken();
     setState(() => loading = true);
     final user = await _riderRepository.login({
       'email': emailController.text.trim(),
       'password': passwordController.text.trim(),
+      "device_token": token ?? '',
+      "udid": token ?? '',
     });
     if (!mounted) return;
     if (user != null) {
@@ -78,7 +82,7 @@ class _LoginState extends State<Login> {
         crossAxisAlignment: CrossAxisAlignment.center,
         insetPadding: EdgeInsets.all(Dimens.spacingXXL),
       );
-      Future.delayed(const Duration(seconds: 3), () {
+      Future.delayed(const Duration(seconds: 1), () {
         if (!mounted) return;
         context.replacePage(AppRoutes.riderHome);
       });
