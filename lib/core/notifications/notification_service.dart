@@ -4,6 +4,7 @@ import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:provider/provider.dart';
 import 'package:sanam_laundry/core/index.dart';
+import 'package:sanam_laundry/presentation/theme/colors.dart';
 import 'package:sanam_laundry/providers/index.dart';
 
 class NotificationService {
@@ -31,12 +32,13 @@ class NotificationService {
       provisional: false,
     );
 
-    // // Set foreground presentation for iOS/macOS
-    // await _messaging.setForegroundNotificationPresentationOptions(
-    //   alert: true,
-    //   badge: true,
-    //   sound: true,
-    // );
+    // Set foreground presentation for iOS/macOS (remote notifications)
+    await _messaging.setForegroundNotificationPresentationOptions(
+      alert:
+          true, // Disable system notification - we show local notification instead
+      badge: true,
+      sound: true, // Disable sound - we play it via local notification
+    );
 
     // Configure local notifications
     // Use a monochrome, transparent-background icon for best results
@@ -99,7 +101,12 @@ class NotificationService {
     if (context != null) {
       context.read<UserProvider>().updateNotificationCount();
     }
-    await _showLocalNotificationFromRemoteMessage(message);
+
+    // Only show local notification if there's no notification payload
+    // (if notification payload exists, system already displayed it)
+    if (message.notification == null) {
+      await _showLocalNotificationFromRemoteMessage(message);
+    }
   }
 
   Future<void> _onMessageOpenedApp(RemoteMessage message) async {
@@ -131,11 +138,11 @@ class NotificationService {
         channelDescription: _defaultAndroidChannel.description,
         importance: Importance.high,
         priority: Priority.high,
-        icon: android?.smallIcon ?? '@drawable/ic_notification',
+        icon: android?.smallIcon ?? '@drawable/ic_launcher',
         playSound: true,
         enableVibration: true,
         visibility: NotificationVisibility.public,
-        color: const Color(0xFF0F9D58), // brand/primary color for icon accent
+        color: AppColors.white, // brand/primary color for icon accent
         category: AndroidNotificationCategory.message,
       ),
       iOS: const DarwinNotificationDetails(
@@ -147,13 +154,7 @@ class NotificationService {
       ),
     );
 
-    await _local.show(
-      message.messageId.hashCode,
-      title,
-      body,
-      details,
-      payload: payload,
-    );
+    await _local.show(0, title, body, details, payload: payload);
   }
 
   void _handleNotificationTapPayload(String? payload) {
