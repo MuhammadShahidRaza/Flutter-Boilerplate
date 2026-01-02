@@ -1,5 +1,6 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
+import 'package:shimmer/shimmer.dart';
 import 'package:sanam_laundry/core/index.dart';
 
 class AppImage extends StatelessWidget {
@@ -38,6 +39,55 @@ class AppImage extends StatelessWidget {
 
   bool get _isAssetPath => path.startsWith('assets/');
 
+  Widget _applyShape(Widget child) {
+    if (isCircular) {
+      return ClipOval(child: child);
+    }
+    if (borderRadius != null) {
+      return ClipRRect(
+        borderRadius: BorderRadius.circular(borderRadius!),
+        child: child,
+      );
+    }
+    return child;
+  }
+
+  Widget _applySkeletonShape(Widget child) {
+    if (isCircular) {
+      return ClipOval(child: child);
+    }
+    if (borderRadius != null) {
+      return ClipRRect(
+        borderRadius: BorderRadius.circular(borderRadius!),
+        child: child,
+      );
+    }
+    return child;
+  }
+
+  Widget _buildShimmer(BuildContext context) {
+    final theme = Theme.of(context);
+
+    final hsl = HSLColor.fromColor(theme.colorScheme.surfaceContainerHighest);
+    final highlightDelta = theme.brightness == Brightness.dark ? 0.10 : 0.06;
+    final baseDelta = theme.brightness == Brightness.dark ? 0.06 : 0.04;
+
+    final baseColor = hsl
+        .withLightness((hsl.lightness - baseDelta).clamp(0.0, 1.0))
+        .toColor();
+    final highlightColor = hsl
+        .withLightness((hsl.lightness + highlightDelta).clamp(0.0, 1.0))
+        .toColor();
+
+    return _applySkeletonShape(
+      Shimmer.fromColors(
+        baseColor: baseColor,
+        highlightColor: highlightColor,
+        child: Container(width: width, height: height, color: baseColor),
+      ),
+    );
+  }
+
   Widget buildPlaceholder() {
     return Image.asset(AppAssets.user, width: width, height: height, fit: fit);
   }
@@ -48,23 +98,27 @@ class AppImage extends StatelessWidget {
 
     if (_isAssetPath) {
       // 🟢 Asset image
-      image = Image.asset(
-        path,
-        width: width,
-        height: height,
-        fit: fit,
-        color: color,
-        errorBuilder: (_, __, ___) => errorWidget ?? buildPlaceholder(),
+      image = _applyShape(
+        Image.asset(
+          path,
+          width: width,
+          height: height,
+          fit: fit,
+          color: color,
+          errorBuilder: (_, __, ___) => errorWidget ?? buildPlaceholder(),
+        ),
       );
     } else if (_isLocalFile) {
       // 🟢 File image
-      image = Image.file(
-        File(path),
-        width: width,
-        height: height,
-        fit: fit,
-        color: color,
-        errorBuilder: (_, __, ___) => errorWidget ?? buildPlaceholder(),
+      image = _applyShape(
+        Image.file(
+          File(path),
+          width: width,
+          height: height,
+          fit: fit,
+          color: color,
+          errorBuilder: (_, __, ___) => errorWidget ?? buildPlaceholder(),
+        ),
       );
     } else if (path.isNotEmpty) {
       image = Image.network(
@@ -73,41 +127,16 @@ class AppImage extends StatelessWidget {
         height: height,
         fit: fit,
         color: color,
-        loadingBuilder: (context, child, progress) {
-          if (progress == null) return child;
-          return placeholder ??
-              Container(
-                width: width,
-                height: height,
-                alignment: Alignment.center,
-                child: UnconstrainedBox(
-                  child: SizedBox(
-                    width: 24,
-                    height: 24,
-                    child: CircularProgressIndicator.adaptive(
-                      strokeWidth: 2,
-                      value: progress.expectedTotalBytes != null
-                          ? progress.cumulativeBytesLoaded /
-                                (progress.expectedTotalBytes ?? 1)
-                          : null,
-                    ),
-                  ),
-                ),
-              );
+        frameBuilder: (context, child, frame, wasSynchronouslyLoaded) {
+          if (wasSynchronouslyLoaded) return _applyShape(child);
+          if (frame == null) return _buildShimmer(context);
+          return _applyShape(child);
         },
-        errorBuilder: (_, __, ___) => errorWidget ?? buildPlaceholder(),
+        errorBuilder: (_, __, ___) =>
+            _applyShape(errorWidget ?? buildPlaceholder()),
       );
     } else {
-      image = errorWidget ?? buildPlaceholder();
-    }
-
-    if (isCircular) {
-      image = ClipOval(child: image);
-    } else if (borderRadius != null) {
-      image = ClipRRect(
-        borderRadius: BorderRadius.circular(borderRadius!),
-        child: image,
-      );
+      image = _applyShape(errorWidget ?? buildPlaceholder());
     }
 
     if (onTap != null) {
