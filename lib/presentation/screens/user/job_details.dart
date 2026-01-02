@@ -177,7 +177,7 @@ class _JobDetailsState extends State<JobDetails> {
                 if (tabType.isNotEmpty)
                   AppButton(
                     title: tabType,
-                    onPressed: () {},
+                    onPressed: null,
                     backgroundColor: AppColors.secondary,
                     padding: EdgeInsets.symmetric(
                       vertical: Dimens.spacingXS,
