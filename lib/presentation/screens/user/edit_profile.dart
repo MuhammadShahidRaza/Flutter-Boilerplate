@@ -56,6 +56,7 @@ class _EditProfileState extends State<EditProfile> {
   }
 
   Future<void> _submit() async {
+    final provider = Provider.of<UserProvider>(context, listen: false);
     setState(() => loading = true);
     final user = await _authRepository.editProfile(
       firstName: firstNameController.text.trim(),
@@ -63,9 +64,9 @@ class _EditProfileState extends State<EditProfile> {
       gender: selectedGender,
       profileImage: _profileImage,
     );
-    if (!mounted) return;
     if (user != null) {
-      context.read<UserProvider>().updateUser(user);
+      await provider.updateUser(user);
+      if (!mounted) return;
       context.back();
     }
     setState(() => loading = false);
@@ -116,6 +117,9 @@ class _EditProfileState extends State<EditProfile> {
                         title: Common.firstName,
                         hint: Common.enterFirstName,
                         fieldKey: FieldType.name,
+                        maxLength: 15,
+                        counterText: "",
+
                         controller: firstNameController,
                       ),
                     ),
@@ -124,6 +128,8 @@ class _EditProfileState extends State<EditProfile> {
                         title: Common.lastName,
                         hint: Common.enterLastName,
                         fieldKey: FieldType.name,
+                        maxLength: 15,
+                        counterText: "",
                         controller: lastNameController,
                       ),
                     ),

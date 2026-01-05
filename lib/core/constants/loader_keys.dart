@@ -1,12 +1,17 @@
-class LoaderKeys {
-  const LoaderKeys._();
+class LoaderKeyGenerator {
+  const LoaderKeyGenerator._();
 
-  /// Build a scoped button loader key: e.g. `LoaderKeys.button(scope: 'auth')`
-  /// -> `loader.auth.primary.button`
-  static String button({required String scope, String variant = 'primary'}) {
-    return 'loader.$scope.$variant.button';
+  static String generate({String scope = 'global', required String title}) {
+    final normalizedScope = _normalize(scope);
+    final normalizedTitle = _normalize(title);
+    return 'loader.$normalizedScope.$normalizedTitle.button';
   }
 
-  /// Build a custom loader key with a single segment: `loader.<name>`.
-  static String custom(String name) => 'loader.$name';
+  static String _normalize(String text) {
+    return text
+        .trim()
+        .toLowerCase()
+        .replaceAll(RegExp(r'\s+'), '_')
+        .replaceAll(RegExp(r'[^a-z0-9_]+'), '');
+  }
 }

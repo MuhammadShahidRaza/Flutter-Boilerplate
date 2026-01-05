@@ -1,5 +1,15 @@
 export 'home.dart';
 export 'orders.dart';
 export 'services.dart';
-export 'profile.dart';
 export 'my_account.dart';
+export 'edit_profile.dart';
+export 'booking_details.dart';
+export 'my_address.dart';
+export 'language.dart';
+export 'contact_us.dart';
+export 'static_page.dart';
+export 'order_details.dart';
+export 'confirmation.dart';
+export 'additional_information.dart';
+export 'service_item.dart';
+export 'notification.dart';

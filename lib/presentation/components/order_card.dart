@@ -1,21 +1,31 @@
 import 'package:flutter/material.dart';
 import 'package:sanam_laundry/core/index.dart';
+import 'package:sanam_laundry/data/models/order.dart';
 import 'package:sanam_laundry/presentation/index.dart';
 
 class OrderCard extends StatelessWidget {
-  const OrderCard({super.key, required this.order});
+  const OrderCard({super.key, required this.order, this.loadOrders});
 
-  final Map<String, dynamic> order;
+  final OrderModel order;
+  final VoidCallback? loadOrders;
 
   @override
   Widget build(BuildContext context) {
-    final bool isCompleted = order["status"] == "completed";
+    // Compare backend literal; UI uses localized key for display only.
+    final bool isCompleted = order.status == 'Order Delivered';
+    final firstService = order.bookingDetail.isNotEmpty
+        ? order.bookingDetail.first.service
+        : null;
+
     return Card(
       clipBehavior: Clip.antiAlias,
       margin: const EdgeInsets.symmetric(vertical: Dimens.spacingS),
       child: InkWell(
         onTap: () {
-          context.navigate(AppRoutes.bookingDetails);
+          context.navigate(
+            AppRoutes.bookingDetails,
+            extra: order.id.toString(),
+          );
         },
         child: Padding(
           padding: EdgeInsets.all(Dimens.spacingS),
@@ -27,7 +37,7 @@ class OrderCard extends StatelessWidget {
                 spacing: Dimens.spacingMSmall,
                 children: [
                   AppImage(
-                    path: order["image"],
+                    path: firstService?.image ?? AppAssets.user,
                     width: context.w(0.30),
                     height: context.h(0.15),
                     borderRadius: Dimens.radiusS,
@@ -38,20 +48,33 @@ class OrderCard extends StatelessWidget {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         AppText(
-                          order["name"],
+                          firstService?.title ?? "",
                           style: context.textTheme.titleMedium!.copyWith(
                             fontWeight: FontWeight.bold,
                           ),
                         ),
-                        AppText(
-                          "Order ID: ${order["id"]}",
-                          style: context.textTheme.bodySmall!.copyWith(
-                            fontWeight: FontWeight.bold,
-                            color: AppColors.primary,
-                          ),
+                        Row(
+                          children: [
+                            AppText(
+                              Common.orderId,
+                              style: context.textTheme.bodySmall!.copyWith(
+                                fontWeight: FontWeight.bold,
+                                color: AppColors.primary,
+                              ),
+                            ),
+                            AppText(
+                              ': ${order.orderNumber ?? ""}',
+                              style: context.textTheme.bodySmall!.copyWith(
+                                fontWeight: FontWeight.bold,
+                                color: AppColors.primary,
+                              ),
+                            ),
+                          ],
                         ),
                         AppText(
-                          TemporaryText.lorumIpsum,
+                          order.specialInstructions.isNotEmpty
+                              ? order.specialInstructions
+                              : Common.noSpecialInstructionsProvided,
                           maxLines: 2,
                           style: context.textTheme.bodySmall!.copyWith(
                             color: AppColors.gray,
@@ -59,20 +82,22 @@ class OrderCard extends StatelessWidget {
                         ),
 
                         AppButton(
-                          title: isCompleted
-                              ? "Completed"
-                              : "Arrived & Picked-Up",
+                          title: order.status,
                           onPressed: () {},
                           backgroundColor: isCompleted
                               ? AppColors.secondary
-                              : AppColors.primary.withValues(alpha: 0.5),
+                              : AppColors.primary.withValues(alpha: 0.3),
                           padding: EdgeInsets.symmetric(
                             vertical: Dimens.spacingXS,
                             horizontal: Dimens.spacingS,
                           ),
+                          textStyle: context.textTheme.bodySmall!.copyWith(
+                            fontWeight: FontWeight.bold,
+                            color: AppColors.white,
+                          ),
                           style: ButtonStyle(
                             minimumSize: WidgetStatePropertyAll(
-                              Size(context.w(0.3), 32),
+                              Size(context.w(0.22), 30),
                             ),
                             shape: WidgetStatePropertyAll(
                               RoundedRectangleBorder(
@@ -105,7 +130,7 @@ class OrderCard extends StatelessWidget {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           AppText(
-                            "Location:",
+                            Common.locationLabel,
                             style: context.textTheme.bodyMedium!.copyWith(
                               fontWeight: FontWeight.bold,
                             ),
@@ -113,7 +138,7 @@ class OrderCard extends StatelessWidget {
                           SizedBox(
                             width: context.w(0.40),
                             child: AppText(
-                              TemporaryText.lorumIpsum,
+                              order.address ?? "",
                               style: context.textTheme.bodySmall!.copyWith(
                                 color: AppColors.text,
                               ),
@@ -126,12 +151,32 @@ class OrderCard extends StatelessWidget {
 
                   if (!isCompleted) ...[
                     AppButton(
-                      title: "Pay Now",
+                      title: order.status == "Awaiting Payment"
+                          ? Common.payNow
+                          : order.paymentStatus == "completed"
+                          ? Common.paid
+                          : Common.payNow,
                       textStyle: context.textTheme.bodySmall!.copyWith(
                         fontWeight: FontWeight.bold,
                         color: AppColors.white,
                       ),
-                      onPressed: () {},
+                      onPressed: () {
+                        if (order.status == "Awaiting Payment") {
+                          context.navigate(
+                            AppRoutes.payment,
+                            extra: {
+                              'order': order,
+                              'amount': double.parse(order.totalAmount ?? '0'),
+                              "loadOrders": loadOrders,
+                            },
+                          );
+                        }
+                      },
+                      backgroundColor:
+                          order.status == "Awaiting Payment" ||
+                              order.paymentStatus == "completed"
+                          ? AppColors.primary
+                          : AppColors.gray,
                       style: ButtonStyle(
                         minimumSize: WidgetStatePropertyAll(
                           Size(context.w(0.1), 36),
@@ -158,7 +203,7 @@ class OrderCard extends StatelessWidget {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             AppText(
-                              "Order Time:",
+                              Common.orderTime,
                               style: context.textTheme.bodyMedium!.copyWith(
                                 fontWeight: FontWeight.bold,
                               ),
@@ -166,7 +211,7 @@ class OrderCard extends StatelessWidget {
                             SizedBox(
                               width: context.w(0.25),
                               child: AppText(
-                                "8:00 AM",
+                                TemporaryText.time,
                                 style: context.textTheme.bodySmall!.copyWith(
                                   color: AppColors.text,
                                 ),

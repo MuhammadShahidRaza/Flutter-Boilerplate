@@ -29,6 +29,7 @@ class AppInput extends StatefulWidget {
   final TextAlign textAlign;
   final TextStyle? style;
   final FocusNode? focusNode;
+  final FocusNode? nextFocusNode;
   final TextCapitalization textCapitalization;
   final double marginBottom;
   final int? minLength;
@@ -51,6 +52,7 @@ class AppInput extends StatefulWidget {
     this.prefixIcon,
     this.suffixIcon,
     this.focusNode,
+    this.nextFocusNode,
     this.textInputAction,
     this.isRequired = false,
     this.maxLines = 1,
@@ -70,11 +72,63 @@ class AppInput extends StatefulWidget {
 
 class _AppInputState extends State<AppInput> {
   late bool _obscure = false;
+  late final FocusNode _ownedFocusNode;
+  bool _hasNextFocusable = true;
+
+  FocusNode get _effectiveFocusNode => widget.focusNode ?? _ownedFocusNode;
+
+  bool _computeHasNextFocusable() {
+    final scope = FocusScope.of(context);
+    final nodes = scope.traversalDescendants
+        .where((n) => n.canRequestFocus && !n.skipTraversal)
+        .toList(growable: false);
+
+    final idx = nodes.indexOf(_effectiveFocusNode);
+    return idx != -1 && idx < nodes.length - 1;
+  }
+
+  FocusNode? _computeNextFocusable() {
+    final scope = FocusScope.of(context);
+    final nodes = scope.traversalDescendants
+        .where((n) => n.canRequestFocus && !n.skipTraversal)
+        .toList(growable: false);
+
+    final idx = nodes.indexOf(_effectiveFocusNode);
+    if (idx == -1) return null;
+    if (idx >= nodes.length - 1) return null;
+    return nodes[idx + 1];
+  }
+
+  void _refreshImeAction() {
+    if (!mounted) return;
+    if (!_effectiveFocusNode.hasFocus) return;
+    if (widget.textInputAction != null) return;
+    if (widget.maxLines != null && widget.maxLines! > 1) return;
+
+    final hasNext = _computeHasNextFocusable();
+    if (hasNext != _hasNextFocusable) {
+      setState(() => _hasNextFocusable = hasNext);
+    }
+  }
+
+  TextInputAction? get _effectiveTextInputAction {
+    if (widget.textInputAction != null) return widget.textInputAction;
+    if (widget.maxLines != null && widget.maxLines! > 1) return null;
+    return _hasNextFocusable ? TextInputAction.next : TextInputAction.done;
+  }
 
   @override
   void initState() {
     super.initState();
     _obscure = widget.obscureText;
+    _ownedFocusNode = FocusNode();
+    _effectiveFocusNode.addListener(() {
+      if (_effectiveFocusNode.hasFocus) {
+        WidgetsBinding.instance.addPostFrameCallback(
+          (_) => _refreshImeAction(),
+        );
+      }
+    });
 
     // 👇 Watch original password field for confirm-password live validation
     if (widget.fieldKey == FieldType.confirmPassword &&
@@ -83,6 +137,20 @@ class _AppInputState extends State<AppInput> {
         if (mounted) setState(() {});
       });
     }
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    WidgetsBinding.instance.addPostFrameCallback((_) => _refreshImeAction());
+  }
+
+  @override
+  void dispose() {
+    if (widget.focusNode == null) {
+      _ownedFocusNode.dispose();
+    }
+    super.dispose();
   }
 
   String? _validator(BuildContext context, String? value) {
@@ -173,18 +241,32 @@ class _AppInputState extends State<AppInput> {
             controller: widget.controller,
             keyboardType: widget.keyboardType ?? _keyboardType(),
             obscureText: _obscure,
-            textInputAction: widget.textInputAction,
+            textInputAction: _effectiveTextInputAction,
             maxLines: widget.maxLines,
             minLines: widget.minLines,
-            enabled: widget.enabled,
             textAlign: widget.textAlign,
+            enabled: true,
+            readOnly: !widget.enabled,
             onChanged: widget.onChanged,
+            onFieldSubmitted: (value) {
+              if (widget.maxLines != null && widget.maxLines! > 1) return;
+              if (widget.nextFocusNode != null) {
+                FocusScope.of(context).requestFocus(widget.nextFocusNode);
+              } else {
+                final next = _computeNextFocusable();
+                if (next != null) {
+                  FocusScope.of(context).requestFocus(next);
+                } else {
+                  FocusScope.of(context).unfocus();
+                }
+              }
+            },
             maxLength: widget.maxLength,
             onTap: widget.onTap,
             validator: (value) => _validator(context, value),
             textCapitalization: widget.textCapitalization,
             style: widget.style ?? context.textTheme.bodyMedium,
-            focusNode: widget.focusNode,
+            focusNode: _effectiveFocusNode,
             autovalidateMode: AutovalidateMode.onUserInteraction,
             decoration: InputDecoration(
               errorMaxLines: 3,

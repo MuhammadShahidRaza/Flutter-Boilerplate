@@ -14,11 +14,13 @@ class AppDropdown<T> extends StatelessWidget {
   final bool isRequired;
   final bool enabled;
   final double marginBottom;
+  final bool showBorder;
+  final TextStyle? itemTextStyle;
 
   const AppDropdown({
     super.key,
-    required this.title,
-    required this.hint,
+    this.title = '',
+    this.hint = '',
     required this.items,
     required this.onChanged,
     this.getLabel,
@@ -26,6 +28,8 @@ class AppDropdown<T> extends StatelessWidget {
     this.marginBottom = Dimens.spacingS,
     this.isRequired = false,
     this.enabled = true,
+    this.showBorder = true,
+    this.itemTextStyle,
   });
 
   @override
@@ -39,13 +43,13 @@ class AppDropdown<T> extends StatelessWidget {
         spacing: Dimens.spacingS,
         children: [
           // Label
-          Row(
-            children: [
-              AppText(title, style: context.textTheme.titleSmall),
-              if (isRequired) const AppText(' *', color: AppColors.red),
-            ],
-          ),
-
+          if (title.isNotEmpty)
+            Row(
+              children: [
+                AppText(title, style: context.textTheme.titleSmall),
+                if (isRequired) const AppText(' *', color: AppColors.red),
+              ],
+            ),
           FormField<T>(
             autovalidateMode: AutovalidateMode.onUserInteraction,
             validator: (val) {
@@ -65,6 +69,7 @@ class AppDropdown<T> extends StatelessWidget {
                     horizontal: 12,
                     vertical: 2,
                   ),
+                  enabledBorder: showBorder ? null : InputBorder.none,
                   errorText: field.errorText,
                   errorMaxLines: 3,
                 ),
@@ -80,7 +85,7 @@ class AppDropdown<T> extends StatelessWidget {
                       final label = getLabel?.call(item) ?? item.toString();
                       return DropdownMenuItem<T>(
                         value: item,
-                        child: AppText(label),
+                        child: AppText(label, style: itemTextStyle),
                       );
                     }).toList(),
                     onChanged: enabled

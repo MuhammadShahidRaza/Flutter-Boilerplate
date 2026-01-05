@@ -2,11 +2,36 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:sanam_laundry/core/index.dart';
 import 'package:sanam_laundry/presentation/index.dart';
-import 'package:sanam_laundry/presentation/screens/user/booking_details.dart';
-import 'package:sanam_laundry/presentation/screens/user/contact_us.dart';
-import 'package:sanam_laundry/presentation/screens/user/edit_profile.dart';
-import 'package:sanam_laundry/presentation/screens/user/language.dart';
-import 'package:sanam_laundry/presentation/screens/user/static_page.dart';
+import 'package:sanam_laundry/presentation/screens/rider/my_jobs.dart';
+import 'package:sanam_laundry/presentation/screens/rider/rider_account.dart';
+import 'package:sanam_laundry/presentation/screens/rider/rider_home.dart';
+import 'package:sanam_laundry/presentation/screens/rider/rider_home_order.dart';
+import 'package:sanam_laundry/presentation/screens/rider/rider_notification.dart';
+import 'package:sanam_laundry/presentation/screens/rider/update_status.dart';
+import 'package:sanam_laundry/presentation/screens/user/job_details.dart';
+import 'package:sanam_laundry/presentation/screens/user/payment.dart';
+
+class UserShell extends StatelessWidget {
+  final StatefulNavigationShell navigationShell;
+
+  const UserShell({super.key, required this.navigationShell});
+
+  @override
+  Widget build(BuildContext context) {
+    return AppShell(navigationShell: navigationShell, isRider: false);
+  }
+}
+
+class RiderShell extends StatelessWidget {
+  final StatefulNavigationShell navigationShell;
+
+  const RiderShell({super.key, required this.navigationShell});
+
+  @override
+  Widget build(BuildContext context) {
+    return AppShell(navigationShell: navigationShell, isRider: true);
+  }
+}
 
 class GoRouterSetup {
   static final GlobalKey<NavigatorState> navigatorKey =
@@ -42,46 +67,86 @@ class GoRouterSetup {
         builder: (context, state) => const Verification(),
       ),
 
-      // App stack with persistent tab navigation
+      /// USER BOTTOM TABS
       StatefulShellRoute.indexedStack(
         builder: (context, state, navigationShell) =>
-            AppShell(navigationShell: navigationShell),
+            UserShell(navigationShell: navigationShell),
+
         branches: [
           StatefulShellBranch(
             routes: [
-              GoRoute(
-                path: AppRoutes.home,
-                builder: (context, state) => const Home(),
-              ),
+              GoRoute(path: AppRoutes.home, builder: (_, __) => const Home()),
             ],
           ),
+
           StatefulShellBranch(
             routes: [
               GoRoute(
                 path: AppRoutes.services,
-                builder: (context, state) => const Services(),
+                builder: (_, __) => const Services(),
               ),
             ],
           ),
+
           StatefulShellBranch(
             routes: [
               GoRoute(
                 path: AppRoutes.orders,
-                builder: (context, state) => const Orders(),
+                builder: (_, __) => const Orders(),
               ),
             ],
           ),
+
           StatefulShellBranch(
             routes: [
               GoRoute(
                 path: AppRoutes.myAccount,
-                builder: (context, state) => MyAccount(),
+                builder: (_, __) => const MyAccount(),
               ),
             ],
           ),
         ],
       ),
 
+      /// RIDER BOTTOM TABS
+      StatefulShellRoute.indexedStack(
+        builder: (context, state, navigationShell) =>
+            RiderShell(navigationShell: navigationShell),
+
+        branches: [
+          StatefulShellBranch(
+            routes: [
+              GoRoute(
+                path: AppRoutes.riderHome,
+                builder: (_, __) => const RiderHome(),
+              ),
+            ],
+          ),
+
+          StatefulShellBranch(
+            routes: [
+              GoRoute(
+                path: AppRoutes.myJobs,
+                builder: (_, __) => const MyJobs(),
+              ),
+            ],
+          ),
+          StatefulShellBranch(
+            routes: [
+              GoRoute(
+                path: AppRoutes.riderAccount,
+                builder: (_, __) => const RiderMyAccount(),
+              ),
+            ],
+          ),
+        ],
+      ),
+
+      // App stack with persistent tab navigation
+      GoRoute(
+        path: AppRoutes.riderHomeOrder,
+        builder: (context, state) => const RiderHomeOrder(),
+      ),
       GoRoute(
         path: AppRoutes.contactUs,
         builder: (context, state) => const ContactUs(),
@@ -100,13 +165,53 @@ class GoRouterSetup {
         builder: (context, state) => const BookingDetails(),
       ),
       GoRoute(
+        path: AppRoutes.jobDetails,
+        builder: (context, state) => const JobDetails(),
+      ),
+      GoRoute(
+        path: AppRoutes.riderNotifications,
+        builder: (context, state) => const RiderNotificationScreen(),
+      ),
+      GoRoute(
+        path: AppRoutes.payment,
+        builder: (context, state) => const Payment(),
+      ),
+      GoRoute(
+        path: AppRoutes.notifications,
+        builder: (context, state) => const NotificationScreen(),
+      ),
+      GoRoute(
+        path: AppRoutes.myAddress,
+        builder: (context, state) => const MyAddress(),
+      ),
+      GoRoute(
+        path: AppRoutes.orderDetails,
+        builder: (context, state) => const OrderDetails(),
+      ),
+      GoRoute(
+        path: AppRoutes.serviceItem,
+        builder: (context, state) => const ServiceItem(),
+      ),
+      GoRoute(
+        path: AppRoutes.additionalInformation,
+        builder: (context, state) => const AdditionalInformation(),
+      ),
+      GoRoute(
+        path: AppRoutes.updateStatus,
+        builder: (context, state) => const UpdateStatus(),
+      ),
+      GoRoute(
         path: AppRoutes.language,
         builder: (context, state) => const ChangeLanguage(),
+      ),
+      GoRoute(
+        path: AppRoutes.confirmation,
+        builder: (context, state) => const Confirmation(),
       ),
     ],
 
     errorBuilder: (context, state) => AppWrapper(
-      child: Center(child: AppText('Page not found: ${state.error}')),
+      child: Center(child: AppText('${Common.pageNotFound}: ${state.error}')),
     ),
   );
 }

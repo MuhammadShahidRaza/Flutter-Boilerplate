@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:sanam_laundry/core/index.dart';
@@ -50,13 +51,14 @@ class _VerificationState extends State<Verification> {
 
   Future<void> _submit() async {
     if (!_isOtpComplete) return;
+    final token = await FirebaseMessaging.instance.getToken();
     setState(() => loading = true);
     final user = await _authRepository.verifyOtp(
       phone: context.getParam<String>('phone') ?? '',
       otp: _otpCode,
+      deviceToken: token ?? '',
       // device_type:Testing Tool
-      // device_token:abcdefghijklmnopqrstuvwxyz
-      // udid:123456789
+      // udid: token ?? '',
       // device_brand:Postman
       // device_os:Linux
       // app_version:1.0.0
@@ -65,7 +67,7 @@ class _VerificationState extends State<Verification> {
     setState(() => loading = false);
     final isFromLogin = context.getParam<bool>('isFromLogin') ?? false;
     if (user != null) {
-      context.read<AuthProvider>().login(user);
+      context.read<AuthProvider>().login(context, user);
       if (!isFromLogin) {
         AppDialog.show(
           context,
@@ -103,7 +105,7 @@ class _VerificationState extends State<Verification> {
           crossAxisAlignment: CrossAxisAlignment.center,
           insetPadding: EdgeInsets.all(Dimens.spacingXXL),
         );
-        Future.delayed(const Duration(seconds: 3), () {
+        Future.delayed(const Duration(seconds: 1), () {
           if (!mounted) return;
           context.replacePage(AppRoutes.home);
         });
@@ -125,9 +127,9 @@ class _VerificationState extends State<Verification> {
   void _onResendPressed() async {
     if (_secondsRemaining == 0) {
       _startTimer();
-      await _authRepository.login(
-        phone: context.getParam<String>('phone') ?? '',
-      );
+      await _authRepository.login({
+        'phone': context.getParam<String>('phone') ?? '',
+      });
     }
   }
 

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:sanam_laundry/core/index.dart';
+import 'package:sanam_laundry/core/utils/helper.dart';
 import 'package:sanam_laundry/data/index.dart';
 
 class AppTermsDialog extends StatefulWidget {
@@ -47,7 +48,7 @@ class _AppTermsDialogState extends State<AppTermsDialog> {
         spacing: Dimens.spacingM,
         children: [
           AppText(
-            widget.termsData?.description ?? Common.noDataAvailable,
+            Utils.removeHtml(widget.termsData?.description ?? ''),
             overflow: TextOverflow.visible,
           ),
           if (widget.termsData?.description != null)

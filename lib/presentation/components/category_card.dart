@@ -1,21 +1,18 @@
 import 'package:dotted_border/dotted_border.dart';
 import 'package:flutter/material.dart';
 import 'package:sanam_laundry/core/index.dart';
+import 'package:sanam_laundry/data/models/category.dart';
 import 'package:sanam_laundry/presentation/index.dart';
 
 class CategoryCard extends StatelessWidget {
   final VoidCallback? onTap;
   final bool isSelected;
-  final String title;
-  final String description;
-  final String image;
+  final CategoryModel data;
   const CategoryCard({
     super.key,
     this.onTap,
+    required this.data,
     this.isSelected = false,
-    this.title = "",
-    this.description = "",
-    this.image = "",
   });
 
   @override
@@ -49,7 +46,7 @@ class CategoryCard extends StatelessWidget {
                 child: Container(
                   width: 55,
                   height: 55,
-                  padding: EdgeInsets.all(5),
+                  padding: EdgeInsets.all(12),
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(Dimens.radiusXL),
                     color: isSelected
@@ -57,11 +54,11 @@ class CategoryCard extends StatelessWidget {
                         : AppColors.primary.withValues(alpha: 0.1),
                   ),
                   child: AppImage(
-                    path: image,
+                    path: data.image,
                     width: 30,
                     height: 30,
-                    fit: BoxFit.cover,
-                    borderRadius: Dimens.radiusXL,
+                    fit: BoxFit.contain,
+                    // borderRadius: Dimens.radiusXL,
                   ),
                 ),
               ),
@@ -72,9 +69,13 @@ class CategoryCard extends StatelessWidget {
                   spacing: Dimens.spacingXS,
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    AppText(title, fontWeight: FontWeight.w600, fontSize: 16),
                     AppText(
-                      description,
+                      data.title,
+                      fontWeight: FontWeight.w600,
+                      fontSize: 16,
+                    ),
+                    AppText(
+                      data.subtitle,
                       color: AppColors.textSecondary,
                       maxLines: 2,
                       fontSize: 11,
@@ -85,7 +86,7 @@ class CategoryCard extends StatelessWidget {
 
               // 🔹 Right button
               AppButton(
-                title: "View Services",
+                title: Common.viewServices,
                 style: ButtonStyle(
                   minimumSize: WidgetStatePropertyAll(Size(20, 30)),
                   shape: WidgetStatePropertyAll(
@@ -107,10 +108,7 @@ class CategoryCard extends StatelessWidget {
                   color: isSelected ? AppColors.white : AppColors.text,
                 ),
                 onPressed: () {
-                  context.navigate(
-                    AppRoutes.services,
-                    params: {'isFromHome': true},
-                  );
+                  context.navigate(AppRoutes.serviceItem, extra: data);
                 },
               ),
             ],

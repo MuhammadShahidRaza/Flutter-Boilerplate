@@ -128,74 +128,79 @@ class AppDialog extends StatelessWidget {
 
     final effectiveRadius = borderRadius ?? Dimens.radiusM;
 
-    return Dialog(
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(effectiveRadius),
-        side: BorderSide(width: borderWidth, color: borderColor),
-      ),
-      backgroundColor:
-          backgroundColor ?? Theme.of(context).scaffoldBackgroundColor,
-      insetPadding: insetPadding ?? const EdgeInsets.all(Dimens.spacingM),
-      child: Padding(
-        padding:
-            contentPadding ??
-            const EdgeInsets.all(Dimens.screenMarginHorizontal),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: crossAxisAlignment,
-          mainAxisAlignment: mainAxisAlignment,
-          spacing: spacing ?? Dimens.spacingMLarge,
-          children: [
-            if (headerWidget != null)
-              headerWidget!
-            else if (imagePath != null)
-              AppImage(
-                path: imagePath!,
-                height: imageSize ?? 80,
-                width: imageSize ?? 80,
-                fit: imageFit,
-              ),
+    return PopScope(
+      // Prevent native back/gesture dismiss when `dismissible` is false.
+      canPop: dismissible,
+      child: Dialog(
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(effectiveRadius),
+          side: BorderSide(width: borderWidth, color: borderColor),
+        ),
+        backgroundColor:
+            backgroundColor ?? Theme.of(context).scaffoldBackgroundColor,
+        insetPadding: insetPadding ?? const EdgeInsets.all(Dimens.spacingM),
+        child: Padding(
+          padding:
+              contentPadding ??
+              const EdgeInsets.all(Dimens.screenMarginHorizontal),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: crossAxisAlignment,
+            mainAxisAlignment: mainAxisAlignment,
+            spacing: spacing ?? Dimens.spacingMLarge,
+            children: [
+              if (headerWidget != null)
+                headerWidget!
+              else if (imagePath != null)
+                AppImage(
+                  path: imagePath!,
+                  height: imageSize ?? 80,
+                  width: imageSize ?? 80,
+                  fit: imageFit,
+                ),
 
-            // Title
-            if (title != null) AppText(title!, style: effectiveTitleStyle),
-            // Content
-            Flexible(child: SingleChildScrollView(child: content)),
+              // Title
+              if (title != null) AppText(title!, style: effectiveTitleStyle),
+              // Content
+              Flexible(child: SingleChildScrollView(child: content)),
 
-            if (primaryButtonText != null || secondaryButtonText != null)
-              Row(
-                mainAxisAlignment: buttonAlignment,
-                spacing: Dimens.spacingS,
-                children: [
-                  if (secondaryButtonText != null)
-                    Expanded(
-                      child: AppButton(
-                        backgroundColor: showTwoPrimaryButtons
-                            ? AppColors.darkBlackOpacity
-                            : null,
-                        isEnabled: isEnabledButton,
-                        title: secondaryButtonText!,
-                        type: showTwoPrimaryButtons
-                            ? AppButtonType.elevated
-                            : AppButtonType.text,
-                        onPressed:
-                            onSecondaryPressed ?? () => Navigator.pop(context),
+              if (primaryButtonText != null || secondaryButtonText != null)
+                Row(
+                  mainAxisAlignment: buttonAlignment,
+                  spacing: Dimens.spacingS,
+                  children: [
+                    if (secondaryButtonText != null)
+                      Expanded(
+                        child: AppButton(
+                          backgroundColor: showTwoPrimaryButtons
+                              ? AppColors.darkBlackOpacity
+                              : null,
+                          isEnabled: isEnabledButton,
+                          title: secondaryButtonText!,
+                          type: showTwoPrimaryButtons
+                              ? AppButtonType.elevated
+                              : AppButtonType.text,
+                          onPressed:
+                              onSecondaryPressed ??
+                              () => Navigator.pop(context),
+                        ),
                       ),
-                    ),
 
-                  if (primaryButtonText != null)
-                    Expanded(
-                      child: AppButton(
-                        isEnabled: isEnabledButton,
-                        title: primaryButtonText!,
-                        isLoading: isLoading,
-                        type: AppButtonType.elevated,
-                        onPressed:
-                            onPrimaryPressed ?? () => Navigator.pop(context),
+                    if (primaryButtonText != null)
+                      Expanded(
+                        child: AppButton(
+                          isEnabled: isEnabledButton,
+                          title: primaryButtonText!,
+                          isLoading: isLoading,
+                          type: AppButtonType.elevated,
+                          onPressed:
+                              onPrimaryPressed ?? () => Navigator.pop(context),
+                        ),
                       ),
-                    ),
-                ],
-              ),
-          ],
+                  ],
+                ),
+            ],
+          ),
         ),
       ),
     );

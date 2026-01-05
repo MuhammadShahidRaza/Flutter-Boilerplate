@@ -10,6 +10,7 @@ class AppWrapper extends StatelessWidget {
   final bool showBackButton;
   final VoidCallback? onBackPressed;
   final String? heading;
+  final bool? resizeToAvoidBottomInset;
   final ScrollPhysics? scrollPhysics;
   final Color? backgroundColor;
   final Widget? bottomNavigationBar;
@@ -20,6 +21,7 @@ class AppWrapper extends StatelessWidget {
     super.key,
     required this.child,
     this.scrollable = false,
+    this.resizeToAvoidBottomInset,
     this.padding,
     this.safeArea = true,
     // this.onWillPop,
@@ -84,6 +86,7 @@ class AppWrapper extends StatelessWidget {
     }
 
     return Scaffold(
+      resizeToAvoidBottomInset: resizeToAvoidBottomInset,
       backgroundColor: resolvedBackground,
       appBar: resolvedAppBar,
       body: content,

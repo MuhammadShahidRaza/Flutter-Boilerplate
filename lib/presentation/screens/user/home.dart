@@ -1,7 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:sanam_laundry/core/index.dart';
+import 'package:sanam_laundry/data/models/list_view.dart';
+import 'package:sanam_laundry/data/repositories/home.dart';
 import 'package:sanam_laundry/presentation/components/slider.dart';
 import 'package:sanam_laundry/presentation/index.dart';
+import 'package:sanam_laundry/providers/services.dart';
+import 'package:sanam_laundry/data/models/category.dart';
 
 class Home extends StatefulWidget {
   const Home({super.key});
@@ -11,57 +16,74 @@ class Home extends StatefulWidget {
 }
 
 class _HomeState extends State<Home> {
+  final HomeRepository _homeRepository = HomeRepository();
   int seletedItemIndex = 0;
-  final List<String> list = [AppAssets.temp, AppAssets.logo, AppAssets.user];
+  List<String> list = [];
+
+  Future<void> fetchBanners() async {
+    final data = await _homeRepository.getBannners();
+    if (!mounted) return;
+    setState(() => list = data ?? []);
+  }
+
+  Future<void> fetchCategories() async {
+    context.read<ServicesProvider>().fetchCategories();
+  }
+
+  Future<void> fetchSettings() async {
+    context.read<ServicesProvider>().fetchSettings();
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    fetchBanners();
+
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      fetchCategories();
+      fetchSettings();
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
-    final List<Map<String, String>> items = [
-      {
-        'title': 'Washing',
-        'subtitle':
-            'Your clothes are freshly washed and neatly folded.\nDelivered right to your doorstep.',
-      },
-      {
-        'title': 'Dry Cleaning',
-        'subtitle':
-            'Premium dry cleaning in progress with gentle care.\nWe’ll notify you once it’s ready for pickup.',
-      },
-      {
-        'title': 'Ironing',
-        'subtitle':
-            'Your garments are being perfectly pressed.\nThey’ll be ready for pickup soon.',
-      },
-    ];
-
     return AppWrapper(
       safeArea: false,
       scrollable: true,
-      appBar: HomeAppBar(),
+      appBar: HomeAppBar(
+        onNotificationTap: () => context.navigate(AppRoutes.notifications),
+      ),
       child: Column(
         spacing: Dimens.spacingS,
         children: [
           SliderList(list: list),
           AppText(Common.categories, fontSize: 20, fontWeight: FontWeight.bold),
-          ListView.separated(
-            itemCount: items.length,
-            shrinkWrap: true,
-            physics: const NeverScrollableScrollPhysics(),
-            padding: const EdgeInsets.symmetric(vertical: Dimens.spacingS),
-            separatorBuilder: (_, __) => SizedBox(height: Dimens.spacingS),
-            itemBuilder: (context, index) {
-              final item = items[index];
-              final isSelected = index == seletedItemIndex;
-              return CategoryCard(
-                onTap: () {
-                  setState(() {
-                    seletedItemIndex = index;
-                  });
+          Consumer<ServicesProvider>(
+            builder: (context, serviceProvider, _) {
+              final List<CategoryModel> categories = serviceProvider.categories;
+
+              return AppListView<CategoryModel>(
+                state: AppListState<CategoryModel>(
+                  items: categories,
+                  loadingInitial: serviceProvider.loading,
+                  loadingMore: false,
+                  hasMore: false,
+                ),
+                separatorBuilderWidget: const SizedBox(height: Dimens.spacingS),
+                scrollPhysics: const NeverScrollableScrollPhysics(),
+                padding: const EdgeInsets.symmetric(vertical: Dimens.spacingS),
+                itemBuilder: (context, item, index) {
+                  final isSelected = index == seletedItemIndex;
+                  return CategoryCard(
+                    data: item,
+                    onTap: () {
+                      setState(() {
+                        seletedItemIndex = index;
+                      });
+                    },
+                    isSelected: isSelected,
+                  );
                 },
-                description: item['subtitle'] ?? '',
-                title: item['title'] ?? '',
-                image: item['image'] ?? AppAssets.user,
-                isSelected: isSelected,
               );
             },
           ),

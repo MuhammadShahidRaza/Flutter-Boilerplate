@@ -4,30 +4,42 @@ import 'package:sanam_laundry/core/index.dart';
 import 'package:sanam_laundry/presentation/index.dart';
 
 class AppShell extends StatelessWidget {
-  const AppShell({super.key, required this.navigationShell});
+  const AppShell({
+    super.key,
+    required this.navigationShell,
+    required this.isRider,
+  });
 
   final StatefulNavigationShell navigationShell;
+  final bool isRider;
 
   @override
   Widget build(BuildContext context) {
-    return AppWrapper(
-      useScaffold: false,
-      safeArea: false,
-      padding: EdgeInsets.zero,
-      child: Column(
-        children: [
-          Expanded(child: navigationShell),
-          AppBottomNavigation(
-            items: getBottomNavItems(context),
-            currentIndex: navigationShell.currentIndex,
-            onItemSelected: (index) {
-              navigationShell.goBranch(
-                index,
-                initialLocation: navigationShell.currentIndex == index,
-              );
-            },
-          ),
-        ],
+    return PopScope(
+      canPop: false,
+      onPopInvokedWithResult: (didPop, result) async {
+        if (didPop) return;
+        await AppBackHandler.handleBack(context, shell: navigationShell);
+      },
+      child: AppWrapper(
+        useScaffold: false,
+        safeArea: false,
+        padding: EdgeInsets.zero,
+        child: Column(
+          children: [
+            Expanded(child: navigationShell),
+            AppBottomNavigation(
+              items: getBottomNavItems(context, isRider),
+              currentIndex: navigationShell.currentIndex,
+              onItemSelected: (index) {
+                navigationShell.goBranch(
+                  index,
+                  initialLocation: navigationShell.currentIndex == index,
+                );
+              },
+            ),
+          ],
+        ),
       ),
     );
   }

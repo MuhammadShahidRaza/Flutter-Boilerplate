@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_widget_from_html_core/flutter_widget_from_html_core.dart';
 import 'package:sanam_laundry/core/index.dart';
 import 'package:sanam_laundry/data/index.dart';
 import 'package:sanam_laundry/presentation/index.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class StaticPage extends StatefulWidget {
   const StaticPage({super.key});
@@ -39,16 +41,22 @@ class _StaticPageState extends State<StaticPage> {
   @override
   Widget build(BuildContext context) {
     final heading = context.getParam<String>('name') ?? pageData?.name ?? '';
+    final html = pageData?.description ?? '';
 
     return AppWrapper(
       scrollable: true,
       heading: heading,
       showBackButton: true,
       child: loading
-          ? const Center(child: CircularProgressIndicator())
-          : AppText(
-              pageData?.description ?? Common.noDataAvailable,
-              overflow: TextOverflow.visible,
+          ? const Center(child: CircularProgressIndicator.adaptive())
+          : HtmlWidget(
+              html,
+              textStyle: Theme.of(context).textTheme.bodyMedium,
+              onTapUrl: (url) async {
+                final uri = Uri.tryParse(url);
+                if (uri == null) return false;
+                return launchUrl(uri, mode: LaunchMode.externalApplication);
+              },
             ),
     );
   }

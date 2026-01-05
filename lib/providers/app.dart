@@ -11,17 +11,14 @@ class AppProvider extends ChangeNotifier {
 
   Future<bool> hasSelectedLanguage() async {
     final lang = await AuthService.loadLanguage();
-    return lang != null;
-  }
 
-  Future<void> loadLanguageOnStart() async {
-    final language = await AuthService.loadLanguage();
-    if (language != null && language == Language.ar.name) {
+    if (lang != null && lang == Language.ar.name) {
       _language = Language.ar;
     } else {
       _language = Language.en;
     }
     notifyListeners();
+    return lang != null;
   }
 
   Future<void> changeLanguage(Language language) async {

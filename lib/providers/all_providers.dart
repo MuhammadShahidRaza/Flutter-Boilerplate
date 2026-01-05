@@ -8,6 +8,8 @@ class AppProviders {
     ChangeNotifierProvider(create: (_) => LoaderProvider()),
     ChangeNotifierProvider(create: (_) => UserProvider()),
     ChangeNotifierProvider(create: (_) => AppProvider()),
+    ChangeNotifierProvider(create: (_) => ServicesProvider()),
+    ChangeNotifierProvider(create: (_) => CartProvider()),
     // ChangeNotifierProvider(create: (_) => AnotherProvider()),
   ];
 }

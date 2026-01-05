@@ -1,5 +1,7 @@
 class AppRoutes {
   // Auth Navigation route names
+
+  // Common route names
   static const String splash = '/splash';
   static const String onboarding = '/onboarding';
   static const String login = '/login';
@@ -24,10 +26,27 @@ class AppRoutes {
   static const String privacyPolicy = '/privacy_policy';
   static const String staticPage = '/static_page';
 
+  static const String orderDetails = '/order_details';
   static const String orders = '/orders';
+  static const String confirmation = '/confirmation';
+  static const String additionalInformation = '/additional_information';
   static const String bookingDetails = '/booking_details';
+  static const String serviceItem = '/service_item';
   static const String services = '/services';
 
   // App Navigation route names
   static const String profile = '/profile';
+
+  //Rider Navigation route names
+  static const String riderHome = '/rider_home';
+  static const String riderHomeOrder = '/rider_home_order';
+  static const String myJobs = '/my_jobs';
+  static const String riderAccount = '/rider_account';
+  static const String jobDetails = '/job_details';
+  static const String updateStatus = '/update_status';
+  static const String riderNotifications = '/rider_notifications';
+
+  static const String riderOrderDetails = '/rider_order_details';
+  static const String riderEarnings = '/rider_earnings';
+  static const String riderProfile = '/rider_profile';
 }

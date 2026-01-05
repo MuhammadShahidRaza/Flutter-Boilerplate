@@ -55,7 +55,7 @@ class _SignUpState extends State<SignUp> {
     if (phone.toString().isEmpty) return;
 
     if (!_agreedTerms) {
-      AppToast.showToast("Please agree to the terms and conditions.");
+      AppToast.showToast("Please agree to the terms and condition.");
       return;
     }
 
@@ -156,7 +156,14 @@ class _SignUpState extends State<SignUp> {
 
           AppCheckbox(
             value: _agreedTerms,
-            onChanged: (bool val) {},
+            onChanged: (bool val) async {
+              final agreed = await AppTermsDialog.show(
+                context,
+                agreed: _agreedTerms,
+                termsData: termsData,
+              );
+              setState(() => _agreedTerms = agreed != null ? true : false);
+            },
             label: Common.termOfUseAndPrivacy,
             onTapLabel: () async {
               final agreed = await AppTermsDialog.show(

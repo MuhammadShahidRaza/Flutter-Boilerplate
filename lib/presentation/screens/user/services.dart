@@ -1,6 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:sanam_laundry/core/index.dart';
+import 'package:sanam_laundry/data/models/list_view.dart';
+import 'package:sanam_laundry/data/models/service.dart';
 import 'package:sanam_laundry/presentation/index.dart';
+import 'package:sanam_laundry/providers/index.dart';
 
 class Services extends StatefulWidget {
   const Services({super.key});
@@ -10,12 +14,7 @@ class Services extends StatefulWidget {
 }
 
 class _ServicesState extends State<Services> {
-  List<Map<String, dynamic>> categories = [];
-  List<dynamic> services = [];
-
   String? selectedCategoryId;
-  bool loadingCategories = true;
-  bool loadingServices = false;
 
   @override
   void initState() {
@@ -24,109 +23,76 @@ class _ServicesState extends State<Services> {
   }
 
   Future<void> _loadCategories() async {
-    // 🔹 Simulating API call
-    await Future.delayed(const Duration(milliseconds: 800));
-    final data = [
-      {"id": "1", "name": "Laundry"},
-      {"id": "2", "name": "Tailoring"},
-      {"id": "3", "name": "Shoe Care"},
-    ];
-
-    setState(() {
-      categories = data;
-      loadingCategories = false;
-      selectedCategoryId = data.first["id"];
-    });
-
-    _loadServices(selectedCategoryId!);
-  }
-
-  Future<void> _loadServices(String categoryId) async {
-    setState(() {
-      loadingServices = true;
-      services = [];
-    });
-
-    // 🔹 Simulating service API per category
-    await Future.delayed(const Duration(milliseconds: 800));
-    final data = switch (categoryId) {
-      "1" => [
-        {"id": "11", "name": "Washing", "image": AppAssets.getStarted},
-        {"id": "12", "name": "Ironing", "image": AppAssets.onboardingOne},
-        {
-          "id": "13",
-          "name": "Dry Cleaning",
-          "image": AppAssets.onboardingThree,
-        },
-        {"id": "14", "name": "Stitching", "image": AppAssets.user},
-      ],
-      "2" => [
-        {"id": "21", "name": "Stitching", "image": AppAssets.user},
-        {"id": "22", "name": "Alteration", "image": AppAssets.logo},
-      ],
-      "3" => [
-        {"id": "31", "name": "Polish", "image": AppAssets.logo},
-        {"id": "32", "name": "Repair", "image": AppAssets.logo},
-      ],
-      _ => [],
-    };
-
-    setState(() {
-      services = data;
-      loadingServices = false;
-    });
+    final listCategories = context.read<ServicesProvider>().categories;
+    if (listCategories.isNotEmpty && selectedCategoryId == null) {
+      setState(() => selectedCategoryId = listCategories.first.id);
+    }
   }
 
   @override
   Widget build(BuildContext context) {
-    final bool isFromHome = context.getParam<bool>('isFromHome') ?? false;
-
     return AppWrapper(
       heading: "Services",
       safeArea: false,
-      showBackButton: isFromHome,
       padding: EdgeInsets.zero,
       child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        spacing: Dimens.spacingMSmall,
+        crossAxisAlignment: CrossAxisAlignment.center,
+        spacing: Dimens.spacingM,
         children: [
-          // 🔹 Category Horizontal List
-          // if (loadingCategories)
-          //   const Center(
-          //     child: Padding(
-          //       padding: EdgeInsets.all(20),
-          //       child: CircularProgressIndicator(),
-          //     ),
-          //   )
-          // else
-          TabList(
-            list: categories,
-            selectedId: selectedCategoryId,
-            onTap: (id) {
-              if (selectedCategoryId != id) {
-                setState(() => selectedCategoryId = id);
-                _loadServices(id);
-              }
+          Consumer<ServicesProvider>(
+            builder: (context, serviceProvider, _) {
+              final categories = serviceProvider.categories;
+              return TabList(
+                list: categories,
+                selectedId: selectedCategoryId,
+                onTap: (id) {
+                  if (selectedCategoryId != id) {
+                    setState(() => selectedCategoryId = id);
+                  }
+                },
+              );
             },
           ),
 
           // 🔹 Services List
           Expanded(
-            child: loadingServices
-                ? const Center(child: CircularProgressIndicator())
-                : services.isEmpty
-                ? const Center(child: AppText("No services available"))
-                : ListView.builder(
-                    padding: const EdgeInsets.symmetric(horizontal: 16),
-                    itemCount: services.length,
-                    itemBuilder: (context, index) {
-                      final service = services[index];
-                      return ServiceCard(
-                        service: service,
-                        isFromHome: isFromHome,
-                      );
-                    },
+            child: Consumer<ServicesProvider>(
+              builder: (context, serviceProvider, _) {
+                final categories = serviceProvider.categories;
+                final services = serviceProvider.servicesForCategory(
+                  selectedCategoryId ?? "",
+                );
+
+                // ✅ Auto-select first category once categories are loaded
+                if (categories.isNotEmpty && selectedCategoryId == null) {
+                  WidgetsBinding.instance.addPostFrameCallback((_) {
+                    if (!mounted) return;
+                    setState(() {
+                      selectedCategoryId = categories.first.id;
+                    });
+                  });
+                }
+
+                return AppListView<ServiceItemModel>(
+                  state: AppListState<ServiceItemModel>(
+                    items: services,
+                    loadingInitial: serviceProvider.loading,
+                    loadingMore: false,
+                    hasMore: false,
                   ),
+                  onRefresh: () => serviceProvider.fetchServicesByCategoryId(
+                    selectedCategoryId!,
+                    force: true,
+                  ),
+
+                  padding: const EdgeInsets.symmetric(horizontal: 16),
+                  itemBuilder: (context, item, index) {
+                    final service = services[index];
+                    return ServiceCard(service: service, showAddRemove: false);
+                  },
+                );
+              },
+            ),
           ),
         ],
       ),

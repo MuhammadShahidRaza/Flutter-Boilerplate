@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:sanam_laundry/providers/auth.dart';
-import 'package:sanam_laundry/providers/app.dart';
 import 'package:sanam_laundry/core/index.dart';
+import 'package:sanam_laundry/providers/index.dart';
 import 'package:video_player/video_player.dart';
 
 class Splash extends StatefulWidget {
@@ -27,24 +26,32 @@ class _SplashState extends State<Splash> {
   }
 
   Future<void> _initFlow() async {
-    await Future.delayed(const Duration(seconds: 4));
-
+    // Storage.clearAllDataFromStorage();
+    await Future.delayed(const Duration(seconds: 1));
     if (!mounted) return;
 
     final authProvider = context.read<AuthProvider>();
     final appProvider = context.read<AppProvider>();
+    final userProvider = context.read<UserProvider>();
     await authProvider.loadLoginStatus();
 
     final hasLanguage = await appProvider.hasSelectedLanguage();
+
+    if (authProvider.isLoggedIn) {
+      await userProvider.loadUserData();
+    }
+    if (!mounted) return;
+
     final route = authProvider.isLoggedIn
-        ? AppRoutes.home
+        ? userProvider.isRider
+              ? AppRoutes.riderHome
+              : AppRoutes.home
         : !hasLanguage
         ? AppRoutes.language
         : !authProvider.hasVisitedApp
         ? AppRoutes.onboarding
         : AppRoutes.getStarted;
 
-    if (!mounted) return;
     context.replacePage(
       route,
       params: !hasLanguage ? {'isFromSplash': true} : {},
@@ -71,7 +78,7 @@ class _SplashState extends State<Splash> {
                 ),
               ),
             )
-          : const Center(child: CircularProgressIndicator()),
+          : const Center(child: CircularProgressIndicator.adaptive()),
     );
   }
 }

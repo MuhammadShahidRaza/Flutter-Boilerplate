@@ -27,25 +27,25 @@ class _MyAccountState extends State<MyAccount> {
           context.navigate(AppRoutes.editProfile);
         },
       ),
-      _AccountOption(
-        icon: Icons.list,
-        title: Common.myOrders,
-        onTap: () {
-          // context.navigate(AppRoutes.myOrders);
-        },
-      ),
+      // _AccountOption(
+      //   icon: Icons.list,
+      //   title: Common.myOrders,
+      //   onTap: () {
+      //     context.replacePage(AppRoutes.orders);
+      //   },
+      // ),
       _AccountOption(
         icon: Icons.location_on_outlined,
         title: Common.myAddress,
         onTap: () {
-          // context.navigate(AppRoutes.myAddress);
+          context.navigate(AppRoutes.myAddress);
         },
       ),
       _AccountOption(
         icon: Icons.credit_card,
         title: Common.payment,
         onTap: () {
-          // context.navigate(AppRoutes.payment);
+          context.navigate(AppRoutes.payment);
         },
       ),
       _AccountOption(
@@ -105,18 +105,18 @@ class _MyAccountState extends State<MyAccount> {
             primaryButtonText: Common.yes,
             secondaryButtonText: Common.no,
             onPrimaryPressed: () async {
-              setState(() {
-                isLoading = true;
-              });
+              // setState(() {
+              //   isLoading = true;
+              // });
               context.back();
               final currentContext = context;
               final isDeleted = await _authRepository.deleteAccount();
               if (isDeleted != null) {
                 if (!currentContext.mounted) return;
-                setState(() {
-                  isLoading = false;
-                });
-                AuthProvider().logout();
+                // setState(() {
+                //   isLoading = false;
+                // });
+                clearSession(context);
                 AppDialog.show(
                   context,
                   borderColor: AppColors.primary,
@@ -238,6 +238,7 @@ class _MyAccountState extends State<MyAccount> {
                         context.replacePage(AppRoutes.getStarted);
                         // await performLogout(context);
                         _authRepository.logout();
+                        await clearSession(context);
                       },
                       crossAxisAlignment: CrossAxisAlignment.center,
                       insetPadding: EdgeInsets.all(Dimens.spacingMLarge),
@@ -273,16 +274,19 @@ class _MyAccountState extends State<MyAccount> {
 
           // 🔹 Profile image
           Positioned(
-            top: 110, // half overlaps header
+            top: 110,
             child: Consumer<UserProvider>(
               builder: (context, provider, child) {
                 final profileImage =
                     provider.user?.profileImage ?? AppAssets.user;
-                return AppImage(
-                  path: profileImage,
-                  height: 90,
+                return Container(
                   width: 90,
-                  isCircular: true,
+                  height: 90,
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    border: Border.all(color: AppColors.primary, width: 3),
+                  ),
+                  child: AppImage(path: profileImage, isCircular: true),
                 );
               },
             ),

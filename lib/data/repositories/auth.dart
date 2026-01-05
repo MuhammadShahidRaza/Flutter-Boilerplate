@@ -1,24 +1,23 @@
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:sanam_laundry/core/index.dart';
 import 'package:sanam_laundry/core/network/api_response.dart';
 import 'package:sanam_laundry/data/index.dart';
 import 'package:sanam_laundry/data/services/endpoints.dart';
+import 'package:sanam_laundry/data/services/rider_endpoints.dart';
 import 'package:sanam_laundry/providers/auth.dart';
 
 class AuthRepository {
   final ApiService _apiService = ApiService();
 
-  Future<String?> login({required String phone}) async {
+  Future<String?> login(Map<String, dynamic> data) async {
     String? message;
 
     await ApiResponseHandler.handleRequest(
       () => _apiService.post(
         Endpoints.login,
-        data: {'phone': phone},
-        config: const ApiRequestConfig(
-          requiresAuth: false,
-          showErrorToast: false,
-        ),
+        data: data,
+        config: ApiRequestConfig(requiresAuth: false, showErrorToast: false),
       ),
       onSuccess: (data, statusCode) {
         if (statusCode == 200) {
@@ -60,47 +59,19 @@ class AuthRepository {
         },
         config: const ApiRequestConfig(requiresAuth: false),
       ),
-
-      // onError: (error, statusCode) {
-      //   if (statusCode == 404) {
-      //     return ErrorMessages.userNotFound;
-      //   } else if (statusCode == 403) {
-      //     return ErrorMessages.userNotVerified;
-      //   } else if (statusCode == 401) {
-      //     return ErrorMessages.invalidUser;
-      //   } else {
-      //     return null;
-      //   }
-      // },
-
-      // onSuccess: (data) {
-      //   final userData = data['user'] ?? data['data'] ?? data;
-      //   return UserModel.fromJson(userData);
-      // },
     );
   }
 
   /// 🔹 PROFILE
-  Future<UserModel?> getProfile() async {
+  Future<UserModel?> getProfile({bool? isRider = false}) async {
     return await ApiResponseHandler.handleRequest<UserModel>(
       () => _apiService.get(
-        Endpoints.profile,
-        config: const ApiRequestConfig(requiresAuth: true, showLoader: true),
+        isRider! ? RiderEndpoints.profile : Endpoints.profile,
       ),
-      onSuccess: (data, _) => UserModel.fromJson(data),
-    );
-  }
-
-  /// 🔹 REFRESH TOKEN
-  Future<void> refreshAuthToken() async {
-    await ApiResponseHandler.handleRequest(
-      () => _apiService.post(
-        Endpoints.refreshToken,
-        config: const ApiRequestConfig(
-          requiresAuth: true,
-          showErrorToast: false,
-        ),
-      ),
+      onSuccess: (data, _) {
+        final userData = data['user'];
+        return UserModel.fromJson(userData);
+      },
     );
   }
 
@@ -108,16 +79,18 @@ class AuthRepository {
     return ApiResponseHandler.handleRequest(
       () => _apiService.delete(
         Endpoints.deleteAccount,
-        config: const ApiRequestConfig(showErrorToast: false),
+        config: const ApiRequestConfig(showErrorToast: false, showLoader: true),
       ),
     );
   }
 
   Future<void> logout() async {
+    final token = await FirebaseMessaging.instance.getToken();
+
     await ApiResponseHandler.handleRequest(
       () => _apiService.post(
         Endpoints.logout,
-        data: {"udid": "132323"},
+        data: {"udid": token ?? ""},
         config: const ApiRequestConfig(showErrorToast: false),
       ),
       onSuccess: (data, statusCode) async {
@@ -130,6 +103,7 @@ class AuthRepository {
   Future<UserModel?> verifyOtp({
     required String phone,
     required String otp,
+    required String deviceToken,
   }) async {
     return await ApiResponseHandler.handleRequest<UserModel>(
       () => _apiService.post(
@@ -138,8 +112,8 @@ class AuthRepository {
           'phone': phone,
           'otp': otp,
           // device_type:Testing Tool
-          // device_token:abcdefghijklmnopqrstuvwxyz
-          // udid:123456789
+          "device_token": deviceToken,
+          "udid": deviceToken,
           // device_brand:Postman
           // device_os:Linux
           // app_version:1.0.0
@@ -168,8 +142,8 @@ class AuthRepository {
 
   /// 🔹 EDIT PROFILE
   Future editProfile({
-    required String firstName,
-    required String lastName,
+    String? firstName,
+    String? lastName,
     String? gender,
     XFile? profileImage,
   }) async {
@@ -178,8 +152,8 @@ class AuthRepository {
         Endpoints.updateUserProfile,
         data: {
           "_method": "PATCH",
-          'first_name': firstName,
-          'last_name': lastName,
+          ...(firstName != null ? {'first_name': firstName} : {}),
+          ...(lastName != null ? {'last_name': lastName} : {}),
           ...(gender != null ? {'gender': gender} : {}),
           ...(profileImage != null ? {'profile_image': profileImage} : {}),
         },

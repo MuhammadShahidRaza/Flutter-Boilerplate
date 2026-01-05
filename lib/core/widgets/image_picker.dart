@@ -10,8 +10,24 @@ import 'package:sanam_laundry/presentation/index.dart';
 class ImagePickerBox extends StatefulWidget {
   final ValueChanged<XFile?>? onImagePicked;
   final String? initialImagePath;
+  final String? title;
+  final double? imageBoxWidth;
+  final double? imageBoxHeight;
+  final Color? borderColor;
+  final bool wantBottomSpace;
+  final bool enabled;
 
-  const ImagePickerBox({super.key, this.onImagePicked, this.initialImagePath});
+  const ImagePickerBox({
+    super.key,
+    this.onImagePicked,
+    this.initialImagePath,
+    this.wantBottomSpace = true,
+    this.title,
+    this.imageBoxWidth,
+    this.imageBoxHeight,
+    this.borderColor,
+    this.enabled = true,
+  });
 
   @override
   State<ImagePickerBox> createState() => _ImagePickerBoxState();
@@ -66,27 +82,31 @@ class _ImagePickerBoxState extends State<ImagePickerBox> {
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
-      onTap: () => _showPickerOptions(context),
+      onTap: widget.enabled ? () => _showPickerOptions(context) : null,
       child: Column(
         spacing: Dimens.spacingS,
         children: [
           DottedBorder(
             options: RoundedRectDottedBorderOptions(
               radius: const Radius.circular(Dimens.radiusM),
-              color: AppColors.secondary,
+              color: widget.borderColor ?? AppColors.secondary,
               padding: EdgeInsets.all(Dimens.spacingXS),
             ),
             child: AppImage(
               path:
                   _imageFile?.path ?? widget.initialImagePath ?? AppAssets.user,
-              width: 120,
-              height: 120,
+              width: widget.imageBoxWidth ?? 120,
+              height: widget.imageBoxHeight ?? 120,
               fit: BoxFit.cover,
               borderRadius: Dimens.radiusM,
             ),
           ),
-          AppText(Common.uploadProfilePicture),
-          SizedBox(height: Dimens.spacingMSmall),
+          AppText(
+            widget.title ?? Common.uploadProfilePicture,
+            maxLines: 3,
+            textAlign: TextAlign.center,
+          ),
+          if (widget.wantBottomSpace) SizedBox(height: Dimens.spacingMSmall),
         ],
       ),
     );

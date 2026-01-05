@@ -35,10 +35,14 @@ class AppText extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final defaultStyle = context.textTheme.bodyMedium;
+    final bool isArabic = Localizations.localeOf(context).languageCode == 'ar';
 
     final textStyle = (defaultStyle?.merge(style))?.copyWith(
       color: color ?? style?.color ?? defaultStyle?.color,
-      fontSize: fontSize ?? style?.fontSize ?? defaultStyle?.fontSize,
+      // fontSize: fontSize ?? style?.fontSize ?? defaultStyle?.fontSize,
+      fontSize:
+          (fontSize ?? style?.fontSize ?? defaultStyle?.fontSize)! *
+          (isArabic ? 1.12 : 1.0),
       fontWeight: fontWeight ?? style?.fontWeight ?? defaultStyle?.fontWeight,
       letterSpacing:
           letterSpacing ?? style?.letterSpacing ?? defaultStyle?.letterSpacing,
