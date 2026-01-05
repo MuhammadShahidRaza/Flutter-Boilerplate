@@ -136,7 +136,7 @@ class _JobDetailsState extends State<JobDetails> {
       scrollable: true,
       heading: Common.jobDetails,
       child: orderDetails == null
-          ? const Center(child: CircularProgressIndicator.adaptive())
+          ? const BookingDetailSkeleton()
           : Column(
               // spacing: Dimens.spacingM,
               crossAxisAlignment: CrossAxisAlignment.center,

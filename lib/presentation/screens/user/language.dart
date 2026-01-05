@@ -92,7 +92,8 @@ class _ChangeLanguageState extends State<ChangeLanguage> {
                     context.replacePage(AppRoutes.onboarding);
                     return;
                   }
-                  Future.delayed(Duration(milliseconds: 300), () {
+                  Future.delayed(const Duration(milliseconds: 300), () {
+                    if (!context.mounted) return;
                     if (context.read<UserProvider>().isRider == false) {
                       context.read<ServicesProvider>().fetchCategories(
                         forceRefresh: true,
