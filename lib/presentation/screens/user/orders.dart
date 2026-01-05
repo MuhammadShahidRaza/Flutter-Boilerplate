@@ -164,7 +164,7 @@ class _OrdersState extends State<Orders> {
           // 🔹 Orders List
           Expanded(
             child: loadingOrders
-                ? const Center(child: CircularProgressIndicator.adaptive())
+                ? const ListSkeleton(skeletonItem: OrderCardSkeleton())
                 : orders.isEmpty
                 ? const Center(child: AppText(Common.noDataAvailable))
                 : RefreshIndicator(

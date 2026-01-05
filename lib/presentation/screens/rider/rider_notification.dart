@@ -158,7 +158,7 @@ class _RiderNotificationScreenState extends State<RiderNotificationScreen> {
       heading: Common.notifications,
       showBackButton: true,
       child: _loadingInitial
-          ? const Center(child: CircularProgressIndicator.adaptive())
+          ? const ListSkeleton(skeletonItem: NotificationCardSkeleton())
           : dateKeys.isEmpty
           ? Center(
               child: AppText(
@@ -176,7 +176,13 @@ class _RiderNotificationScreenState extends State<RiderNotificationScreen> {
                     return const Padding(
                       padding: EdgeInsets.symmetric(vertical: 16),
                       child: Center(
-                        child: CircularProgressIndicator.adaptive(),
+                        child: SizedBox(
+                          height: 30,
+                          width: 30,
+                          child: CircularProgressIndicator.adaptive(
+                            strokeWidth: 2,
+                          ),
+                        ),
                       ),
                     );
                   }

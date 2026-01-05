@@ -48,7 +48,7 @@ class _StaticPageState extends State<StaticPage> {
       heading: heading,
       showBackButton: true,
       child: loading
-          ? const Center(child: CircularProgressIndicator.adaptive())
+          ? const DetailPageSkeleton()
           : HtmlWidget(
               html,
               textStyle: Theme.of(context).textTheme.bodyMedium,

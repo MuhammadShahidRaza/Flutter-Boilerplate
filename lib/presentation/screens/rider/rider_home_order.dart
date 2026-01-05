@@ -53,6 +53,7 @@ class _RiderHomeOrderState extends State<RiderHomeOrder> {
     if (orderDetails == null) return;
 
     final result = await _polylinePoints.getRouteBetweenCoordinates(
+      // ignore: deprecated_member_use
       request: PolylineRequest(
         origin: PointLatLng(pickupLatLng.latitude, pickupLatLng.longitude),
         destination: PointLatLng(dropLatLng.latitude, dropLatLng.longitude),

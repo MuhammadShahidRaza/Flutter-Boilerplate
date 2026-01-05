@@ -51,10 +51,15 @@ class _VerificationState extends State<Verification> {
 
   Future<void> _submit() async {
     if (!_isOtpComplete) return;
+
+    // Get context-dependent values before async operations
+    final phone = context.getParam<String>('phone') ?? '';
+    final isFromLogin = context.getParam<bool>('isFromLogin') ?? false;
+
     final token = await FirebaseMessaging.instance.getToken();
     setState(() => loading = true);
     final user = await _authRepository.verifyOtp(
-      phone: context.getParam<String>('phone') ?? '',
+      phone: phone,
       otp: _otpCode,
       deviceToken: token ?? '',
       // device_type:Testing Tool
@@ -65,7 +70,6 @@ class _VerificationState extends State<Verification> {
     );
     if (!mounted) return;
     setState(() => loading = false);
-    final isFromLogin = context.getParam<bool>('isFromLogin') ?? false;
     if (user != null) {
       context.read<AuthProvider>().login(context, user);
       if (!isFromLogin) {

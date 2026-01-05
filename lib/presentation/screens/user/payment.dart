@@ -286,7 +286,7 @@ class _PaymentState extends State<Payment> with WidgetsBindingObserver {
       heading: Common.payment,
       showBackButton: true,
       child: isLoading
-          ? const Center(child: CircularProgressIndicator())
+          ? const PaymentPageSkeleton()
           : Column(
               children: [
                 Container(

@@ -18,6 +18,7 @@ class AppListView<T> extends StatelessWidget {
   final String? emptyMessageDesciption;
   final String? emptyMessageTitle;
   final EdgeInsets? emptyWidgetPadding;
+  final Widget? loadingWidget;
 
   const AppListView({
     super.key,
@@ -35,12 +36,14 @@ class AppListView<T> extends StatelessWidget {
     this.emptyWidgetPadding,
     this.emptyMessageDesciption,
     this.emptyMessageTitle,
+    this.loadingWidget,
   });
 
   @override
   Widget build(BuildContext context) {
     if (state.loadingInitial) {
-      return const Center(child: CircularProgressIndicator.adaptive());
+      return loadingWidget ??
+          const ListSkeleton(skeletonItem: OrderCardSkeleton());
     }
     if (state.error != null && state.items.isEmpty) {
       return Column(
@@ -95,7 +98,13 @@ class AppListView<T> extends StatelessWidget {
             if (index >= state.items.length) {
               return const Padding(
                 padding: EdgeInsets.symmetric(vertical: 16),
-                child: Center(child: CircularProgressIndicator.adaptive()),
+                child: Center(
+                  child: SizedBox(
+                    height: 30,
+                    width: 30,
+                    child: CircularProgressIndicator.adaptive(strokeWidth: 2),
+                  ),
+                ),
               );
             }
             final item = state.items[index];

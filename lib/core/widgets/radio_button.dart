@@ -33,15 +33,20 @@ class AppRadioItem<T> extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         spacing: Dimens.spacingMSmall,
         children: [
-          SizedBox(
-            width: 25,
-            height: 25,
-            child: Radio<T>(
-              value: value,
-              groupValue: groupValue,
-              side: BorderSide(color: AppColors.primary, width: 3),
-              activeColor: AppColors.primary,
-              onChanged: (val) => onChanged(val as T),
+          RadioGroup<T>(
+            groupValue: groupValue,
+            onChanged: (val) {
+              if (val != null) onChanged(val);
+            },
+            child: SizedBox(
+              width: 25,
+              height: 25,
+              child: Radio<T>(
+                value: value,
+                side: BorderSide(color: AppColors.primary, width: 3),
+                activeColor: AppColors.primary,
+                toggleable: false,
+              ),
             ),
           ),
           Expanded(

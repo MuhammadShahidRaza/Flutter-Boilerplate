@@ -65,7 +65,7 @@ class _BookingDetailsState extends State<BookingDetails> {
       scrollable: true,
       heading: Common.bookingDetails,
       child: orderDetails == null
-          ? const Center(child: CircularProgressIndicator.adaptive())
+          ? const BookingDetailSkeleton()
           : Column(
               spacing: Dimens.spacingM,
               crossAxisAlignment: CrossAxisAlignment.start,
